@@ -1,12 +1,10 @@
 // BoardGameInfoActivity.kt
 package com.example.myapplication
 
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-//import androidx.compose.foundation.layout.RowScopeInstance.alignBy
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,15 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.font.FontWeight
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 
 
@@ -49,9 +46,10 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
 
         if (isLoading) {
             // Indikator
-            Row (Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
+            Row (
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
                 )
@@ -139,24 +137,28 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Text(
-                        text = boardGame.description,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(
-                        onClick = {
-                            navController.popBackStack()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Text("Back to Home")
+                    LazyColumn(modifier = Modifier.weight(1f)){
+                       item{
+                           Box {
+                               Text(
+                                   text = boardGame.description,
+                                   style = MaterialTheme.typography.bodyLarge,
+                                   modifier = Modifier.fillMaxWidth()
+                               )
+                           }
+                       }
                     }
+
+                }
+                Button(
+                    onClick = {
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    Text("Back")
                 }
             }
         }

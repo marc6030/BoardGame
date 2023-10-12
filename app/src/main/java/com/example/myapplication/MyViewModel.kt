@@ -1,6 +1,6 @@
 package com.example.myapplication
 
-import android.widget.ImageView
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,19 +13,37 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.xml.sax.InputSource
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
-import org.xml.sax.InputSource
 
 
 class MyViewModel : ViewModel() {
     private val mainScope = MainScope()
-    private var _boardGameData = MutableLiveData<BoardGame?>()
-    var boardGameData: LiveData<BoardGame?> = _boardGameData
     private var _isLoading = MutableLiveData<Boolean>()
+    private var _boardGameData = MutableLiveData<BoardGame?>()
+    private var _boardGameList = MutableLiveData<BoardGameItems?>()
+
     var isLoading: LiveData<Boolean> = _isLoading
-    //var boardGameList = MutableLiveData<ArrayList<String>>()
-    private var image = MutableLiveData<ImageView>()
+    var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
+    var boardGameData: LiveData<BoardGame?> = _boardGameData
+
+
+     fun fetchBoardGameList(url: String) {             // Lige nu er det hot listen
+        _isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val boardGameList: BoardGameItems = getDataAsBoardGameList(url)
+                _boardGameList.postValue(boardGameList)
+            } catch (e: Exception) {
+                _boardGameList.postValue(null)
+            } finally {
+                _isLoading.postValue(false)
+            }
+        }
+    }
+
+
 
     fun fetchBoardGameData(id: String) {
         val url: String = "https://api.geekdo.com/xmlapi/boardgame/$id"
@@ -84,4 +102,27 @@ class MyViewModel : ViewModel() {
         boardGame.playingTime = document.getElementsByTagName("playingtime").item(0).textContent
         return boardGame
     }
+
+    private suspend fun getDataAsBoardGameList(url: String): BoardGameItems{
+        val strDeferred = fetchData(url)
+        val xmlData = strDeferred.await()
+        val factory = DocumentBuilderFactory.newInstance()
+        val builder = factory.newDocumentBuilder()
+        val document = builder.parse(InputSource(StringReader(xmlData)))
+
+        val boardGameItems = BoardGameItems()
+
+        for (i in 0 until document.getElementsByTagName("item").length) {
+            val newBoardGame = BoardGameItem().apply {
+                id = document.getElementsByTagName("item").item(i).attributes.getNamedItem("id").textContent
+                name = document.getElementsByTagName("name").item(i).attributes.getNamedItem("value").textContent
+            }
+            boardGameItems.boardGames = boardGameItems.boardGames + newBoardGame
+        }
+        return boardGameItems
+
+    }
+
 }
+
+

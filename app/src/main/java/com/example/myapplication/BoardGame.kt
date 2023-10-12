@@ -1,10 +1,7 @@
 package com.example.myapplication
 
-import androidx.compose.runtime.Composable
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
-import androidx.compose.ui.graphics.ImageBitmap
-import android.os.Bundle
 
 
 

@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
                 startDestination = "home"
             ) {
                 composable("home") {
-                    HomeActivity(navController)
+                    HomeActivity(navController, myViewModel)
                 }
                 composable("search") {
                     SearchActivity(navController)
