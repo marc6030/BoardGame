@@ -95,11 +95,15 @@ class MyViewModel : ViewModel() {
         val document = builder.parse(InputSource(StringReader(xmlData)))
         val boardGame = BoardGame()
         val numberOfNames = document.getElementsByTagName("name").length
-        println(numberOfNames)
-        for(i in 0..numberOfNames){
-           if(document.getElementsByTagName("name").item(i).hasAttributes())
-               println(document.getElementsByTagName("name").item(i).attributes)
-                boardGame.name = document.getElementsByTagName("name").item(0).textContent
+        if(numberOfNames>1) {
+            for (i in 0..numberOfNames) {
+                if (document.getElementsByTagName("name").item(i).attributes.length >= 2) {
+                    boardGame.name = document.getElementsByTagName("name").item(i).textContent
+                    break
+                }
+            }
+        } else{
+            boardGame.name = document.getElementsByTagName("name").item(0).textContent
         }
         boardGame.minPlayers = document.getElementsByTagName("minplayers").item(0).textContent
         boardGame.maxPlayers = document.getElementsByTagName("maxplayers").item(0).textContent
