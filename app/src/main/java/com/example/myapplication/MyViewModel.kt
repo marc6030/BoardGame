@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 
+import android.text.Html
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -93,12 +94,18 @@ class MyViewModel : ViewModel() {
         val builder = factory.newDocumentBuilder()
         val document = builder.parse(InputSource(StringReader(xmlData)))
         val boardGame = BoardGame()
-        boardGame.name = document.getElementsByTagName("name").item(0).textContent
+        val numberOfNames = document.getElementsByTagName("name").length
+        println(numberOfNames)
+        for(i in 0..numberOfNames){
+           if(document.getElementsByTagName("name").item(i).hasAttributes())
+               println(document.getElementsByTagName("name").item(i).attributes)
+                boardGame.name = document.getElementsByTagName("name").item(0).textContent
+        }
         boardGame.minPlayers = document.getElementsByTagName("minplayers").item(0).textContent
         boardGame.maxPlayers = document.getElementsByTagName("maxplayers").item(0).textContent
         boardGame.yearPublished = document.getElementsByTagName("yearpublished").item(0).textContent
         boardGame.age = document.getElementsByTagName("age").item(0).textContent
-        boardGame.description = document.getElementsByTagName("description").item(0).textContent
+        boardGame.description = Html.fromHtml(document.getElementsByTagName("description").item(0).textContent).toString()
         boardGame.playingTime = document.getElementsByTagName("playingtime").item(0).textContent
         return boardGame
     }
