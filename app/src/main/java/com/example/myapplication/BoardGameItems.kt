@@ -19,4 +19,7 @@ class BoardGameItem {
 
     @field:Element(name = "name")
     var name: String = ""
+
+    @field:Element(name = "imgurl")
+    var imgUrl: String = ""
 }
