@@ -25,60 +25,66 @@ import androidx.navigation.NavHostController
 
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
-    val navBar = NavBar()
-    val url = "https://boardgamegeek.com/xmlapi2/hot?boardgame"
-    val context = LocalContext.current
-    // Check internet Connection
-    if (!isInternetAvailable(context)) {
-        Text("No Internet!")
-    }
 
-    viewModel.fetchBoardGameList(url) // Henter dataen
 
-    val isLoading by viewModel.isLoading.observeAsState(initial = false)
-    if (isLoading) {
-        // Indikator
-        Row (
-            Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(200.dp),
-                strokeWidth = 50.dp
-            )
-        }
-    } else {
-
-        val items = viewModel.boardGameDataList.value
-        if(items != null) {
-            Column( modifier = Modifier
-                .fillMaxSize()) {
-                LazyColumn (
-                    modifier = Modifier
-                        .weight(1f) // Takes up remaining available space
-                ){
-                    items(items.boardGames) { item ->
-                        val gameName: String = item.name
-                        val gameID: String = item.id
-                        Button(
-                            onClick = {
-                                navController.navigate("boardgameinfo/$gameID")
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        ) {
-                            Text(gameName)
-                        }
-                    }
-                }
-                navBar.BottomNavigationBar(navController, "Favorite")
-            }
-        }
-    }
 }
+
+//@Composable
+//fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
+//    val navBar = NavBar()
+//    val url = "https://boardgamegeek.com/xmlapi2/hot?boardgame"
+//    val context = LocalContext.current
+//    // Check internet Connection
+//    if (!isInternetAvailable(context)) {
+//        Text("No Internet!")
+//    }
+//
+//    viewModel.fetchBoardGameList(url) // Henter dataen
+//
+//    val isLoading by viewModel.isLoading.observeAsState(initial = false)
+//    if (isLoading) {
+//        // Indikator
+//        Row (
+//            Modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight(),
+//            horizontalArrangement = Arrangement.Center,
+//            verticalAlignment = Alignment.CenterVertically
+//        )
+//        {
+//            CircularProgressIndicator(
+//                modifier = Modifier
+//                    .size(200.dp),
+//                strokeWidth = 50.dp
+//            )
+//        }
+//    } else {
+//
+//        val items = viewModel.boardGameDataList.value
+//        if(items != null) {
+//            Column( modifier = Modifier
+//                .fillMaxSize()) {
+//                LazyColumn (
+//                    modifier = Modifier
+//                        .weight(1f) // Takes up remaining available space
+//                ){
+//                    items(items.boardGames) { item ->
+//                        val gameName: String = item.name
+//                        val gameID: String = item.id
+//                        Button(
+//                            onClick = {
+//                                navController.navigate("boardgameinfo/$gameID")
+//                            },
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(8.dp)
+//                        ) {
+//                            Text(gameName)
+//                        }
+//                    }
+//                }
+//                navBar.BottomNavigationBar(navController, "Favorite")
+//            }
+//        }
+//    }
+//}
