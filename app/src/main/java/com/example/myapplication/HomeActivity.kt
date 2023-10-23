@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,8 +19,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,10 +36,15 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 
 //@Composable
 //fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
@@ -90,11 +100,25 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
         val items = viewModel.boardGameDataList.value
         if(items != null) {
-            Column(
-                modifier = Modifier
-                .fillMaxSize()
-            )
+            Column( modifier = Modifier)
             {
+                Box(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .background(Color.White)
+                ) {
+                    Icon(imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(80.dp)
+                            .width(80.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+
+
+                Text(text = "Headline1", fontSize = 35.sp, fontWeight = FontWeight.Bold)
                 LazyRow (
                             modifier = Modifier
                                 .weight(1f), // Takes up remaining available space
@@ -105,15 +129,25 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                                 modifier = Modifier
                                     .size(175.dp)
                                     .padding(5.dp)
-                                    .background(Color.Red, shape = MaterialTheme.shapes.large)
+                                    .clip(RoundedCornerShape(20.dp))
                             )
                             {
+                                AsyncImage(
+                                    model = item.imgUrl,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    alignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                )
                                 Box(
                                     modifier = Modifier
                                         .align(Alignment.BottomCenter)
                                         .fillMaxWidth(1f)
                                         .fillMaxHeight(0.33f)
-                                        .background(Color.LightGray, shape = MaterialTheme.shapes.large)
+                                        .background(
+                                            Color.LightGray,
+                                            shape = MaterialTheme.shapes.large
+                                        )
                                 ){
                                     Text(
                                         text = item.name,
@@ -124,9 +158,11 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
                         }
                 }
+
+                Text(text = "Headline2", fontSize = 35.sp, fontWeight = FontWeight.Bold)
                 LazyRow (
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(1f), // Takes up remaining available space
                 )
                 {
                     items(items.boardGames){item ->
@@ -134,9 +170,16 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                             modifier = Modifier
                                 .size(175.dp)
                                 .padding(5.dp)
-                                .background(Color.Red, shape = MaterialTheme.shapes.large)
+                                .clip(RoundedCornerShape(20.dp))
                         )
                         {
+                            AsyncImage(
+                                model = item.imgUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                alignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            )
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)

@@ -116,6 +116,7 @@ class MyViewModel : ViewModel() {
             val newBoardGame = BoardGameItem().apply {
                 id = document.getElementsByTagName("item").item(i).attributes.getNamedItem("id").textContent
                 name = document.getElementsByTagName("name").item(i).attributes.getNamedItem("value").textContent
+                imgUrl  = document.getElementsByTagName("thumbnail").item(i).attributes.getNamedItem("value").textContent
             }
             boardGameItems.boardGames = boardGameItems.boardGames + newBoardGame
         }
