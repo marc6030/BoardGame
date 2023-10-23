@@ -24,7 +24,7 @@ class NavBar : ComponentActivity() {
     fun BottomNavigationBar(navController: NavHostController, actName: String) {
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color.Blue,
+            backgroundColor = Color.LightGray,
         ) {
             BottomNavigationItem(
                 selected = actName == "Home",
