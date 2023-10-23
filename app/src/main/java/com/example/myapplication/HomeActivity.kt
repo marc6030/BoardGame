@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -46,27 +47,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 
-//@Composable
-//fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
-//    val navBar = NavBar()
-//    navBar.BottomNavigationBar(navController, "Home")
-//
-//    Row (
-//            Modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight(),
-//            horizontalArrangement = Arrangement.Center,
-//            verticalAlignment = Alignment.CenterVertically
-//        )
-//        {
-//            CircularProgressIndicator(
-//                modifier = Modifier
-//                    .size(200.dp),
-//                strokeWidth = 50.dp
-//            )
-//        }
-//
-//}
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
     val navBar = NavBar()
@@ -81,7 +61,6 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
     if (isLoading) {
-        // Indikator
         Row (
             Modifier
                 .fillMaxWidth()
@@ -100,31 +79,34 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
         val items = viewModel.boardGameDataList.value
         if(items != null) {
-            Column( modifier = Modifier)
+            Box(modifier = Modifier
+                .fillMaxSize()
+            ){
+            LazyColumn( modifier = Modifier)
             {
-                Box(
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
-                        .background(Color.White)
-                ) {
-                    Icon(imageVector = Icons.Default.Star,
-                        contentDescription = null,
+                item {
+                    Box(
                         modifier = Modifier
-                            .height(80.dp)
-                            .width(80.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-
-
-                Text(text = "Headline1", fontSize = 35.sp, fontWeight = FontWeight.Bold)
-                LazyRow (
+                            .height(100.dp)
+                            .fillMaxWidth()
+                            .background(Color.White)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
                             modifier = Modifier
-                                .weight(1f), // Takes up remaining available space
+                                .height(80.dp)
+                                .width(80.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
+
+                    Text(text = "Headline1", fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
+                    LazyRow(
+                        modifier = Modifier
                     )
                     {
-                        items(items.boardGames){item ->
+                        items(items.boardGames) { item ->
                             Box(
                                 modifier = Modifier
                                     .size(175.dp)
@@ -148,7 +130,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                                             Color.LightGray,
                                             shape = MaterialTheme.shapes.large
                                         )
-                                ){
+                                ) {
                                     Text(
                                         text = item.name,
                                         modifier = Modifier.align(Alignment.Center)
@@ -157,46 +139,95 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                             }
 
                         }
-                }
+                    }
 
-                Text(text = "Headline2", fontSize = 35.sp, fontWeight = FontWeight.Bold)
-                LazyRow (
-                    modifier = Modifier
-                        .weight(1f), // Takes up remaining available space
-                )
-                {
-                    items(items.boardGames){item ->
-                        Box(
-                            modifier = Modifier
-                                .size(175.dp)
-                                .padding(5.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                        )
-                        {
-                            AsyncImage(
-                                model = item.imgUrl,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                alignment = Alignment.Center,
-                                modifier = Modifier.fillMaxSize()
-                            )
+                    Text(text = "Headline2", fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
+                    LazyRow(
+                        modifier = Modifier
+                    )
+                    {
+                        items(items.boardGames) { item ->
                             Box(
                                 modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .fillMaxWidth(1f)
-                                    .fillMaxHeight(0.33f)
-                                    .background(Color.LightGray, shape = MaterialTheme.shapes.large)
-                            ){
-                                Text(
-                                    text = item.name,
-                                    modifier = Modifier.align(Alignment.Center)
+                                    .size(175.dp)
+                                    .padding(5.dp)
+                                    .clip(RoundedCornerShape(20.dp))
+                            )
+                            {
+                                AsyncImage(
+                                    model = item.imgUrl,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    alignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxSize()
                                 )
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .fillMaxWidth(1f)
+                                        .fillMaxHeight(0.33f)
+                                        .background(
+                                            Color.LightGray,
+                                            shape = MaterialTheme.shapes.large
+                                        )
+                                ) {
+                                    Text(
+                                        text = item.name,
+                                        modifier = Modifier.align(Alignment.Center)
+                                    )
+                                }
                             }
-                        }
 
+                        }
                     }
+
+                    Text(text = "Headline3", fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
+                    LazyRow(
+                        modifier = Modifier
+                    )
+                    {
+                        items(items.boardGames) { item ->
+                            Box(
+                                modifier = Modifier
+                                    .size(175.dp)
+                                    .padding(5.dp)
+                                    .clip(RoundedCornerShape(20.dp))
+                            )
+                            {
+                                AsyncImage(
+                                    model = item.imgUrl,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    alignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomCenter)
+                                        .fillMaxWidth(1f)
+                                        .fillMaxHeight(0.33f)
+                                        .background(
+                                            Color.LightGray,
+                                            shape = MaterialTheme.shapes.large
+                                        )
+                                ) {
+                                    Text(
+                                        text = item.name,
+                                        modifier = Modifier.align(Alignment.Center)
+                                    )
+                                }
+                            }
+
+                        }
+                    }
+
                 }
+            }
+            Box( modifier = Modifier
+                .align(Alignment.BottomCenter)
+            ) {
                 navBar.BottomNavigationBar(navController, "Home")
+            }
             }
         }
     }
