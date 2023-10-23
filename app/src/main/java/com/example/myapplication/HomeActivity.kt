@@ -25,7 +25,7 @@ import androidx.navigation.NavHostController
 
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
-    val navBar = NavBar()
+    val navBar = NavBar()//assssssssss
     val url = "https://boardgamegeek.com/xmlapi2/hot?boardgame"
     val context = LocalContext.current
     // Check internet Connection

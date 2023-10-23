@@ -19,7 +19,7 @@ fun FavoriteActivity(navController: NavHostController) {
             modifier = Modifier.weight(1f),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Favorite!")
+            //Text(text = "Favorite!")
         }
 
         NavBar().BottomNavigationBar(navController, "Favorite")
