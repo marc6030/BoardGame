@@ -21,11 +21,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 
 
 @Composable
@@ -76,13 +80,14 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                             .fillMaxWidth()
                             .height(200.dp)
                     ) {
-                        val painter = painterResource(id = R.drawable.ic_launcher_background)
-                        Image(
-                            painter = painter,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
+                        AsyncImage(
+                                model = boardGame.imageURL,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                alignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
                         )
+
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))

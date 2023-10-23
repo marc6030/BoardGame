@@ -111,6 +111,7 @@ class MyViewModel : ViewModel() {
         boardGame.age = document.getElementsByTagName("age").item(0).textContent
         boardGame.description = Html.fromHtml(document.getElementsByTagName("description").item(0).textContent).toString()
         boardGame.playingTime = document.getElementsByTagName("playingtime").item(0).textContent
+        boardGame.imageURL = document.getElementsByTagName("image").item(0).textContent
         return boardGame
     }
 
