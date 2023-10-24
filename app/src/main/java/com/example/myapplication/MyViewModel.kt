@@ -47,7 +47,7 @@ class MyViewModel : ViewModel() {
 
 
     fun fetchBoardGameData(id: String) {
-        val url: String = "https://api.geekdo.com/xmlapi/boardgame/$id"
+        val url: String = "https://api.geekdo.com/xmlapi/boardgame/$id?stats=1"
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -112,6 +112,9 @@ class MyViewModel : ViewModel() {
         boardGame.description = Html.fromHtml(document.getElementsByTagName("description").item(0).textContent).toString()
         boardGame.playingTime = document.getElementsByTagName("playingtime").item(0).textContent
         boardGame.imageURL = document.getElementsByTagName("image").item(0).textContent
+        boardGame.averageRating = document.getElementsByTagName("average").item(0).textContent
+        boardGame.averageWeight = document.getElementsByTagName("averageweight").item(0).textContent
+        boardGame.overallRank = document.getElementsByTagName("rank").item(0).attributes.getNamedItem("value").nodeValue
         return boardGame
     }
 

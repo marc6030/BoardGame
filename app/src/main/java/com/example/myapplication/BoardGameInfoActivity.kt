@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +46,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
             Text("No Internet!")
         }
 
-        if(gameID != null){
+        if (gameID != null) {
             viewModel.fetchBoardGameData(gameID)
         } else {
             viewModel.fetchBoardGameData("2536")
@@ -55,18 +56,18 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
 
         if (isLoading) {
             // Indikator
-            Row (
+            Row(
                 Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-                )
+            )
             {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .size(200.dp),
-                        strokeWidth = 50.dp
+                    strokeWidth = 50.dp
                 )
             }
         } else {
@@ -85,60 +86,111 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                             fontSize = 50.sp
                         ),
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 20.dp),
                         textAlign = TextAlign.Center
                     )
                     Row(
-                        modifier = Modifier.height(150.dp)
-                    ){
+                        modifier = Modifier.height(175.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
                         Box(
                             modifier = Modifier
-                                .width(150.dp)
-                                .height(150.dp)
+                                .width(175.dp)
+                                .height(175.dp)
+                                .padding(10.dp)
                         ) {
                             AsyncImage(
                                 model = boardGame.imageURL,
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 alignment = Alignment.Center,
-                                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp))
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(20.dp))
                             )
 
                         }
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                                .padding(16.dp)
-                                .clip(RoundedCornerShape(10.dp))
+                                .padding(10.dp)
+                                .width(175.dp)
+                                .height(175.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color.LightGray),
+
                         ) {
-                            Column (
+                            Row(
                                 modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                            ){
-                                Text(
-                                    text = "Year Published: ${boardGame.yearPublished}",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                    .fillMaxSize(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(100.dp),
+                                    verticalArrangement = Arrangement.SpaceAround,
+                                    horizontalAlignment = Alignment.CenterHorizontally
 
-                                Text(
-                                    text = "Players: ${boardGame.minPlayers} - ${boardGame.maxPlayers}",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                ) {
 
-                                Text(
-                                    text = "Playing Time: ${boardGame!!.playingTime} mins",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                    Image(
+                                        painter = painterResource(id = R.drawable.people_alt),
+                                        contentDescription = null,
+                                    )
+                                    Text(
+                                        text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
 
-                                Text(
-                                    text = "Age: ${boardGame.age}+",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                    Image(
+                                        painter = painterResource(id = R.drawable.av_timer),
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        text = "${boardGame.playingTime} min.",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .width(100.dp),
+                                    verticalArrangement = Arrangement.SpaceAround,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.elderly),
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        text = "${boardGame.age}+",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Image(
+                                        painter = painterResource(id = R.drawable.fitness_center),
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        text = "${boardGame.averageWeight}",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                             }
                         }
                     }
@@ -146,29 +198,40 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.LightGray)
+                    ) {
+                        Column() {
+                            Text(
+                                text = "Description:",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                            )
 
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "Description:",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    LazyColumn(modifier = Modifier.weight(1f)){
-                       item{
-                           Box {
-                               Text(
-                                   text = boardGame.description,
-                                   style = MaterialTheme.typography.bodyLarge,
-                                   modifier = Modifier.fillMaxWidth()
-                               )
-                           }
-                       }
+                            LazyColumn(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                            ) {
+                                item {
+                                    Box {
+                                        Text(
+                                            text = boardGame.description,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
+
 
                 }
                 Button(
@@ -178,11 +241,22 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
-                        .padding(8.dp)
-                ) {
-                    Text("Back")
+                        .padding(8.dp),
+
+                    ) {
+
                 }
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(18.dp),
+
+
+                    )
+
             }
         }
     }
 }
+
