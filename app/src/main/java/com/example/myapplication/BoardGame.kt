@@ -31,4 +31,15 @@ class BoardGame {
     @field:Element(name = "image")
     var imageURL: String = ""
 
+    @field:Element(name = "average")
+    var averageRating : String = ""
+
+    @field:Element(name = "averageweight")
+    var averageWeight : String = ""
+
+    @field:Element(name = "OverallRank")
+    var overallRank : String = ""
+
+
+
 }
