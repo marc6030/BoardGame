@@ -248,17 +248,3 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
     }
 }
 
-//                    items(items.boardGames) { item ->
-//                        val gameName: String = item.name
-//                        val gameID: String = item.id
-//                        Button(
-//                            onClick = {
-//                                navController.navigate("boardgameinfo/$gameID")
-//                            },
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(8.dp)
-//                        ) {
-//                            Text(gameName)
-//                        }
-//                    }
