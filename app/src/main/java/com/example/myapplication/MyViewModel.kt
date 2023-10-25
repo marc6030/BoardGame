@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 
+import android.text.Html
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,7 +47,7 @@ class MyViewModel : ViewModel() {
 
 
     fun fetchBoardGameData(id: String) {
-        val url: String = "https://api.geekdo.com/xmlapi/boardgame/$id"
+        val url: String = "https://api.geekdo.com/xmlapi/boardgame/$id?stats=1"
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -93,13 +94,27 @@ class MyViewModel : ViewModel() {
         val builder = factory.newDocumentBuilder()
         val document = builder.parse(InputSource(StringReader(xmlData)))
         val boardGame = BoardGame()
-        boardGame.name = document.getElementsByTagName("name").item(0).textContent
+        val numberOfNames = document.getElementsByTagName("name").length
+        if(numberOfNames>1) {
+            for (i in 0..numberOfNames) {
+                if (document.getElementsByTagName("name").item(i).attributes.length >= 2) {
+                    boardGame.name = document.getElementsByTagName("name").item(i).textContent
+                    break
+                }
+            }
+        } else{
+            boardGame.name = document.getElementsByTagName("name").item(0).textContent
+        }
         boardGame.minPlayers = document.getElementsByTagName("minplayers").item(0).textContent
         boardGame.maxPlayers = document.getElementsByTagName("maxplayers").item(0).textContent
         boardGame.yearPublished = document.getElementsByTagName("yearpublished").item(0).textContent
         boardGame.age = document.getElementsByTagName("age").item(0).textContent
-        boardGame.description = document.getElementsByTagName("description").item(0).textContent
+        boardGame.description = Html.fromHtml(document.getElementsByTagName("description").item(0).textContent).toString()
         boardGame.playingTime = document.getElementsByTagName("playingtime").item(0).textContent
+        boardGame.imageURL = document.getElementsByTagName("image").item(0).textContent
+        boardGame.averageRating = document.getElementsByTagName("average").item(0).textContent
+        boardGame.averageWeight = document.getElementsByTagName("averageweight").item(0).textContent
+        boardGame.overallRank = document.getElementsByTagName("rank").item(0).attributes.getNamedItem("value").nodeValue
         return boardGame
     }
 

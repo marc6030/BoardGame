@@ -17,14 +17,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 
 
 @Composable
@@ -36,7 +46,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
             Text("No Internet!")
         }
 
-        if(gameID != null){
+        if (gameID != null) {
             viewModel.fetchBoardGameData(gameID)
         } else {
             viewModel.fetchBoardGameData("2536")
@@ -46,18 +56,18 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
 
         if (isLoading) {
             // Indikator
-            Row (
+            Row(
                 Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-                )
+            )
             {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .size(200.dp),
-                        strokeWidth = 50.dp
+                    strokeWidth = 50.dp
                 )
             }
         } else {
@@ -70,84 +80,156 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    ) {
-                        val painter = painterResource(id = R.drawable.ic_launcher_background)
-                        Image(
-                            painter = painter,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     Text(
                         text = boardGame.name,
-                        style = MaterialTheme.typography.headlineLarge,
+                        style = TextStyle(
+                            fontSize = 50.sp
+                        ),
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                            .padding(16.dp)
+                            .padding(vertical = 20.dp),
+                        textAlign = TextAlign.Center
+                    )
+                    Row(
+                        modifier = Modifier.height(175.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Column {
-                            Text(
-                                text = "Year Published: ${boardGame.yearPublished}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.fillMaxWidth()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .padding(10.dp)
+                        ) {
+                            AsyncImage(
+                                model = boardGame.imageURL,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                alignment = Alignment.Center,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(RoundedCornerShape(20.dp))
                             )
 
-                            Text(
-                                text = "Players: ${boardGame.minPlayers} - ${boardGame.maxPlayers}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth(1f)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color.LightGray),
 
-                            Text(
-                                text = "Playing Time: ${boardGame!!.playingTime} mins",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .fillMaxWidth(0.5f),
+                                    verticalArrangement = Arrangement.SpaceAround,
+                                    horizontalAlignment = Alignment.CenterHorizontally
 
-                            Text(
-                                text = "Age: ${boardGame.age}+",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                                ) {
+
+                                    Image(
+                                        painter = painterResource(id = R.drawable.people_alt),
+                                        contentDescription = null,
+                                    )
+                                    Text(
+                                        text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Image(
+                                        painter = painterResource(id = R.drawable.av_timer),
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        text = "${boardGame.playingTime} min.",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .fillMaxWidth(1f),
+                                    verticalArrangement = Arrangement.SpaceAround,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.elderly),
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        text = "${boardGame.age}+",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Image(
+                                        painter = painterResource(id = R.drawable.fitness_center),
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        text = boardGame.averageWeight,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                     }
 
+
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = "Description:",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.LightGray)
+                    ) {
+                        Column() {
+                            Text(
+                                text = "Description:",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                            )
 
-                    LazyColumn(modifier = Modifier.weight(1f)){
-                       item{
-                           Box {
-                               Text(
-                                   text = boardGame.description,
-                                   style = MaterialTheme.typography.bodyLarge,
-                                   modifier = Modifier.fillMaxWidth()
-                               )
-                           }
-                       }
+                            LazyColumn(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                            ) {
+                                item {
+                                    Box {
+                                        Text(
+                                            text = boardGame.description,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
+
 
                 }
                 Button(
@@ -155,12 +237,24 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                         navController.popBackStack()
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Text("Back")
+                        .width(60.dp)
+                        .height(60.dp)
+                        .padding(8.dp),
+
+                    ) {
+
                 }
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(18.dp),
+
+
+                    )
+
             }
         }
     }
 }
+
