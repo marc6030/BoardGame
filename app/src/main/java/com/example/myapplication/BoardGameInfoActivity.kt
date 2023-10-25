@@ -97,8 +97,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                     ) {
                         Box(
                             modifier = Modifier
-                                .width(175.dp)
-                                .height(175.dp)
+                                .fillMaxWidth(0.5f)
                                 .padding(10.dp)
                         ) {
                             AsyncImage(
@@ -115,8 +114,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                         Box(
                             modifier = Modifier
                                 .padding(10.dp)
-                                .width(175.dp)
-                                .height(175.dp)
+                                .fillMaxWidth(1f)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color.LightGray),
 
@@ -129,7 +127,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                                 Column(
                                     modifier = Modifier
                                         .fillMaxHeight()
-                                        .width(100.dp),
+                                        .fillMaxWidth(0.5f),
                                     verticalArrangement = Arrangement.SpaceAround,
                                     horizontalAlignment = Alignment.CenterHorizontally
 
@@ -163,7 +161,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                                 Column(
                                     modifier = Modifier
                                         .fillMaxHeight()
-                                        .width(100.dp),
+                                        .fillMaxWidth(1f),
                                     verticalArrangement = Arrangement.SpaceAround,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
@@ -184,7 +182,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                                         contentDescription = null
                                     )
                                     Text(
-                                        text = "${boardGame.averageWeight}",
+                                        text = boardGame.averageWeight,
                                         style = MaterialTheme.typography.bodyLarge,
                                         modifier = Modifier.fillMaxWidth(),
                                         textAlign = TextAlign.Center,
