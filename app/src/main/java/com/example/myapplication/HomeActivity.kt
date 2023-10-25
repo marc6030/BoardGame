@@ -3,6 +3,7 @@ package com.example.myapplication
 
 import android.content.ClipData
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -107,13 +108,18 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                     )
                     {
                         items(items.boardGames) { item ->
+                            val gameName: String = item.name
+                            val gameID: String = item.id
                             Box(
                                 modifier = Modifier
                                     .size(175.dp)
                                     .padding(5.dp)
                                     .clip(RoundedCornerShape(20.dp))
+                                    .clickable { navController.navigate("boardgameinfo/$gameID")
+                                    }
                             )
                             {
+
                                 AsyncImage(
                                     model = item.imgUrl,
                                     contentDescription = null,
@@ -136,6 +142,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                                         modifier = Modifier.align(Alignment.Center)
                                     )
                                 }
+
                             }
 
                         }
@@ -147,11 +154,15 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                     )
                     {
                         items(items.boardGames) { item ->
+                            val gameName: String = item.name
+                            val gameID: String = item.id
                             Box(
                                 modifier = Modifier
                                     .size(175.dp)
                                     .padding(5.dp)
                                     .clip(RoundedCornerShape(20.dp))
+                                    .clickable { navController.navigate("boardgameinfo/$gameID")
+                                    }
                             )
                             {
                                 AsyncImage(
@@ -187,11 +198,15 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                     )
                     {
                         items(items.boardGames) { item ->
+                            val gameName: String = item.name
+                            val gameID: String = item.id
                             Box(
                                 modifier = Modifier
                                     .size(175.dp)
                                     .padding(5.dp)
                                     .clip(RoundedCornerShape(20.dp))
+                                    .clickable { navController.navigate("boardgameinfo/$gameID")
+                                    }
                             )
                             {
                                 AsyncImage(
