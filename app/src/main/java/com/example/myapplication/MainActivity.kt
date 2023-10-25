@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                     SearchActivity(navController)
                 }
                 composable("favorite") {
-                    FavoriteActivity(navController)
+                    FavoriteActivity(navController, myViewModel)
                 }
                 composable(
                     route = "boardgameinfo/{gameID}",
