@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -80,31 +81,41 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
         val items = viewModel.boardGameDataList.value
         if(items != null) {
-            Box(modifier = Modifier
+            Column(modifier = Modifier
                 .fillMaxSize()
             ){
-            LazyColumn( modifier = Modifier)
+                Box(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .background(Color.White)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(80.dp)
+                            .width(80.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+                Box(
+                        modifier = Modifier
+                            .height(2.dp)
+                            .fillMaxWidth()
+                            .background(Color.Black)
+                        )
+            LazyColumn( modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .background(Color.White))
             {
                 item {
-                    Box(
-                        modifier = Modifier
-                            .height(100.dp)
-                            .fillMaxWidth()
-                            .background(Color.White)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(80.dp)
-                                .width(80.dp)
-                                .align(Alignment.Center)
-                        )
-                    }
 
                     Text(text = "Headline1", fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
                     LazyRow(
                         modifier = Modifier
+                            .background(Color.White)
                     )
                     {
                         items(items.boardGames) { item ->
@@ -151,6 +162,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                     Text(text = "Headline2", fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
                     LazyRow(
                         modifier = Modifier
+                            .background(Color.White)
                     )
                     {
                         items(items.boardGames) { item ->
@@ -195,6 +207,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                     Text(text = "Headline3", fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
                     LazyRow(
                         modifier = Modifier
+                            .background(Color.White)
                     )
                     {
                         items(items.boardGames) { item ->
@@ -238,13 +251,10 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
                 }
             }
-            Box( modifier = Modifier
-                .align(Alignment.BottomCenter)
-            ) {
                 navBar.BottomNavigationBar(navController, "Home")
-            }
             }
         }
     }
 }
+
 
