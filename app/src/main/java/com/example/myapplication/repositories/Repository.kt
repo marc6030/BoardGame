@@ -1,8 +1,6 @@
 package com.example.myapplication.repositories
 
-import android.util.Log
 import com.example.myapplication.API.ApiService
-import com.example.myapplication.API.RetrofitClient
 import com.example.myapplication.BoardGame
 import org.w3c.dom.Document
 import org.xml.sax.InputSource
@@ -13,6 +11,8 @@ import org.w3c.dom.Element
 import android.text.Html
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.BoardGameItems
+import com.example.myapplication.models.BoardGameSearch
+import com.example.myapplication.models.BoardGameSearchItems
 
 class Repository(private val apiService: ApiService) {
 
@@ -34,6 +34,33 @@ class Repository(private val apiService: ApiService) {
         } else {
             throw HttpException(response)
         }
+    }
+
+    suspend fun getBoardGameSearch(userSearch: String): BoardGameSearchItems{
+        val response = apiService.getBoardGameSearch(userSearch)
+        if (response.isSuccessful) {
+            val xmlData = response.body() ?: throw NoSuchElementException("GameList connection error")
+            return parseSearchData(xmlData)
+        } else {
+            throw HttpException(response)
+        }
+    }
+
+    fun parseSearchData(xmlData: String): BoardGameSearchItems {
+        val factory = DocumentBuilderFactory.newInstance()
+        val builder = factory.newDocumentBuilder()
+        val document: Document = builder.parse(InputSource(StringReader(xmlData)))
+
+        val boardGameSearchItems = BoardGameSearchItems()
+
+        for (i in 0 until document.getElementsByTagName("item").length) {
+            val newBoardGame = BoardGameSearch().apply {
+                id = document.getElementsByTagName("item").item(i).attributes.getNamedItem("id").textContent
+                name = document.getElementsByTagName("name").item(i).attributes.getNamedItem("value").textContent
+            }
+            boardGameSearchItems.boardGameSearchItems += newBoardGame
+        }
+        return boardGameSearchItems
     }
 
     fun parseBoardGameList(xmlData: String): BoardGameItems {

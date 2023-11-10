@@ -15,4 +15,9 @@ interface ApiService {
 
     @GET("xmlapi2/hot?boardgame")
     suspend fun getBoardGameList(): Response<String>
+
+    @GET("xmlapi2/search?query={query}")
+    suspend fun getBoardGameSearch(
+        @Query("query") userSearch: String
+    ): Response<String>
 }
