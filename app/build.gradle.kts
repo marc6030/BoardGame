@@ -68,6 +68,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.X.X")
     implementation("org.simpleframework:simple-xml:2.7.1")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
    // implementation("androidx.compose.ui:ui-coil:2023.03.00")
     implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.compose.material:material:1.0.5")

@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.myapplication.modelviews.MyViewModel
 
 
 @Composable
@@ -42,14 +43,13 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
     val context = LocalContext.current
     if (gameID != null) {
         // Check internet Connection
+        // Emil comment - maybe a bit much checking it everytime we load an item? - also we don't handle retries anyways?
         if (!isInternetAvailable(context)) {
             Text("No Internet!")
         }
-
-        if (gameID != null) {
+        // Use LaunchedEffect peoples! Is much importante!
+        LaunchedEffect(Unit) {
             viewModel.fetchBoardGameData(gameID)
-        } else {
-            viewModel.fetchBoardGameData("2536")
         }
 
         val isLoading by viewModel.isLoading.observeAsState(initial = false)

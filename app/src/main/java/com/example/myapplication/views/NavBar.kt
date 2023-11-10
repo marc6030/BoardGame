@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.views
 
 import android.content.Intent
 import androidx.activity.ComponentActivity
