@@ -53,6 +53,7 @@ class MyViewModel : ViewModel() {
         }
     }
 
+
     fun fetchBoardGameData(id: String) {
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
