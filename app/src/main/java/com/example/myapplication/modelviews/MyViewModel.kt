@@ -69,6 +69,7 @@ class MyViewModel : ViewModel() {
                 Log.v("bgsearch", "searchlogs: $boardGameSearchItems")
                 _boardGameSearch.postValue(boardGameSearchItems)
             } catch (e: Exception) {
+                Log.v("bgsearch", "searchlogs: $e")
                 _boardGameSearch.postValue(null)
             } finally {
                 _isLoading.postValue(false) // why?

@@ -1,10 +1,13 @@
 package com.example.myapplication.views
 
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.TextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +20,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.modelviews.MyViewModel
@@ -27,12 +31,12 @@ fun SearchActivity(navController: NavHostController, myViewModel: MyViewModel) {
     var input by remember { mutableStateOf("") }
     val searchQuery = input
 
-    // Triggered every time the input changes.
+// Triggered every time the input changes.
     LaunchedEffect(key1 = searchQuery) {
-        myViewModel.fetchGameBoardSearch(searchQuery)
+        myViewModel.fetchGameBoardSearch(input)
     }
 
-    // Observing the search results
+// Observing the search results
     val searchResults = myViewModel.boardGameSearchResults.observeAsState().value?.boardGameSearchItems ?: emptyList()
 
     Column(
@@ -48,9 +52,20 @@ fun SearchActivity(navController: NavHostController, myViewModel: MyViewModel) {
         )
 
         // List of search results
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
             items(searchResults) { result ->
-                Text(text = result.name, modifier = Modifier.padding(16.dp))
+                Button(
+                    onClick = { navController.navigate("boardgameinfo/${result.id}") },
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(text = result.name, textAlign = TextAlign.Center)
+                }
             }
         }
 
