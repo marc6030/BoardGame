@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "322774038654",
+    "project_id": "skolebgg",
+    "storage_bucket": "skolebgg.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322774038654:android:d1603a4ede767fbefbc02f",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322774038654-uqc2t2f0gan2t11gt1fs58jnihucsdbi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.myapplication",
+            "certificate_hash": "371f69e24c0c10f69c449193c93ffafef711f162"
+          }
+        },
+        {
+          "client_id": "322774038654-lj24soegu1v7np2penvo302r3qt63v22.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkN-pFSbew7P9HbKNmqI9Rc_yjD3rgNTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322774038654-lj24soegu1v7np2penvo302r3qt63v22.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
