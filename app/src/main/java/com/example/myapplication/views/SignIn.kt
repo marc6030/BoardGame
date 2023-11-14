@@ -1,32 +1,33 @@
 package com.example.myapplication.views
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SignIn() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Button(
-            onClick = { /* Sign in through Google */ },
-            modifier = Modifier
-                .align(Alignment.Center)
-        ) {
-            Text("Sign in through Google")
+fun LoginScreen(onSignInClick: () -> Unit) {
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Welcome to Boardgame App")
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onSignInClick) {
+                    Text(text = "Sign In with Google")
+                }
+            }
         }
     }
 }
-
