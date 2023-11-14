@@ -28,11 +28,23 @@ class AuthenticationManager(private val activity: Activity) {
         activity.startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
+    fun signOut() {
+        // Sign out from Firebase
+        FirebaseAuth.getInstance().signOut()
+
+        // Sign out from Google Sign-In
+        googleSignInClient.signOut().addOnCompleteListener(activity) {
+            Log.v("Authentication", "Signed out of Google")
+            // Handle UI update or redirection after sign-out
+        }
+    }
+
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             if (account != null && account.idToken != null) {
                 firebaseAuthWithGoogle(account.idToken!!)
+
             } else {
                 Log.v("Authentication", "Google sign-in failed: Account or ID token is null")
             }

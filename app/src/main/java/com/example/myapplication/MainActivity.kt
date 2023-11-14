@@ -22,6 +22,13 @@ import com.example.myapplication.repositories.AuthenticationManager
 import com.example.myapplication.views.LoginScreen
 import com.example.myapplication.views.SearchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 class MainActivity : ComponentActivity() {
@@ -32,12 +39,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         authManager = AuthenticationManager(this)
 
+
         val account = GoogleSignIn.getLastSignedInAccount(this)
         if (account != null) {
             setContent {
 
-                // lazy instantiation of views
                 val viewModel: MyViewModel by viewModels()
+                // lazy instantiation of views
                 boardgameApp(viewModel)
             }
         } else {
@@ -53,9 +61,14 @@ class MainActivity : ComponentActivity() {
         if (requestCode == AuthenticationManager.RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             authManager.handleSignInResult(task)
+            setContent{
+                val viewModel: MyViewModel by viewModels()
+                boardgameApp(viewModel)
+            }
         }
     }
 }
+
 
 
 
