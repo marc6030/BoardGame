@@ -1,12 +1,8 @@
 package com.example.myapplication
 
 
-
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -22,13 +18,6 @@ import com.example.myapplication.repositories.AuthenticationManager
 import com.example.myapplication.views.LoginScreen
 import com.example.myapplication.views.SearchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 
 
 class MainActivity : ComponentActivity() {
@@ -38,9 +27,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authManager = AuthenticationManager(this)
+        authManager.signOut()
 
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
+
         if (account != null) {
             setContent {
 
@@ -55,22 +46,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AuthenticationManager.RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            authManager.handleSignInResult(task)
-            setContent{
-                val viewModel: MyViewModel by viewModels()
-                boardgameApp(viewModel)
-            }
-        }
-    }
 }
 
 
+fun AppManager(viewModel: MyViewModel) {
 
+
+}
 
 @Composable
 fun boardgameApp(viewModel: MyViewModel) {

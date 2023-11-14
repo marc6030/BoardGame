@@ -26,42 +26,31 @@ class AuthenticationManager(private val activity: Activity) {
     fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         activity.startActivityForResult(signInIntent, RC_SIGN_IN)
+        Log.v("Authentication", "Signed in")
+    }
+
+    fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(activity) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success
+                    Log.v("Authentication", "signInWithCredential:success")
+                } else {
+                    // If sign in fails
+                    Log.w("Authentication", "signInWithCredential:failure", task.exception)
+                }
+            }
     }
 
     fun signOut() {
         // Sign out from Firebase
-        FirebaseAuth.getInstance().signOut()
+        auth.signOut()
 
         // Sign out from Google Sign-In
         googleSignInClient.signOut().addOnCompleteListener(activity) {
             Log.v("Authentication", "Signed out of Google")
             // Handle UI update or redirection after sign-out
-        }
-    }
-
-    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-            if (account != null && account.idToken != null) {
-                firebaseAuthWithGoogle(account.idToken!!)
-
-            } else {
-                Log.v("Authentication", "Google sign-in failed: Account or ID token is null")
-            }
-        } catch (e: ApiException) {
-            Log.v("Authentication", "Google sign-in failed with exception: ${e.statusCode}")
-        }
-    }
-
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential).addOnCompleteListener(activity) { task ->
-            if (task.isSuccessful) {
-                Log.v("Authentication", "Firebase Auth with Google succeeded")
-                // Notify MainActivity or update UI accordingly
-            } else {
-                Log.v("Authentication", "Firebase Auth with Google failed: ${task.exception}")
-            }
         }
     }
 

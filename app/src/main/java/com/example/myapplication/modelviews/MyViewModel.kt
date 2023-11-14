@@ -1,5 +1,6 @@
 package com.example.myapplication.modelviews
 
+import android.content.Context
 import com.example.myapplication.repositories.Repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.util.Log
 import com.example.myapplication.models.BoardGameSearchItems
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 
 class MyViewModel : ViewModel() {
@@ -19,10 +21,14 @@ class MyViewModel : ViewModel() {
     private var _boardGameData = MutableLiveData<BoardGame?>()
     private var _boardGameList = MutableLiveData<BoardGameItems?>()
     private var _boardGameSearch = MutableLiveData<BoardGameSearchItems?>()
+    private var _isUserSignedInGoogle = MutableLiveData<Boolean>()
+    private var _isUserSignedInFireStore = MutableLiveData<Boolean>()
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
 
     // Exposing the values for the views
+    val isUserLoggedInGoogle: LiveData<Boolean> = _isUserSignedInGoogle
+    val isUserLoggedInFirestore: LiveData<Boolean> = _isUserSignedInFireStore
     val boardGameSearchResults: LiveData<BoardGameSearchItems?> = _boardGameSearch
 
     var isLoading: LiveData<Boolean> = _isLoading
@@ -75,6 +81,31 @@ class MyViewModel : ViewModel() {
                 _isLoading.postValue(false) // why?
             }
         }
+    }
+
+
+    fun checkCurrentUser(context: Context) : Boolean {
+        // Check if the user is logged in and update _isUserLoggedIn
+        // For example, you might check this from your AuthenticationManager
+        val account = GoogleSignIn.getLastSignedInAccount(context)
+        if (account != null) {
+            return true;
+        }
+        return false;
+    }
+
+    fun userLoggedIn() {
+        // Call this method when user logs in
+        _isUserSignedInGoogle.value = true
+    }
+
+    fun userLoggedOut() {
+        // Call this method when user logs out
+        _isUserSignedInGoogle.value = false
+    }
+
+    fun signInUser() {
+
     }
 
     /*
