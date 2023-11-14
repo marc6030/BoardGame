@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         authManager = AuthenticationManager(this)
-        authManager.signOut()
 
 
         val account = GoogleSignIn.getLastSignedInAccount(this)
