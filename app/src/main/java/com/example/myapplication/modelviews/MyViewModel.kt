@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import android.util.Log
 import com.example.myapplication.models.BoardGameSearchItems
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.firebase.auth.FirebaseUser
 
 
 class MyViewModel : ViewModel() {
@@ -21,14 +22,13 @@ class MyViewModel : ViewModel() {
     private var _boardGameData = MutableLiveData<BoardGame?>()
     private var _boardGameList = MutableLiveData<BoardGameItems?>()
     private var _boardGameSearch = MutableLiveData<BoardGameSearchItems?>()
-    private var _isUserSignedInGoogle = MutableLiveData<Boolean>()
-    private var _isUserSignedInFireStore = MutableLiveData<Boolean>()
+    private var _userAuthenticated = MutableLiveData<Boolean>()
+    private var _firebaseuser = MutableLiveData<FirebaseUser?>()
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
 
     // Exposing the values for the views
-    val isUserLoggedInGoogle: LiveData<Boolean> = _isUserSignedInGoogle
-    val isUserLoggedInFirestore: LiveData<Boolean> = _isUserSignedInFireStore
+    val isUserLoggedInGoogle: LiveData<Boolean> = _userAuthenticated
     val boardGameSearchResults: LiveData<BoardGameSearchItems?> = _boardGameSearch
 
     var isLoading: LiveData<Boolean> = _isLoading
@@ -94,19 +94,21 @@ class MyViewModel : ViewModel() {
         return false;
     }
 
-    fun userLoggedIn() {
-        // Call this method when user logs in
-        _isUserSignedInGoogle.value = true
+
+
+
+    // Updates the FirebaseUser and the user authentication status
+    fun setUser(firebaseUser: FirebaseUser?) {
+        _firebaseuser.value = firebaseUser
+        _userAuthenticated.value = firebaseUser != null
     }
 
-    fun userLoggedOut() {
-        // Call this method when user logs out
-        _isUserSignedInGoogle.value = false
+    // LiveData to observe the user's sign-in status
+    fun verifySignedIn(): LiveData<Boolean> {
+        return _userAuthenticated
     }
 
-    fun signInUser() {
 
-    }
 
     /*
     private fun fetchData(url: String): Deferred<String> {

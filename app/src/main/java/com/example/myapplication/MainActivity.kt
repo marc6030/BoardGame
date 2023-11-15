@@ -16,55 +16,63 @@ import androidx.navigation.navArgument
 import com.example.myapplication.modelviews.MyViewModel
 import com.example.myapplication.repositories.AuthenticationManager
 import com.example.myapplication.views.LoginScreen
-import com.example.myapplication.views.SearchActivity
+import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
 
 
 class MainActivity : ComponentActivity() {
-    private lateinit var authManager: AuthenticationManager
 
+    private lateinit var authManager: AuthenticationManager
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authManager = AuthenticationManager(this)
-
-
         val account = GoogleSignIn.getLastSignedInAccount(this)
+        val viewModel: MyViewModel by viewModels()
+        authManager = AuthenticationManager(this, viewModel)
+        authManager.signOut()
 
-        if (account != null) {
+        if (account != null){
             setContent {
-
-                val viewModel: MyViewModel by viewModels()
-                // lazy instantiation of views
-                boardgameApp(viewModel)
+                boardgameApp(viewModel, authManager, account)
             }
-        } else {
-            setContent {
-                // Display login screen
-                LoginScreen { authManager.signIn() }
+
+        }
+
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == AuthenticationManager.RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                authManager.firebaseAuthWithGoogle(account)
+            } catch (e: ApiException) {
+                // Handle the error here
             }
         }
     }
 }
 
 
-fun AppManager(viewModel: MyViewModel) {
-
-
-}
 
 @Composable
-fun boardgameApp(viewModel: MyViewModel) {
+fun boardgameApp(viewModel: MyViewModel, authManager: AuthenticationManager, account: GoogleSignInAccount?) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "login"
     ) {
+        composable("login") {
+            LoginScreen(viewModel, navController) { authManager.signIn() }
+        }
         composable("home") {
             HomeActivity(navController, viewModel)
         }
         composable("search") {
-            SearchActivity(navController, viewModel)
+            searchActivity(navController, viewModel)
         }
         composable("favorite") {
             FavoriteActivity(navController, viewModel)
@@ -78,6 +86,8 @@ fun boardgameApp(viewModel: MyViewModel) {
             BoardGameInfoActivity(navController, gameID, viewModel)
         }
     }
+
+
 }
 
 

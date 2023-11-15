@@ -21,7 +21,7 @@ import androidx.navigation.NavHostController
 import com.example.myapplication.modelviews.MyViewModel
 
 @Composable
-fun SearchActivity(navController: NavHostController, myViewModel: MyViewModel) {
+fun searchActivity(navController: NavHostController, myViewModel: MyViewModel) {
     var input by remember { mutableStateOf("") }
     val searchQuery = input
 

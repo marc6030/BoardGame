@@ -2,22 +2,24 @@ package com.example.myapplication.repositories
 
 import android.app.Activity
 import android.util.Log
+import com.example.myapplication.modelviews.MyViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class AuthenticationManager(private val activity: Activity) {
-    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
+class AuthenticationManager(private val activity: Activity, private val viewModel: MyViewModel) {
+    interface SignInResult {
+        fun onSignInResult(success: Boolean, userId: String?)
+    }
+
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var googleSignInClient: GoogleSignInClient
-
-
     init {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("322774038654-lj24soegu1v7np2penvo302r3qt63v22.apps.googleusercontent.com") // Replace with your client ID
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(activity, gso)
@@ -26,18 +28,19 @@ class AuthenticationManager(private val activity: Activity) {
     fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         activity.startActivityForResult(signInIntent, RC_SIGN_IN)
-        Log.v("Authentication", "Signed in")
     }
 
-    fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
-        auth.signInWithCredential(credential)
+    fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {
+        val credential = GoogleAuthProvider.getCredential(acct?.idToken, null)
+        firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success
+                    // Sign in success, update UI with the signed-in user's information
                     Log.v("Authentication", "signInWithCredential:success")
+                    val user = firebaseAuth.currentUser
+                    viewModel.setUser(user)
                 } else {
-                    // If sign in fails
+                    // If sign in fails, display a message to the user.
                     Log.w("Authentication", "signInWithCredential:failure", task.exception)
                 }
             }
@@ -45,7 +48,7 @@ class AuthenticationManager(private val activity: Activity) {
 
     fun signOut() {
         // Sign out from Firebase
-        auth.signOut()
+        firebaseAuth.signOut()
 
         // Sign out from Google Sign-In
         googleSignInClient.signOut().addOnCompleteListener(activity) {
