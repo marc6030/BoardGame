@@ -15,6 +15,7 @@ import android.util.Log
 import com.example.myapplication.models.BoardGameSearchItems
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MyViewModel : ViewModel() {
@@ -28,6 +29,7 @@ class MyViewModel : ViewModel() {
     private val repository = Repository(apiService) // factory builder and singleton
 
     // Exposing the values for the views
+    val db = FirebaseFirestore.getInstance()
     val isUserLoggedInGoogle: LiveData<Boolean> = _userAuthenticated
     val boardGameSearchResults: LiveData<BoardGameSearchItems?> = _boardGameSearch
 
