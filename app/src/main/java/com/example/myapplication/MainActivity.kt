@@ -32,13 +32,11 @@ class MainActivity : ComponentActivity() {
         val viewModel: MyViewModel by viewModels()
         authManager = AuthenticationManager(this, viewModel)
         authManager.signOut()
-
-        if (account != null){
-            setContent {
-                boardgameApp(viewModel, authManager, account)
-            }
-
+        setContent {
+            boardgameApp(viewModel, authManager, account)
         }
+
+
 
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
