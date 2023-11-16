@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,8 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +50,7 @@ import com.example.myapplication.views.NavBar
 fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
 
+    val logo: Painter = painterResource(id = R.drawable.banditlogo)
     val navBar = NavBar()
     val context = LocalContext.current
     // Check internet Connection - this does not belong here.
@@ -88,12 +92,12 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                         .fillMaxWidth()
                         .background(Color.White)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
+                    Image(
+                        painter = logo,
+                        contentDescription = null, // Set a meaningful content description if needed
                         modifier = Modifier
-                            .height(80.dp)
-                            .width(80.dp)
+                            .height(120.dp)
+                            .width(120.dp)
                             .align(Alignment.Center)
                     )
                 }
