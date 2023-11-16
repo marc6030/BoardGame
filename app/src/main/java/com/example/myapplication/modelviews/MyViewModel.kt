@@ -1,5 +1,6 @@
 package com.example.myapplication.modelviews
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import com.example.myapplication.repositories.Repository
 import androidx.lifecycle.LiveData
@@ -51,6 +52,20 @@ class MyViewModel : ViewModel() {
                 _isLoading.postValue(false)
             }
         }
+    }
+
+    fun insertintodbtest() {
+
+        val city = hashMapOf(
+            "name" to "Los Angeles",
+            "state" to "CA",
+            "country" to "USA",
+        )
+
+        db.collection("cities").document("LA")
+            .set(city)
+            .addOnSuccessListener { Log.v("FirebaseTest", "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.v("FirebaseTest", "Error writing document", e) }
     }
 
 

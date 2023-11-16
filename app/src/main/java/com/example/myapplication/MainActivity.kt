@@ -35,10 +35,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             boardgameApp(viewModel, authManager, account)
         }
-
-
-
+        viewModel.insertintodbtest()
     }
+
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
