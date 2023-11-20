@@ -326,7 +326,9 @@ fun generalInfo(boardGame: BoardGame) {
             simpleInfo("Time", boardGame.playingTime, null)
             simpleInfo("Age", boardGame.age+"+", null)
             simpleInfo("BGG Rating", boardGame.averageRating, null)
-            simpleInfo(boardGame.category, info1 = boardGame.categoryRank, info2 = null )
+            if(boardGame.category != "") {
+                simpleInfo(boardGame.category, info1 = boardGame.categoryRank, info2 = null)
+            }
             complexInfo(title = "Mechanisms", infoList = boardGame.mechanisms)
             complexInfo(title = "Categories", infoList = boardGame.categories)
             complexInfo(title = "Publishers", infoList = boardGame.publishers)
@@ -346,7 +348,7 @@ fun simpleInfo(title: String, info1: String, info2: String?) {
                 text = title + ": ",
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left,
-                modifier = Modifier.fillMaxWidth(0.5f),
+                modifier = Modifier.fillMaxWidth(0.65f),
                 fontSize = 20.sp
             )
             if (info2 != null) {
