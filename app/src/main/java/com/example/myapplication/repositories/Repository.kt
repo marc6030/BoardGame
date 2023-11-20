@@ -115,10 +115,18 @@ class Repository(private val apiService: ApiService) {
         boardGame.averageRating = document.getElementsByTagName("average").item(0)?.textContent ?: ""
         boardGame.averageWeight = document.getElementsByTagName("averageweight").item(0)?.textContent ?: ""
 
+        var i = 0;
+        while(document.getElementsByTagName("boardgamemechanic").item(i).textContent != "") {
+            boardGame.mechanisms +=
+                document.getElementsByTagName("boardgamemechanic").item(i)?.textContent ?: ""
+            i++
+        }
         val ranks = document.getElementsByTagName("rank")
         if (ranks.length > 0) {
-            val rankElement = ranks.item(0) as Element
-            boardGame.overallRank = rankElement.getAttribute("value")
+            val overallRankElement = ranks.item(0) as Element
+            val categoryRankElement = ranks.item(1) as Element
+            boardGame.overallRank = overallRankElement.getAttribute("value")
+            boardGame.categoryRank = categoryRankElement.getAttribute("value")
         }
 
         return boardGame

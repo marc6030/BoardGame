@@ -40,6 +40,30 @@ class BoardGame {
     @field:Element(name = "OverallRank", required = false)
     var overallRank : String = ""
 
+    @field:Element(name = "CategoryRank", required = false)
+    var categoryRank : String = ""
+
+    @field:Element(name = "test", required = false)
+    var test : String = ""
+
+    @field:Element(name = "Mechanisms", required = false)
+    var mechanisms : List<String> = emptyList()
+
+    @field:Element(name = "Publishers", required = false)
+    var publishers : List<String> = emptyList()
+
+    @field:Element(name = "Categories", required = false)
+    var categories : List<String> = emptyList()
+
+    @field:Element(name = "Families", required = false)
+    var families : List<String> = emptyList()
+
+    @field:Element(name = "Designers", required = false)
+    var designers : List<String> = emptyList()
+
+    @field:Element(name = "Mechanisms", required = false)
+    var artists : List<String> = emptyList()
+
     // debugging
     override fun toString(): String {
         return "BoardGame(name=$name, yearPublished=$yearPublished, minPlayers=$minPlayers, maxPlayers=$maxPlayers, playingTime=$playingTime, description=$description, age=$age, imageURL=$imageURL, averageRating=$averageRating, averageWeight=$averageWeight, overallRank=$overallRank)"

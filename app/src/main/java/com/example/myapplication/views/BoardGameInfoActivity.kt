@@ -24,14 +24,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
@@ -39,7 +36,11 @@ import com.example.myapplication.modelviews.MyViewModel
 
 
 @Composable
-fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, viewModel: MyViewModel) {
+fun BoardGameInfoActivity(
+    navController: NavHostController,
+    gameID: String?,
+    viewModel: MyViewModel
+) {
     val context = LocalContext.current
     if (gameID != null) {
         // Check internet Connection
@@ -71,6 +72,9 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                 )
             }
         } else {
+            var selectedTabIndex by remember {
+                mutableStateOf(0)
+            }
             val boardGame = viewModel.boardGameData.value
             // Observe the data
             if (boardGame != null) {
@@ -118,7 +122,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color.LightGray),
 
-                        ) {
+                            ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxSize(),
@@ -204,28 +208,23 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                             .background(Color.LightGray)
                     ) {
                         Column() {
-                            Text(
-                                text = "Description:",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp)
-                            )
-
-                            LazyColumn(
-                                modifier = Modifier
-                                    .padding(10.dp)
+                            tabView(
+                                texts = listOf(
+                                    "Description",
+                                    "General Info",
+                                    "BoardBandit Rating"
+                                )
                             ) {
-                                item {
-                                    Box {
-                                        Text(
-                                            text = boardGame.description,
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    }
-                                }
+                                selectedTabIndex = it;
+                            }
+                            when (selectedTabIndex) {
+                                0 -> description(
+                                    boardGame
+                                )
+
+                                1 -> generalInfo(
+                                    boardGame
+                                )
                             }
                         }
                     }
@@ -248,13 +247,122 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                     painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(18.dp),
-
-
-                    )
+                        .padding(18.dp)
+                )
 
             }
         }
     }
+}
+
+@Composable
+fun tabView(
+    modifier: Modifier = Modifier,
+    texts: List<String>,
+    onTabSelected: (selectedIndex: Int) -> Unit
+) {
+    var selectedTabIndex by remember {
+        mutableStateOf(0)
+    }
+    val inactiveColor = Color(0xFF777777)
+    TabRow(
+        selectedTabIndex = selectedTabIndex,
+        modifier = modifier
+    ) {
+        texts.forEachIndexed { index, item ->
+            Tab(
+                modifier = modifier.background(Color.LightGray),
+                selected = selectedTabIndex == index,
+                selectedContentColor = Color.Black,
+                unselectedContentColor = inactiveColor,
+                onClick = {
+                    selectedTabIndex = index
+                    onTabSelected(index)
+                }
+            ) {
+                Text(
+                    text = item,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun description(boardGame: BoardGame) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(10.dp)
+    ) {
+        item {
+            Box {
+                Text(
+                    text = boardGame.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun generalInfo(boardGame: BoardGame) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(10.dp)
+    ) {
+        item {
+            simpleInfo("Player Count", boardGame.minPlayers, boardGame.maxPlayers)
+            simpleInfo("Weight", boardGame.averageWeight, null)
+            simpleInfo("BGG Rank", boardGame.overallRank, null)
+            simpleInfo("Time", boardGame.playingTime, null)
+            simpleInfo("Age", boardGame.age+"+", null)
+            simpleInfo("BGG Rating", boardGame.averageRating, null)
+            simpleInfo("test", info1 = boardGame.test, info2 =null )
+
+        }
+    }
+}
+
+@Composable
+fun simpleInfo(title: String, info1: String, info2: String?) {
+    Box{
+        Row(modifier = Modifier
+            .fillMaxWidth()) {
+            Text(
+                text = title + ": ",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.fillMaxWidth(0.5f),
+                fontSize = 20.sp
+            )
+            if (info2 != null) {
+                Text(
+                    text = info1 + " - " + info2,
+                    textAlign = TextAlign.Right,
+                    modifier = Modifier.fillMaxWidth(1f),
+                    fontSize = 20.sp
+                )
+            } else {
+                Text(
+                    text = info1,
+                    textAlign = TextAlign.Right,
+                    modifier = Modifier.fillMaxWidth(1f),
+                    fontSize = 20.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun complexInfo(title: String, infoList : List<String>){
+    
 }
 

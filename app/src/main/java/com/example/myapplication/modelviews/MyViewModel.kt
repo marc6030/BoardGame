@@ -38,7 +38,6 @@ class MyViewModel : ViewModel() {
     var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
     var boardGameData: LiveData<BoardGame?> = _boardGameData
 
-
     fun fetchBoardGameList() {             // Lige nu er det hot listen
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
