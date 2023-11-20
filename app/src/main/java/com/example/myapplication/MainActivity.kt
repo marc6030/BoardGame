@@ -32,6 +32,14 @@ class MainActivity : ComponentActivity() {
         val viewModel: MyViewModel by viewModels()
         authManager = AuthenticationManager(this, viewModel)
         authManager.signOut()
+        val newBoardGameItem = BoardGameItem().apply {
+            id = "newId"
+            name = "New Board Game"
+            imgUrl = "https://st3.depositphotos.com/13194036/35884/i/1600/depositphotos_358841660-stock-photo-partial-view-sexy-girl-red.jpg"
+        }
+
+        viewModel.addBoardGameItem(newBoardGameItem)
+
         setContent {
             boardgameApp(viewModel, authManager, account)
         }

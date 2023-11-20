@@ -23,7 +23,7 @@ fun LoginScreen(viewmodel: MyViewModel, navController: NavController, onSignInCl
 
     val firebaseUser by viewmodel.isUserLoggedInGoogle.observeAsState()
 
-    if (firebaseUser != null) {
+    if (firebaseUser == null) {
         LaunchedEffect(firebaseUser) {
             navController.navigate("home")
         }

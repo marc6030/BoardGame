@@ -18,7 +18,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -149,6 +151,15 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                                     Text(
                                         text = item.name,
                                         modifier = Modifier.align(Alignment.Center)
+                                    )
+                                    Icon(
+                                        imageVector = if (viewModel.itemExistsInFavorite(item)) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = "Favorite Icon",
+                                        tint = Color.Red,
+                                        modifier = Modifier
+                                            .align(Alignment.CenterEnd)
+                                            .size(32.dp)
+                                            .clickable { viewModel.toggleFavorite(item) }
                                     )
                                 }
 

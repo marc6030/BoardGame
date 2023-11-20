@@ -5,7 +5,7 @@ import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 
 @Root(name = "boardgameitems", strict = false)
-class BoardGameItems {
+class BoardGameItems(emptyList: List<Any>) {
 
     @field:ElementList(inline = true, name = "boardgameitem")
     var boardGames: List<BoardGameItem> = listOf()

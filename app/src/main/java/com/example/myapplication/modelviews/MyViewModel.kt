@@ -1,6 +1,5 @@
 package com.example.myapplication.modelviews
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import com.example.myapplication.repositories.Repository
 import androidx.lifecycle.LiveData
@@ -13,10 +12,17 @@ import com.example.myapplication.BoardGameItems
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import com.example.myapplication.models.BoardGameSearchItems
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.example.myapplication.BoardGameItem
 
 
 class MyViewModel : ViewModel() {
@@ -28,6 +34,35 @@ class MyViewModel : ViewModel() {
     private var _firebaseuser = MutableLiveData<FirebaseUser?>()
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
+
+    var isFavorite by mutableStateOf(false)
+
+    var favoriteBoardGameItemList: MutableState<List<BoardGameItem>> = mutableStateOf(emptyList())
+
+    fun addBoardGameItem(boardGameItem: BoardGameItem) {
+        val currentList = favoriteBoardGameItemList.value.toMutableList()
+        currentList.add(boardGameItem)
+        favoriteBoardGameItemList.value = currentList
+    }
+
+    fun removeBoardGameItem(boardGameItem: BoardGameItem) {
+        val currentList = favoriteBoardGameItemList.value.toMutableList()
+        currentList.remove(boardGameItem)
+        favoriteBoardGameItemList.value = currentList
+    }
+
+
+    fun itemExistsInFavorite(item: BoardGameItem): Boolean {
+        return favoriteBoardGameItemList.value.any { it.id == item.id }
+    }
+
+    fun toggleFavorite(item : BoardGameItem){
+        if(itemExistsInFavorite(item)){
+            removeBoardGameItem(item)
+        } else {
+            addBoardGameItem(item)
+        }
+    }
 
     // Exposing the values for the views
     val db = FirebaseFirestore.getInstance()
