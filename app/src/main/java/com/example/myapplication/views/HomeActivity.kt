@@ -153,13 +153,15 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
                                         modifier = Modifier.align(Alignment.Center)
                                     )
                                     Icon(
-                                        imageVector = if (viewModel.itemExistsInFavorite(item)) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+                                        imageVector = if (viewModel.itemExistsInFavoriteList(item)) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
                                         contentDescription = "Favorite Icon",
                                         tint = Color.Red,
                                         modifier = Modifier
                                             .align(Alignment.CenterEnd)
                                             .size(32.dp)
-                                            .clickable { viewModel.toggleFavorite(item) }
+                                            .clickable {
+                                                viewModel.toggleFavorite(item)
+                                            }
                                     )
                                 }
 
@@ -264,6 +266,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
             }
         }
     }
+
 }
 
 

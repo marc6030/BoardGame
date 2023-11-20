@@ -34,33 +34,35 @@ class MyViewModel : ViewModel() {
     private var _firebaseuser = MutableLiveData<FirebaseUser?>()
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
-
-    var isFavorite by mutableStateOf(false)
-
     var favoriteBoardGameItemList: MutableState<List<BoardGameItem>> = mutableStateOf(emptyList())
 
-    fun addBoardGameItem(boardGameItem: BoardGameItem) {
+    fun addBoardGameItemToFavoriteList(boardGameItem: BoardGameItem) {
         val currentList = favoriteBoardGameItemList.value.toMutableList()
         currentList.add(boardGameItem)
         favoriteBoardGameItemList.value = currentList
     }
 
-    fun removeBoardGameItem(boardGameItem: BoardGameItem) {
+    fun removeBoardGameItemToFavoriteList(boardGameItem: BoardGameItem) {
         val currentList = favoriteBoardGameItemList.value.toMutableList()
         currentList.remove(boardGameItem)
         favoriteBoardGameItemList.value = currentList
     }
 
 
-    fun itemExistsInFavorite(item: BoardGameItem): Boolean {
-        return favoriteBoardGameItemList.value.any { it.id == item.id }
+    fun itemExistsInFavoriteList(item: BoardGameItem): Boolean {
+        for (boardGameItem in favoriteBoardGameItemList.value) {
+            if (boardGameItem.id == item.id) {
+                return true
+            }
+        }
+        return false
     }
 
-    fun toggleFavorite(item : BoardGameItem){
-        if(itemExistsInFavorite(item)){
-            removeBoardGameItem(item)
+    fun toggleFavorite(item : BoardGameItem){ // Den er funktion tilføjer og fjerner items fra favorite listen
+        if(itemExistsInFavoriteList(item)){
+            removeBoardGameItemToFavoriteList(item)
         } else {
-            addBoardGameItem(item)
+            addBoardGameItemToFavoriteList(item)
         }
     }
 
@@ -78,7 +80,7 @@ class MyViewModel : ViewModel() {
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // val boardGameList: BoardGameItems = getDataAsBoardGameList(url)
+                // val boardGameList: BoardGameItems = getDataAsBoardGameList(url) // Den her kan måske slettes, hvis den ikke bruges længere?
                 val boardGameList: BoardGameItems = repository.getBoardGameList()
                 _boardGameList.postValue(boardGameList)
             } catch (e: Exception) {
@@ -159,41 +161,6 @@ class MyViewModel : ViewModel() {
     fun verifySignedIn(): LiveData<Boolean> {
         return _userAuthenticated
     }
-
-
-
-    /*
-    private fun fetchData(url: String): Deferred<String> {
-        return mainScope.async {
-            try {
-                makeNetworkRequest(url)
-            } catch (e: Exception) {
-                ""
-            }
-        }
-    }
-
-    private suspend fun makeNetworkRequest(url: String): String {
-        try {
-            return withContext(Dispatchers.IO) {
-                val client = OkHttpClient()
-                val request = Request.Builder()
-                    .url(url)
-                    .build()
-                val response = client.newCall(request).execute()
-                if (response.isSuccessful) {
-                    response.body?.string() ?: ""
-                } else {
-                    ""
-                }
-            }
-        } catch (e: Exception) {
-            println("Could not get response from BGG")
-            return ""
-        }
-    }
-
-     */
 }
 
 

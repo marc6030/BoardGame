@@ -71,7 +71,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
             .weight(1f)
             .background(Color.White)
         ){
-            items(viewModel.favoriteBoardGameItemList.value ?: emptyList()) { item ->
+            items(viewModel.favoriteBoardGameItemList.value) { item ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -98,7 +98,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
                             .clip(RoundedCornerShape(20.dp)))
                         {
                             Text(
-                                text = extractSubstring(item.name),
+                                text = item.shortTitel(),
                                 modifier = Modifier.align(Alignment.Center),
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Bold
@@ -110,7 +110,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .size(32.dp)
-                                    .clickable { viewModel.removeBoardGameItem(item) }
+                                    .clickable { viewModel.toggleFavorite(item) }
                             )
                         }
                     }
@@ -121,13 +121,3 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
         NavBar().BottomNavigationBar(navController, "Favorite")
     }
 }
-fun extractSubstring(input: String): String {
-    val index = input.indexOf(":")
-    return if (index != -1) {
-        input.substring(0, index)
-    } else {
-        input
-    }
-}
-
-
