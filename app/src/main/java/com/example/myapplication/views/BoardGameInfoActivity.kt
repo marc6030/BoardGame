@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.MyViewModel
+import java.lang.Math.ceil
+import java.lang.Math.floor
 
 
 @Composable
@@ -324,8 +326,13 @@ fun generalInfo(boardGame: BoardGame) {
             simpleInfo("Time", boardGame.playingTime, null)
             simpleInfo("Age", boardGame.age+"+", null)
             simpleInfo("BGG Rating", boardGame.averageRating, null)
-            simpleInfo("test", info1 = boardGame.test, info2 =null )
-
+            simpleInfo(boardGame.category, info1 = boardGame.categoryRank, info2 = null )
+            complexInfo(title = "Mechanisms", infoList = boardGame.mechanisms)
+            complexInfo(title = "Categories", infoList = boardGame.categories)
+            complexInfo(title = "Publishers", infoList = boardGame.publishers)
+            complexInfo(title = "Artists", infoList = boardGame.artists)
+            complexInfo(title = "Designers", infoList = boardGame.designers)
+            complexInfo(title = "Families", infoList = boardGame.families)
         }
     }
 }
@@ -362,7 +369,47 @@ fun simpleInfo(title: String, info1: String, info2: String?) {
 }
 
 @Composable
-fun complexInfo(title: String, infoList : List<String>){
-    
+fun complexInfo(title: String, infoList : List<String>) {
+    var halfway = kotlin.math.floor((infoList.size / 2).toDouble())
+    if(infoList.size % 2 == 0){
+        halfway = halfway - 1
+    }
+    Box {
+        Column {
+            Text(
+                text = title + ":",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.fillMaxWidth(0.5f),
+                fontSize = 20.sp,
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Column {
+                    for (i in 0..(halfway).toInt()) {
+                        Text(
+                            text = infoList.get(i),
+                            fontSize = 10.sp,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth(0.5f)
+                        )
+                    }
+                }
+                Column {
+                    for (i in (halfway + 1).toInt() until infoList.size) {
+                        Text(
+                            text = infoList.get(i),
+                            fontSize = 10.sp,
+                            textAlign = TextAlign.Right,
+                            modifier = Modifier.fillMaxWidth(1f)
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
+
 

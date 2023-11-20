@@ -43,8 +43,8 @@ class BoardGame {
     @field:Element(name = "CategoryRank", required = false)
     var categoryRank : String = ""
 
-    @field:Element(name = "test", required = false)
-    var test : String = ""
+    @field:Element(name = "Category", required = false)
+    var category : String = ""
 
     @field:Element(name = "Mechanisms", required = false)
     var mechanisms : List<String> = emptyList()
@@ -61,7 +61,7 @@ class BoardGame {
     @field:Element(name = "Designers", required = false)
     var designers : List<String> = emptyList()
 
-    @field:Element(name = "Mechanisms", required = false)
+    @field:Element(name = "Artists", required = false)
     var artists : List<String> = emptyList()
 
     // debugging
