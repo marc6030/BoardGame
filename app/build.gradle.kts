@@ -103,5 +103,14 @@ dependencies {
     // Importing cucumber for testing
     testImplementation("io.cucumber:cucumber-java:7.14.0")
     testImplementation("io.cucumber:cucumber-junit:7.14.0")
+
+    testImplementation("androidx.navigation:navigation-testing:2.7.5")
+    // AndroidJUnit Runner and JUnit Rules
+    testImplementation("androidx.test.ext:junit:1.1.3")
+    testImplementation("androidx.test:rules:1.1.3")
+    testImplementation("junit:junit:4.13.2")
+
+// Espresso core
+    testImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
 
