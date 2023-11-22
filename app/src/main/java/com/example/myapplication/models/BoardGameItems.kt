@@ -5,7 +5,7 @@ import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 
 @Root(name = "boardgameitems", strict = false)
-class BoardGameItems {
+class BoardGameItems(emptyList: List<Any>) {
 
     @field:ElementList(inline = true, name = "boardgameitem")
     var boardGames: List<BoardGameItem> = listOf()
@@ -22,4 +22,15 @@ class BoardGameItem {
 
     @field:Element(name = "imgurl")
     var imgUrl: String = ""
+
+
+
+    fun shortTitel(): String{
+        val index = name.indexOf(":")
+        return if (index != -1) {
+            name.substring(0, index)
+        } else {
+            name
+        }
+    }
 }

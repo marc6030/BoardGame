@@ -68,7 +68,7 @@ class Repository(private val apiService: ApiService) {
         val builder = factory.newDocumentBuilder()
         val document: Document = builder.parse(InputSource(StringReader(xmlData)))
 
-        val boardGameItems = BoardGameItems()
+        val boardGameItems = BoardGameItems(emptyList())
 
         for (i in 0 until document.getElementsByTagName("item").length) {
             val newBoardGame = BoardGameItem().apply {
