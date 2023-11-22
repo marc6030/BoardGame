@@ -13,7 +13,7 @@ public class TestOne {
     @Given("The user is on the search page")
     public void i_work() {
         TestNavHostController testNav = new TestNavHostController(ApplicationProvider.getApplicationContext());
-        testNav.
+        testNav.setCurrentDestination(1);
     }
 
 }
