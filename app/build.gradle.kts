@@ -53,41 +53,31 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-simplexml:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
-    implementation("androidx.lifecycle:lifecycle-livedata:2.3.1")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.X.X")
-    implementation("org.simpleframework:simple-xml:2.7.1")
+
+    // Used for debugging
+    //implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+    // Used for connecting to the API
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
-   // implementation("androidx.compose.ui:ui-coil:2023.03.00")
+
+
+    // UI elements from google
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.compose.material:material:1.0.5")
+    implementation("androidx.compose.material3:material3")
+
+    // not sure
     implementation("androidx.navigation:navigation-compose:2.4.0")
+
+    // Used for the observer pattern
     implementation("androidx.compose.runtime:runtime-livedata:1.5.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
-    implementation("io.coil-kt:coil:2.4.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Used to import async images (dunno why we use this? - someone?)
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // used for reading xml files
+    implementation("org.simpleframework:simple-xml:2.7.1")
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))

@@ -1,6 +1,5 @@
 package com.example.myapplication.models
 
-import com.example.myapplication.BoardGameItem
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root

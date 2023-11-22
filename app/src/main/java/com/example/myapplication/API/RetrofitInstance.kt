@@ -1,8 +1,6 @@
 package com.example.myapplication.API
 
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 // We have moved to Retrofit because it's part of the lectures
