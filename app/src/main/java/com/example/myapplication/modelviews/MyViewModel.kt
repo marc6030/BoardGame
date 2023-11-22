@@ -33,6 +33,15 @@ class MyViewModel : ViewModel() {
     private val repository = Repository(apiService) // factory builder and singleton
     var favoriteBoardGameItemList: MutableState<List<BoardGameItem>> = mutableStateOf(emptyList())
 
+    // Exposing the values for the views
+    val db = FirebaseFirestore.getInstance()
+    val isUserLoggedInGoogle: LiveData<Boolean> = _userAuthenticated
+    val boardGameSearchResults: LiveData<BoardGameSearchItems?> = _boardGameSearch
+
+    var isLoading: LiveData<Boolean> = _isLoading
+    var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
+    var boardGameData: LiveData<BoardGame?> = _boardGameData
+
     fun addBoardGameItemToFavoriteList(boardGameItem: BoardGameItem) {
         val currentList = favoriteBoardGameItemList.value.toMutableList()
         currentList.add(boardGameItem)
@@ -62,16 +71,6 @@ class MyViewModel : ViewModel() {
             addBoardGameItemToFavoriteList(item)
         }
     }
-
-    // Exposing the values for the views
-    val db = FirebaseFirestore.getInstance()
-    val isUserLoggedInGoogle: LiveData<Boolean> = _userAuthenticated
-    val boardGameSearchResults: LiveData<BoardGameSearchItems?> = _boardGameSearch
-
-    var isLoading: LiveData<Boolean> = _isLoading
-    var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
-    var boardGameData: LiveData<BoardGame?> = _boardGameData
-
 
     fun fetchBoardGameList() {             // Lige nu er det hot listen
         _isLoading.postValue(true)
