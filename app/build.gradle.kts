@@ -110,7 +110,7 @@ dependencies {
     testImplementation("androidx.test:rules:1.1.3")
     testImplementation("junit:junit:4.13.2")
 
-// Espresso core
+    // Espresso core
     testImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
 
