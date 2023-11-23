@@ -36,10 +36,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.MyViewModel
+import java.lang.Math.ceil
+import java.lang.Math.floor
 
 
 @Composable
-fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, viewModel: MyViewModel) {
+fun BoardGameInfoActivity(
+    navController: NavHostController,
+    gameID: String?,
+    viewModel: MyViewModel
+) {
     val context = LocalContext.current
     if (gameID != null) {
         // Check internet Connection
@@ -71,6 +77,9 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                 )
             }
         } else {
+            var selectedTabIndex by remember {
+                mutableStateOf(0)
+            }
             val boardGame = viewModel.boardGameData.value
             // Observe the data
             if (boardGame != null) {
@@ -118,7 +127,7 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color.LightGray),
 
-                        ) {
+                            ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxSize(),
@@ -204,28 +213,23 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                             .background(Color.LightGray)
                     ) {
                         Column() {
-                            Text(
-                                text = "Description:",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(10.dp)
-                            )
-
-                            LazyColumn(
-                                modifier = Modifier
-                                    .padding(10.dp)
+                            tabView(
+                                texts = listOf(
+                                    "Description",
+                                    "General Info",
+                                    "BoardBandit Rating"
+                                )
                             ) {
-                                item {
-                                    Box {
-                                        Text(
-                                            text = boardGame.description,
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    }
-                                }
+                                selectedTabIndex = it;
+                            }
+                            when (selectedTabIndex) {
+                                0 -> description(
+                                    boardGame
+                                )
+
+                                1 -> generalInfo(
+                                    boardGame
+                                )
                             }
                         }
                     }
@@ -248,13 +252,169 @@ fun BoardGameInfoActivity(navController: NavHostController, gameID: String?, vie
                     painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(18.dp),
-
-
-                    )
+                        .padding(18.dp)
+                )
 
             }
         }
     }
 }
+
+@Composable
+fun tabView(
+    modifier: Modifier = Modifier,
+    texts: List<String>,
+    onTabSelected: (selectedIndex: Int) -> Unit
+) {
+    var selectedTabIndex by remember {
+        mutableStateOf(0)
+    }
+    val inactiveColor = Color(0xFF777777)
+    TabRow(
+        selectedTabIndex = selectedTabIndex,
+        modifier = modifier
+    ) {
+        texts.forEachIndexed { index, item ->
+            Tab(
+                modifier = modifier.background(Color.LightGray),
+                selected = selectedTabIndex == index,
+                selectedContentColor = Color.Black,
+                unselectedContentColor = inactiveColor,
+                onClick = {
+                    selectedTabIndex = index
+                    onTabSelected(index)
+                }
+            ) {
+                Text(
+                    text = item,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun description(boardGame: BoardGame) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(10.dp)
+    ) {
+        item {
+            Box {
+                Text(
+                    text = boardGame.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun generalInfo(boardGame: BoardGame) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(10.dp)
+    ) {
+        item {
+            simpleInfo("Player Count", boardGame.minPlayers, boardGame.maxPlayers)
+            simpleInfo("Weight", boardGame.averageWeight, null)
+            simpleInfo("BGG Rank", boardGame.overallRank, null)
+            simpleInfo("Time", boardGame.playingTime, null)
+            simpleInfo("Age", boardGame.age+"+", null)
+            simpleInfo("BGG Rating", boardGame.averageRating, null)
+            if(boardGame.category != "") {
+                simpleInfo(boardGame.category, info1 = boardGame.categoryRank, info2 = null)
+            }
+            complexInfo(title = "Mechanisms", infoList = boardGame.mechanisms)
+            complexInfo(title = "Categories", infoList = boardGame.categories)
+            complexInfo(title = "Publishers", infoList = boardGame.publishers)
+            complexInfo(title = "Artists", infoList = boardGame.artists)
+            complexInfo(title = "Designers", infoList = boardGame.designers)
+            complexInfo(title = "Families", infoList = boardGame.families)
+        }
+    }
+}
+
+@Composable
+fun simpleInfo(title: String, info1: String, info2: String?) {
+    Box{
+        Row(modifier = Modifier
+            .fillMaxWidth()) {
+            Text(
+                text = title + ": ",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.fillMaxWidth(0.65f),
+                fontSize = 20.sp
+            )
+            if (info2 != null) {
+                Text(
+                    text = info1 + " - " + info2,
+                    textAlign = TextAlign.Right,
+                    modifier = Modifier.fillMaxWidth(1f),
+                    fontSize = 20.sp
+                )
+            } else {
+                Text(
+                    text = info1,
+                    textAlign = TextAlign.Right,
+                    modifier = Modifier.fillMaxWidth(1f),
+                    fontSize = 20.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun complexInfo(title: String, infoList : List<String>) {
+    var halfway = kotlin.math.floor((infoList.size / 2).toDouble())
+    if(infoList.size % 2 == 0){
+        halfway = halfway - 1
+    }
+    Box {
+        Column {
+            Text(
+                text = title + ":",
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.fillMaxWidth(0.5f),
+                fontSize = 20.sp,
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Column {
+                    for (i in 0..(halfway).toInt()) {
+                        Text(
+                            text = infoList.get(i),
+                            fontSize = 10.sp,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth(0.5f)
+                        )
+                    }
+                }
+                Column {
+                    for (i in (halfway + 1).toInt() until infoList.size) {
+                        Text(
+                            text = infoList.get(i),
+                            fontSize = 10.sp,
+                            textAlign = TextAlign.Right,
+                            modifier = Modifier.fillMaxWidth(1f)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 

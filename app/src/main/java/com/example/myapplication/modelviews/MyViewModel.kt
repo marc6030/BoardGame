@@ -41,6 +41,7 @@ class MyViewModel : ViewModel() {
     var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
     var boardGameData: LiveData<BoardGame?> = _boardGameData
 
+
     fun addBoardGameItemToFavoriteList(boardGameItem: BoardGameItem) {
         val currentList = favoriteBoardGameItemList.value.toMutableList()
         currentList.add(boardGameItem)

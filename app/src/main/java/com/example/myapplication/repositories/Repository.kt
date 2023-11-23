@@ -105,22 +105,49 @@ class Repository(private val apiService: ApiService) {
         }
 
         // Extracting and setting other fields
-        boardGame.yearPublished = document.getElementsByTagName("yearpublished").item(0)?.textContent ?: ""
-        boardGame.minPlayers = document.getElementsByTagName("minplayers").item(0)?.textContent ?: ""
-        boardGame.maxPlayers = document.getElementsByTagName("maxplayers").item(0)?.textContent ?: ""
-        boardGame.playingTime = document.getElementsByTagName("playingtime").item(0)?.textContent ?: ""
-        boardGame.age = document.getElementsByTagName("age").item(0)?.textContent ?: ""
+        boardGame.yearPublished = document.getElementsByTagName("yearpublished").item(0)?.textContent ?: "???"
+        boardGame.minPlayers = document.getElementsByTagName("minplayers").item(0)?.textContent ?: "???"
+        boardGame.maxPlayers = document.getElementsByTagName("maxplayers").item(0)?.textContent ?: "???"
+        boardGame.playingTime = document.getElementsByTagName("playingtime").item(0)?.textContent ?: "???"
+        boardGame.age = document.getElementsByTagName("age").item(0)?.textContent ?: "???"
         boardGame.description = Html.fromHtml(document.getElementsByTagName("description").item(0)?.textContent).toString()
-        boardGame.imageURL = document.getElementsByTagName("image").item(0)?.textContent ?: ""
-        boardGame.averageRating = document.getElementsByTagName("average").item(0)?.textContent ?: ""
-        boardGame.averageWeight = document.getElementsByTagName("averageweight").item(0)?.textContent ?: ""
+        boardGame.imageURL = document.getElementsByTagName("image").item(0)?.textContent ?: "???"
+        boardGame.averageRating = document.getElementsByTagName("average").item(0)?.textContent ?: "???"
+        boardGame.averageWeight = document.getElementsByTagName("averageweight").item(0)?.textContent ?: "???"
+
+        boardGame.mechanisms = fillList("boardgamemechanic", document)
+        boardGame.publishers = fillList("boardgamepublisher", document)
+        boardGame.categories = fillList("boardgamecategory", document)
+        boardGame.families = fillList("boardgamefamily", document)
+        boardGame.designers = fillList("boardgamedesigner", document)
+        boardGame.artists = fillList("boardgameartist", document)
+
 
         val ranks = document.getElementsByTagName("rank")
         if (ranks.length > 0) {
-            val rankElement = ranks.item(0) as Element
-            boardGame.overallRank = rankElement.getAttribute("value")
+            val overallRankElement = ranks.item(0) as Element
+            boardGame.overallRank = overallRankElement.getAttribute("value")
+            if(ranks.length > 1){
+                val categoryRankElement = ranks.item(1) as Element
+                boardGame.categoryRank = categoryRankElement.getAttribute("value")
+                boardGame.category = categoryRankElement.getAttribute("friendlyname")
+            }
         }
 
         return boardGame
     }
+}
+
+
+fun fillList(tagName: String, document : Document): List<String> {
+    var boardGameList : List<String> = emptyList()
+    var i = 0;
+    var test = document.getElementsByTagName(tagName).item(i)?.textContent ?: "???"
+    while(test != "???") {
+        boardGameList +=
+            document.getElementsByTagName(tagName).item(i).textContent
+        i++
+        test = document.getElementsByTagName(tagName).item(i)?.textContent ?: "???"
+    }
+    return boardGameList
 }
