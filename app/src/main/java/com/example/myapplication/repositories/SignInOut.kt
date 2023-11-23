@@ -38,7 +38,12 @@ class AuthenticationManager(private val activity: Activity, private val viewMode
                     // Sign in success, update UI with the signed-in user's information
                     Log.v("Authentication", "signInWithCredential:success")
                     val user = firebaseAuth.currentUser
-                    viewModel.setUser(user)
+                    if (user != null) {
+                        viewModel.setUser(user)
+                    } else {
+                        TODO("Implement error handling")
+                        println("error")
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("Authentication", "signInWithCredential:failure", task.exception)

@@ -27,10 +27,11 @@ class MyViewModel : ViewModel() {
     private var _boardGameList = MutableLiveData<BoardGameItems?>()
     private var _boardGameSearch = MutableLiveData<BoardGameSearchItems?>()
     private var _userAuthenticated = MutableLiveData<Boolean>()
-    private var _firebaseuser = MutableLiveData<FirebaseUser?>()
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
     var favoriteBoardGameItemList: MutableState<List<BoardGameItem>> = mutableStateOf(emptyList())
+
+    private lateinit var firebaseuser: FirebaseUser
 
     // Exposing the values for the views
     val db = FirebaseFirestore.getInstance()
@@ -148,9 +149,9 @@ class MyViewModel : ViewModel() {
 
 
     // Updates the FirebaseUser and the user authentication status
-    fun setUser(firebaseUser: FirebaseUser?) {
-        _firebaseuser.value = firebaseUser
-        _userAuthenticated.value = firebaseUser != null
+    fun setUser(firebaseUser: FirebaseUser) {
+        this.firebaseuser = firebaseUser
+        this._userAuthenticated.value = true
     }
 
     // LiveData to observe the user's sign-in status
