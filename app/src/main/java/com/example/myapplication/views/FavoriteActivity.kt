@@ -14,15 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -71,17 +67,17 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
             .weight(1f)
             .background(Color.White)
         ){
-            items(viewModel.favoriteBoardGameItemList.value) { item ->
+            items(viewModel.favoriteBoardGameList.value) { boardgame ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(160.dp)
                             .padding(10.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable { navController.navigate("boardgameinfo/${item.id}") }
+                            .clickable { navController.navigate("boardgameinfo/${boardgame.id}") }
                     ) {
                         AsyncImage(
-                            model = item.imgUrl,
+                            model = boardgame.imageURL,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -98,7 +94,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
                             .clip(RoundedCornerShape(20.dp)))
                         {
                             Text(
-                                text = item.shortTitel(),
+                                text = boardgame.shortTitel(),
                                 modifier = Modifier.align(Alignment.Center),
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Bold
@@ -110,7 +106,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .size(32.dp)
-                                    .clickable { viewModel.toggleFavorite(item) }
+                                    .clickable { viewModel.toggleFavorite(boardgame) }
                             )
                         }
                     }
