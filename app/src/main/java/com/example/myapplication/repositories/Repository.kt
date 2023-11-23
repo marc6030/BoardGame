@@ -105,6 +105,8 @@ class Repository(private val apiService: ApiService) {
         }
 
         // Extracting and setting other fields
+        val idElement = document.getElementsByTagName("boardgame").item(0) as Element
+        boardGame.id = idElement.getAttribute("objectid")
         boardGame.yearPublished = document.getElementsByTagName("yearpublished").item(0)?.textContent ?: "???"
         boardGame.minPlayers = document.getElementsByTagName("minplayers").item(0)?.textContent ?: "???"
         boardGame.maxPlayers = document.getElementsByTagName("maxplayers").item(0)?.textContent ?: "???"

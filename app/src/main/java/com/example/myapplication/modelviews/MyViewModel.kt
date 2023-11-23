@@ -149,9 +149,9 @@ class MyViewModel : ViewModel() {
 
 
     // Updates the FirebaseUser and the user authentication status
-    fun setUser(firebaseUser: FirebaseUser) {
-        this.firebaseuser = firebaseUser
-        this._userAuthenticated.value = true
+    fun setUser(firebaseUser: FirebaseUser?) {
+        _firebaseuser.value = firebaseUser
+        _userAuthenticated.value = firebaseUser != null
     }
 
     // LiveData to observe the user's sign-in status

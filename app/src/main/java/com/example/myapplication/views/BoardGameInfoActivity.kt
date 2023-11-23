@@ -1,6 +1,7 @@
 // BoardGameInfoActivity.kt
 package com.example.myapplication
 
+import android.content.ClipData.Item
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -236,25 +238,41 @@ fun BoardGameInfoActivity(
 
 
                 }
-                Button(
-                    onClick = {
-                        navController.popBackStack()
-                    },
+                Box(
                     modifier = Modifier
-                        .width(60.dp)
-                        .height(60.dp)
-                        .padding(8.dp),
+                        .fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            navController.popBackStack()
+                        },
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(60.dp)
+                            .padding(8.dp),
 
-                    ) {
+                        ) {
 
+                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(18.dp)
+                    )
+                    Icon(
+                        imageVector = if (viewModel.itemExistsInFavoriteList(boardGame)) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite Icon",
+                        tint = Color.Red,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .size(55.dp)
+                            .padding(8.dp)
+                            .clickable {
+                                viewModel.toggleFavorite(boardGame)
+                            }
+                    )
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(18.dp)
-                )
-
             }
         }
     }

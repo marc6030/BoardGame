@@ -7,6 +7,9 @@ import org.simpleframework.xml.Root
 
 @Root(name = "boardgame", strict = false)
 class BoardGame {
+    @field:Element(name = "id", required = false)
+    var id: String = ""
+
     @field:Element(name = "yearpublished", required = false)
     var yearPublished: String = ""
 
@@ -63,6 +66,15 @@ class BoardGame {
 
     @field:Element(name = "Artists", required = false)
     var artists : List<String> = emptyList()
+
+    fun shortTitel(): String{
+        val index = name.indexOf(":")
+        return if (index != -1) {
+            name.substring(0, index)
+        } else {
+            name
+        }
+    }
 
     // debugging
     override fun toString(): String {

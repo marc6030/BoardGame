@@ -23,14 +23,4 @@ class BoardGameItem {
     @field:Element(name = "imgurl")
     var imgUrl: String = ""
 
-
-
-    fun shortTitel(): String{
-        val index = name.indexOf(":")
-        return if (index != -1) {
-            name.substring(0, index)
-        } else {
-            name
-        }
-    }
 }

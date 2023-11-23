@@ -35,7 +35,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             boardgameApp(viewModel, authManager, account)
         }
-        viewModel.insertintodbtest()
     }
 
 
