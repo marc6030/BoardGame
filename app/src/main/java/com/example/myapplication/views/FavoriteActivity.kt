@@ -132,6 +132,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
                         }
                     }
 
+                }
             }
         }
 
