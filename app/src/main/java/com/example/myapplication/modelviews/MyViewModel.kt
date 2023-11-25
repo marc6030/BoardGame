@@ -9,27 +9,28 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.API.RetrofitClient
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import com.example.myapplication.models.BoardGameSearchItems
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.runtime.mutableStateOf
-import com.example.myapplication.BoardGameItem
+import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 
 
 class MyViewModel : ViewModel() {
     private var _isLoading = MutableLiveData<Boolean>()
+    private var _isBoardgameFavourite = MutableLiveData<Boolean>()
     private var _boardGameData = MutableLiveData<BoardGame?>()
     private var _boardGameList = MutableLiveData<BoardGameItems?>()
     private var _boardGameSearch = MutableLiveData<BoardGameSearchItems?>()
     private var _userAuthenticated = MutableLiveData<Boolean>()
+    private var _favoriteBoardGameList = MutableLiveData<List<BoardGame?>>()
+
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
-    var favoriteBoardGameItemList: MutableState<List<BoardGameItem>> = mutableStateOf(emptyList())
+    //var favoriteBoardGameList: MutableState<List<BoardGame>> = mutableStateOf(emptyList())
 
     private lateinit var firebaseuser: FirebaseUser
 
@@ -41,45 +42,53 @@ class MyViewModel : ViewModel() {
     var isLoading: LiveData<Boolean> = _isLoading
     var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
     var boardGameData: LiveData<BoardGame?> = _boardGameData
+    var favoriteBoardGameList: LiveData<List<BoardGame?>> = _favoriteBoardGameList
+    var isBoardGameFavourite: LiveData<Boolean> = _isBoardgameFavourite
 
-
-    fun addBoardGameItemToFavoriteList(boardGameItem: BoardGameItem) {
-        val currentList = favoriteBoardGameItemList.value.toMutableList()
-        currentList.add(boardGameItem)
-        favoriteBoardGameItemList.value = currentList
+    fun addBoardGameItemToFavoriteList(boardGame: BoardGame) {
+        // _favoriteBoardGameList.value = _favoriteBoardGameList.value?.plus(boardGame)
+        insertIntoUserFavoriteDB(boardGame.id)
     }
 
-    fun removeBoardGameItemToFavoriteList(boardGameItem: BoardGameItem) {
-        val currentList = favoriteBoardGameItemList.value.toMutableList()
-        currentList.remove(boardGameItem)
-        favoriteBoardGameItemList.value = currentList
+    fun removeBoardGameItemToFavoriteList(boardGame: BoardGame) {
+        removeFromUserFavoriteDB(boardGame.id)
     }
 
+    fun itemExistsInFavoriteList(boardGame: BoardGame): Boolean {
 
-    fun itemExistsInFavoriteList(item: BoardGameItem): Boolean {
-        for (boardGameItem in favoriteBoardGameItemList.value) {
-            if (boardGameItem.id == item.id) {
-                return true
+        val favorites = _favoriteBoardGameList.value?: return false
+
+        for (favoritedBoardGame in favorites) {
+            val favboard = favoritedBoardGame?: return false
+                if (favboard.id == boardGame.id) {
+                    return true
+                }
             }
-        }
         return false
     }
 
-    fun toggleFavorite(item : BoardGameItem){ // Den er funktion tilføjer og fjerner items fra favorite listen
-        if(itemExistsInFavoriteList(item)){
-            removeBoardGameItemToFavoriteList(item)
-        } else {
-            addBoardGameItemToFavoriteList(item)
+
+    fun toggleFavorite(boardGame: BoardGame?) { // Den er funktion tilføjer og fjerner items fra favorite listen
+        if (boardGame != null) {
+            if (itemExistsInFavoriteList(boardGame)) {
+                removeBoardGameItemToFavoriteList(boardGame)
+            } else {
+                addBoardGameItemToFavoriteList(boardGame)
+            }
         }
     }
+
+
 
     fun fetchBoardGameList() {             // Lige nu er det hot listen
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // val boardGameList: BoardGameItems = getDataAsBoardGameList(url) // Den her kan måske slettes, hvis den ikke bruges længere?
                 val boardGameList: BoardGameItems = repository.getBoardGameList()
-                _boardGameList.postValue(boardGameList)
+
+                withContext(Dispatchers.Main) {
+                    _boardGameList.postValue(boardGameList)
+                }
             } catch (e: Exception) {
                 _boardGameList.postValue(null)
             } finally {
@@ -88,18 +97,78 @@ class MyViewModel : ViewModel() {
         }
     }
 
-    fun insertintodbtest() {
+    fun insertIntoUserFavoriteDB(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val gameID = hashMapOf("id" to id)
 
-        val city = hashMapOf(
-            "name" to "Los Angeles",
-            "state" to "CA",
-            "country" to "USA",
-        )
+                // Perform Firestore operation and wait for it to complete
+                db.collection("BBUsers").document(getUserID())
+                    .collection("favorites")
+                    .document(id).set(gameID, SetOptions.merge()).await()
 
-        db.collection("cities").document("LA")
-            .set(city)
-            .addOnSuccessListener { Log.v("FirebaseTest", "DocumentSnapshot successfully written!") }
-            .addOnFailureListener { e -> Log.v("FirebaseTest", "Error writing document", e) }
+                // Fetch the BoardGame details after adding to Firestore
+                val newFav = repository.getBoardGame(id)
+
+                // Update the LiveData on the main thread
+                withContext(Dispatchers.Main) {
+                    // Use plus to add the new favorite BoardGame to the list
+                    _favoriteBoardGameList.value = _favoriteBoardGameList.value?.plus(newFav)
+                }
+            } catch (e: Exception) {
+                Log.v("FirebaseTest", "Error in insertIntoUserFavoriteDB", e)
+                // Write something handling exceptins exception
+            }
+        }
+    }
+
+
+    fun removeFromUserFavoriteDB(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                db.collection("BBUsers").document(getUserID())
+                    .collection("favorites")
+                    .document(id).delete()
+                    .await()
+                withContext(Dispatchers.Main) {
+                    // We are using filter instead of minus because minus compares the objects hash value which might differ
+                    _favoriteBoardGameList.value = _favoriteBoardGameList.value?.filter { it!!.id != id } // "it" is a lambda function and checks all elements in the lsit..
+                }
+            } catch (e: Exception) {
+                Log.v("FirebaseTest", "Error writing document", e)
+                // Write something handling exceptins exception
+            }
+        }
+    }
+
+
+
+    fun fetchFavoriteListFromDB() {
+
+
+        val tempBg : ArrayList<BoardGame> = ArrayList();
+        _isLoading.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val favSnapshot = db.collection("BBUsers").document(getUserID())
+                    .collection("favorites")
+                    .get()
+                    .await()
+
+                for (document in favSnapshot) {
+                    val boardGame: BoardGame = repository.getBoardGame(document.id)
+                    tempBg.add(boardGame)
+                }
+
+
+                //_boardGameData.postValue(boardGame)
+            } catch (e: Exception) {
+                _favoriteBoardGameList.postValue(null)
+            } finally {
+                _isLoading.postValue(false)
+            }
+            _favoriteBoardGameList.postValue(tempBg)
+        }
     }
 
 
@@ -109,6 +178,9 @@ class MyViewModel : ViewModel() {
             try {
                 val boardGame: BoardGame = repository.getBoardGame(id)
                 Log.v("bgload", "bgnotloading: $boardGame")
+                if (favoriteBoardGameList.value?.contains(boardGame)!!) {
+                    boardGame.isfavorite = true
+                }
                 _boardGameData.postValue(boardGame)
             } catch (e: Exception) {
                 _boardGameData.postValue(null)
@@ -122,7 +194,8 @@ class MyViewModel : ViewModel() {
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val boardGameSearchItems: BoardGameSearchItems = repository.getBoardGameSearch(userSearch)
+                val boardGameSearchItems: BoardGameSearchItems =
+                    repository.getBoardGameSearch(userSearch)
                 Log.v("bgsearch", "searchlogs: $boardGameSearchItems")
                 _boardGameSearch.postValue(boardGameSearchItems)
             } catch (e: Exception) {
@@ -135,7 +208,7 @@ class MyViewModel : ViewModel() {
     }
 
 
-    fun checkCurrentUser(context: Context) : Boolean {
+    fun checkCurrentUser(context: Context): Boolean {
         // Check if the user is logged in and update _isUserLoggedIn
         // For example, you might check this from your AuthenticationManager
         val account = GoogleSignIn.getLastSignedInAccount(context)
@@ -146,18 +219,31 @@ class MyViewModel : ViewModel() {
     }
 
 
-
-
     // Updates the FirebaseUser and the user authentication status
-    fun setUser(firebaseUser: FirebaseUser?) {
-        _firebaseuser.value = firebaseUser
-        _userAuthenticated.value = firebaseUser != null
+    fun setUser(firebaseUser: FirebaseUser) {
+        this.firebaseuser = firebaseUser
+        _userAuthenticated.value = true
     }
+
+    fun getUserEmail(): String? {
+        val email: String? = this.firebaseuser.email
+        Log.v("User email is: ", "$email")
+        return email
+    }
+
+    fun getUserID(): String {
+        val userID: String = this.firebaseuser.uid
+        Log.v("UserID is: ", userID)
+        return userID
+    }
+
 
     // LiveData to observe the user's sign-in status
     fun verifySignedIn(): LiveData<Boolean> {
         return _userAuthenticated
     }
 }
+
+
 
 

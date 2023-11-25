@@ -31,10 +31,10 @@ class MainActivity : ComponentActivity() {
         val account = GoogleSignIn.getLastSignedInAccount(this)
         val viewModel: MyViewModel by viewModels()
         authManager = AuthenticationManager(this, viewModel)
-        authManager.signOut()
         setContent {
             boardgameApp(viewModel, authManager, account)
         }
+
     }
 
 
@@ -58,6 +58,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun boardgameApp(viewModel: MyViewModel, authManager: AuthenticationManager, account: GoogleSignInAccount?) {
+
     val navController = rememberNavController()
     NavHost(
         navController = navController,

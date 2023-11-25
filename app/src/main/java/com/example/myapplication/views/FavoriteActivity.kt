@@ -21,6 +21,9 @@ import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +41,13 @@ import com.example.myapplication.views.NavBar
 
 @Composable
 fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchFavoriteListFromDB()
+    }
+
+    val favoriteBoardGame by viewModel.favoriteBoardGameList.observeAsState(initial = emptyList())
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -66,39 +76,50 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
             .fillMaxWidth()
             .weight(1f)
             .background(Color.White)
-        ){
-            items(viewModel.favoriteBoardGameList.value) { boardgame ->
+        ) {
+            if (favoriteBoardGame != null) {
+                items(favoriteBoardGame) { boardgame ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(160.dp)
                             .padding(10.dp)
                             .clip(RoundedCornerShape(20.dp))
-                            .clickable { navController.navigate("boardgameinfo/${boardgame.id}") }
+                            .clickable {
+                                if (boardgame != null) {
+                                    navController.navigate("boardgameinfo/${boardgame.id}")
+                                }
+                            }
                     ) {
-                        AsyncImage(
-                            model = boardgame.imageURL,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
+                        if (boardgame != null) {
+                            AsyncImage(
+                                model = boardgame.imageURL,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .fillMaxWidth(1f)
+                                    .fillMaxHeight(0.5f)
+                            )
+                        }
+                        Box(
                             modifier = Modifier
-                                .align(Alignment.TopCenter)
+                                .background(Color.LightGray)
+                                .align(Alignment.BottomCenter)
                                 .fillMaxWidth(1f)
                                 .fillMaxHeight(0.5f)
+                                .padding(12.dp)
+                                .clip(RoundedCornerShape(20.dp))
                         )
-                        Box(modifier = Modifier
-                            .background(Color.LightGray)
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth(1f)
-                            .fillMaxHeight(0.5f)
-                            .padding(12.dp)
-                            .clip(RoundedCornerShape(20.dp)))
                         {
-                            Text(
-                                text = boardgame.shortTitel(),
-                                modifier = Modifier.align(Alignment.Center),
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            if (boardgame != null) {
+                                Text(
+                                    text = boardgame.shortTitel(),
+                                    modifier = Modifier.align(Alignment.Center),
+                                    fontSize = 32.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                             Icon(
                                 imageVector = Icons.Outlined.Favorite,
                                 contentDescription = "Favorite Icon",

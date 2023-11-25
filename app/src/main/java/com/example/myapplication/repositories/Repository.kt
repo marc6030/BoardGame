@@ -13,6 +13,7 @@ import com.example.myapplication.BoardGameItem
 import com.example.myapplication.BoardGameItems
 import com.example.myapplication.models.BoardGameSearch
 import com.example.myapplication.models.BoardGameSearchItems
+import okhttp3.internal.wait
 
 class Repository(private val apiService: ApiService) {
 
@@ -105,7 +106,7 @@ class Repository(private val apiService: ApiService) {
         }
 
         // Extracting and setting other fields
-        val idElement = document.getElementsByTagName("boardgame").item(0) as Element
+        val idElement: Element = document.getElementsByTagName("boardgame").item(0) as Element
         boardGame.id = idElement.getAttribute("objectid")
         boardGame.yearPublished = document.getElementsByTagName("yearpublished").item(0)?.textContent ?: "???"
         boardGame.minPlayers = document.getElementsByTagName("minplayers").item(0)?.textContent ?: "???"

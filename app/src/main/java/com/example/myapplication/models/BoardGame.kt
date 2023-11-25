@@ -7,6 +7,10 @@ import org.simpleframework.xml.Root
 
 @Root(name = "boardgame", strict = false)
 class BoardGame {
+
+    @field:Element(name = "isfavorite", required = false)
+    var isfavorite: Boolean = false
+
     @field:Element(name = "id", required = false)
     var id: String = ""
 
