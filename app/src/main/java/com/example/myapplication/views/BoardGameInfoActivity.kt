@@ -140,13 +140,118 @@ fun BoardGameInfoActivity(
                                                          }
                         }
                     }
-
-
                 }
                 favoriteButton(navController, viewModel, boardGame!!)
             }
         }
     }
+}
+
+
+@Composable
+fun pictureAndKeyInfo(boardGame: BoardGame){
+    Row(
+        modifier = Modifier.height(175.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .padding(10.dp)
+        ) {
+            AsyncImage(
+                model = boardGame.imageURL,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(20.dp))
+            )
+
+        }
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(1f)
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color.LightGray),
+
+            ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.5f),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ) {
+
+                    Image(
+                        painter = painterResource(id = R.drawable.people_alt),
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.av_timer),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "${boardGame.playingTime} min.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(1f),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.elderly),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "${boardGame.age}+",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.fitness_center),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = boardGame.averageWeight,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -303,6 +408,60 @@ fun complexInfo(title: String, infoList : List<String>) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ratingTab(){
+    Column(modifier = Modifier) {
+        Text("ad")
+    }
+}
+
+@Composable
+fun starDisplay(){
+
+}
+
+@Composable
+fun favoriteButton(navController: NavHostController,
+                   viewModel: MyViewModel,
+                   boardGame: BoardGame){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Button(
+            onClick = {
+                navController.popBackStack()
+            },
+            modifier = Modifier
+                .width(60.dp)
+                .height(60.dp)
+                .padding(8.dp),
+
+            ) {
+
+        }
+        Image(
+            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(18.dp)
+        )
+        Icon(
+            imageVector = if (boardGame.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+            contentDescription = "Favorite Icon",
+            tint = Color.Red,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .size(55.dp)
+                .padding(8.dp)
+                .clickable {
+                    viewModel.toggleFavorite(boardGame)
+                    Log.v("is still fav", "${boardGame.isfavorite}")
+                }
+        )
     }
 }
 

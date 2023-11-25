@@ -48,9 +48,6 @@ import com.example.myapplication.views.NavBar
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
-
-
-    val navBar = NavBar()
     val context = LocalContext.current
     // Check internet Connection - this does not belong here.
     if (!isInternetAvailable(context)) {
@@ -58,11 +55,12 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
     }
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameList()
+        viewModel.fetchFavoriteListFromDB()
     }
 
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
     if (isLoading) {
-        Row (
+        Row(
             Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
