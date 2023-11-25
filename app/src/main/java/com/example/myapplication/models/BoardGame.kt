@@ -6,71 +6,72 @@ import org.simpleframework.xml.Root
 
 
 @Root(name = "boardgame", strict = false)
-class BoardGame {
+data class BoardGame(
 
     @field:Element(name = "isfavorite", required = false)
-    var isfavorite: Boolean = false
+    var isfavorite: Boolean = false,
 
     @field:Element(name = "id", required = false)
-    var id: String = ""
+    var id: String = "",
 
     @field:Element(name = "yearpublished", required = false)
-    var yearPublished: String = ""
+    var yearPublished: String = "",
 
     @field:Element(name = "minplayers", required = false)
-    var minPlayers: String = ""
+    var minPlayers: String = "",
 
     @field:Element(name = "maxplayers", required = false)
-    var maxPlayers: String = ""
+    var maxPlayers: String = "",
 
     @field:Element(name = "playingtime", required = false)
-    var playingTime: String = ""
+    var playingTime: String = "",
 
     @field:Element(name = "name", required = false)
-    var name: String = ""
+    var name: String = "",
 
     @field:Element(name = "description", required = false)
-    var description: String = ""
+    var description: String = "",
 
     @field:Element(name = "age", required = false)
-    var age: String = ""
+    var age: String = "",
 
     @field:Element(name = "image", required = false)
-    var imageURL: String = ""
+    var imageURL: String = "",
 
     @field:Element(name = "average", required = false)
-    var averageRating : String = ""
+    var averageRating : String = "",
 
     @field:Element(name = "averageweight", required = false)
-    var averageWeight : String = ""
+    var averageWeight : String = "",
 
     @field:Element(name = "OverallRank", required = false)
-    var overallRank : String = ""
+    var overallRank : String = "",
 
     @field:Element(name = "CategoryRank", required = false)
-    var categoryRank : String = ""
+    var categoryRank : String = "",
 
     @field:Element(name = "Category", required = false)
-    var category : String = ""
+    var category : String = "",
 
     @field:Element(name = "Mechanisms", required = false)
-    var mechanisms : List<String> = emptyList()
+    var mechanisms : List<String> = emptyList(),
 
     @field:Element(name = "Publishers", required = false)
-    var publishers : List<String> = emptyList()
+    var publishers : List<String> = emptyList(),
 
     @field:Element(name = "Categories", required = false)
-    var categories : List<String> = emptyList()
+    var categories : List<String> = emptyList(),
 
     @field:Element(name = "Families", required = false)
-    var families : List<String> = emptyList()
+    var families : List<String> = emptyList(),
 
     @field:Element(name = "Designers", required = false)
-    var designers : List<String> = emptyList()
+    var designers : List<String> = emptyList(),
 
     @field:Element(name = "Artists", required = false)
-    var artists : List<String> = emptyList()
+    var artists : List<String> = emptyList(),
 
+) {
     fun shortTitel(): String{
         val index = name.indexOf(":")
         return if (index != -1) {

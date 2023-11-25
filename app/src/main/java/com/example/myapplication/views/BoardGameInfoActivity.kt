@@ -54,11 +54,13 @@ fun BoardGameInfoActivity(
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
         viewModel.fetchBoardGameData(gameID!!)
+        // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
     }
 
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
     val boardGame by viewModel.boardGameData.observeAsState()
+    // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
     if (gameID != null) {
         // Check internet Connection
@@ -86,7 +88,6 @@ fun BoardGameInfoActivity(
             var selectedTabIndex by remember {
                 mutableStateOf(0)
             }
-            Log.v("boardgameisnotnull", "${boardGame}")
             // Observe the data
             if (boardGame != null) {
                 // Data is available, update the UI

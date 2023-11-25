@@ -21,7 +21,6 @@ import kotlinx.coroutines.tasks.await
 
 class MyViewModel : ViewModel() {
     private var _isLoading = MutableLiveData<Boolean>()
-    private var _isBoardgameFavourite = MutableLiveData<Boolean>()
     private var _boardGameData = MutableLiveData<BoardGame?>()
     private var _boardGameList = MutableLiveData<BoardGameItems?>()
     private var _boardGameSearch = MutableLiveData<BoardGameSearchItems?>()
@@ -43,42 +42,20 @@ class MyViewModel : ViewModel() {
     var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
     var boardGameData: LiveData<BoardGame?> = _boardGameData
     var favoriteBoardGameList: LiveData<List<BoardGame?>> = _favoriteBoardGameList
-    var isBoardGameFavourite: LiveData<Boolean> = _isBoardgameFavourite
-
-    fun addBoardGameItemToFavoriteList(boardGame: BoardGame) {
-        // _favoriteBoardGameList.value = _favoriteBoardGameList.value?.plus(boardGame)
-        insertIntoUserFavoriteDB(boardGame.id)
-    }
-
-    fun removeBoardGameItemToFavoriteList(boardGame: BoardGame) {
-        removeFromUserFavoriteDB(boardGame.id)
-    }
-
-    fun itemExistsInFavoriteList(boardGame: BoardGame): Boolean {
-
-        val favorites = _favoriteBoardGameList.value?: return false
-
-        for (favoritedBoardGame in favorites) {
-            val favboard = favoritedBoardGame?: return false
-                if (favboard.id == boardGame.id) {
-                    return true
-                }
-            }
-        return false
-    }
 
 
-    fun toggleFavorite(boardGame: BoardGame?) { // Den er funktion tilføjer og fjerner items fra favorite listen
+
+    fun toggleFavorite(boardGame: BoardGame?) {
         if (boardGame != null) {
-            if (itemExistsInFavoriteList(boardGame)) {
-                removeBoardGameItemToFavoriteList(boardGame)
+            val updatedBoardGame = boardGame.copy(isfavorite = !boardGame.isfavorite)
+            if (updatedBoardGame.isfavorite) {
+                insertIntoUserFavoriteDB(boardGame.id)
             } else {
-                addBoardGameItemToFavoriteList(boardGame)
+                removeFromUserFavoriteDB(boardGame.id)
             }
+            _boardGameData.value = updatedBoardGame // Assuming _boardGameData is the MutableState
         }
     }
-
-
 
     fun fetchBoardGameList() {             // Lige nu er det hot listen
         _isLoading.postValue(true)
@@ -87,6 +64,7 @@ class MyViewModel : ViewModel() {
                 val boardGameList: BoardGameItems = repository.getBoardGameList()
 
                 withContext(Dispatchers.Main) {
+
                     _boardGameList.postValue(boardGameList)
                 }
             } catch (e: Exception) {
@@ -114,6 +92,8 @@ class MyViewModel : ViewModel() {
                 withContext(Dispatchers.Main) {
                     // Use plus to add the new favorite BoardGame to the list
                     _favoriteBoardGameList.value = _favoriteBoardGameList.value?.plus(newFav)
+
+                    Log.v("add fav list", "${favoriteBoardGameList.value?.map {it?.id}}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error in insertIntoUserFavoriteDB", e)
@@ -133,6 +113,7 @@ class MyViewModel : ViewModel() {
                 withContext(Dispatchers.Main) {
                     // We are using filter instead of minus because minus compares the objects hash value which might differ
                     _favoriteBoardGameList.value = _favoriteBoardGameList.value?.filter { it!!.id != id } // "it" is a lambda function and checks all elements in the lsit..
+                    Log.v("remove fav list", "${favoriteBoardGameList.value?.map { it?.id }}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error writing document", e)
@@ -144,8 +125,6 @@ class MyViewModel : ViewModel() {
 
 
     fun fetchFavoriteListFromDB() {
-
-
         val tempBg : ArrayList<BoardGame> = ArrayList();
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
@@ -157,6 +136,7 @@ class MyViewModel : ViewModel() {
 
                 for (document in favSnapshot) {
                     val boardGame: BoardGame = repository.getBoardGame(document.id)
+                    boardGame.isfavorite = true
                     tempBg.add(boardGame)
                 }
 
@@ -178,7 +158,7 @@ class MyViewModel : ViewModel() {
             try {
                 val boardGame: BoardGame = repository.getBoardGame(id)
                 Log.v("bgload", "bgnotloading: $boardGame")
-                if (favoriteBoardGameList.value?.contains(boardGame)!!) {
+                if (favoriteBoardGameList.value!!.any {it?.id == boardGame.id}) {
                     boardGame.isfavorite = true
                 }
                 _boardGameData.postValue(boardGame)
