@@ -103,6 +103,22 @@ class MyViewModel : ViewModel() {
         }
     }
 
+    fun insertAverageRating(id: String, rating: String){
+        val previous_entity = db.collection("Ratings").document(id).get()
+
+        if (previous_entity != null) {
+            db.collection("Ratings").document(id).set(hashMapOf("rating" to rating))
+        }
+    }
+
+    fun fetchAverageRating(id: String){
+
+        val previous_entity = db.collection("Ratings").document(id).get()
+
+
+
+    }
+
 
     fun removeFromUserFavoriteDB(id: String) {
         viewModelScope.launch(Dispatchers.IO) {

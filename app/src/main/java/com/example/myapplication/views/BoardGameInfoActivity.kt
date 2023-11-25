@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -28,6 +29,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.TextStyle
@@ -134,7 +136,11 @@ fun BoardGameInfoActivity(
                                 1 -> generalInfo(
                                     boardGame!!
                                 )
-                                                         }
+
+                                2 -> ratingTab(
+                                    boardGame!!
+                                )
+                            }
                         }
                     }
                 }
@@ -417,7 +423,46 @@ fun ratingTab(boardGame: BoardGame){
 }
 
 @Composable
-fun starDisplay(){
+fun starDisplay(stars: String, text: String){
+    val num_of_stars: Double = stars.toDouble()
+    Column {
+        Box {
+            Text(text)
+        }
+        Box(
+            modifier = Modifier
+                .padding(2.dp)
+                .wrapContentWidth(Alignment.Start)
+        ) {
+            Row() {
+                for (i in 1..10) {
+                    if (num_of_stars >= i) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Favorite Icon",
+                            tint = Color.Yellow,
+                            modifier = Modifier
+                                .size(34.dp)
+
+                            // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Favorite Icon",
+                            tint = Color.Black,
+                            modifier = Modifier
+                                .size(34.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun interactebleStars(){
 
 }
 

@@ -180,7 +180,6 @@ fun boardGameSelection(headline: String,
                     )
                 }
             }
-
         }
     }
 }
