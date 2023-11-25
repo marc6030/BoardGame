@@ -115,8 +115,9 @@ class Repository(private val apiService: ApiService) {
         boardGame.age = document.getElementsByTagName("age").item(0)?.textContent ?: "???"
         boardGame.description = Html.fromHtml(document.getElementsByTagName("description").item(0)?.textContent).toString()
         boardGame.imageURL = document.getElementsByTagName("image").item(0)?.textContent ?: "???"
-        boardGame.averageRating = document.getElementsByTagName("average").item(0)?.textContent ?: "???"
         boardGame.averageWeight = document.getElementsByTagName("averageweight").item(0)?.textContent ?: "???"
+        boardGame.ratingBGG = document.getElementsByTagName("average").item(0)?.textContent ?: "0"
+
 
         boardGame.mechanisms = fillList("boardgamemechanic", document)
         boardGame.publishers = fillList("boardgamepublisher", document)

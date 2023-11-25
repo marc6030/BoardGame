@@ -59,6 +59,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
     }
 
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
+
     if (isLoading) {
         Row(
             Modifier
@@ -86,7 +87,7 @@ fun boardgameSelections(
     viewModel: MyViewModel
 ) {
     val navBar = NavBar()
-    val items = viewModel.boardGameDataList.value
+    val items = viewModel.boardGameDataList.observeAsState().value
     if (items != null) {
         Column(
             modifier = Modifier

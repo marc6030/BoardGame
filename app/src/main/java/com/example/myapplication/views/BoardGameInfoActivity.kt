@@ -1,11 +1,9 @@
 // BoardGameInfoActivity.kt
 package com.example.myapplication
 
-import android.content.ClipData.Item
+
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -39,8 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.MyViewModel
-import java.lang.Math.ceil
-import java.lang.Math.floor
+import okio.blackholeSink
 
 
 @Composable
@@ -322,7 +319,7 @@ fun generalInfo(boardGame: BoardGame) {
             simpleInfo("BGG Rank", boardGame.overallRank, null)
             simpleInfo("Time", boardGame.playingTime, null)
             simpleInfo("Age", boardGame.age+"+", null)
-            simpleInfo("BGG Rating", boardGame.averageRating, null)
+            simpleInfo("BGG Rating", boardGame.ratingBGG, null)
             if(boardGame.category != "") {
                 simpleInfo(boardGame.category, info1 = boardGame.categoryRank, info2 = null)
             }
@@ -412,9 +409,10 @@ fun complexInfo(title: String, infoList : List<String>) {
 }
 
 @Composable
-fun ratingTab(){
-    Column(modifier = Modifier) {
-        Text("ad")
+fun ratingTab(boardGame: BoardGame){
+    Column {
+        starDisplay(boardGame.ratingBGG, "BGG rating")
+        Log.v("BGG Rating", "${boardGame.ratingBGG}")
     }
 }
 

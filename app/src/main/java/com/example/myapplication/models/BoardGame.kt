@@ -11,6 +11,15 @@ data class BoardGame(
     @field:Element(name = "isfavorite", required = false)
     var isfavorite: Boolean = false,
 
+    @field:Element(name = "ratingBGG", required = false)
+    var ratingBGG: String = "",
+
+    @field:Element(name = "ratingBGGBandit", required = false)
+    var ratingBGGBandit: String = "",
+
+    @field:Element(name = "ratingUser", required = false)
+    var ratingUser: String = "",
+
     @field:Element(name = "id", required = false)
     var id: String = "",
 
@@ -37,9 +46,6 @@ data class BoardGame(
 
     @field:Element(name = "image", required = false)
     var imageURL: String = "",
-
-    @field:Element(name = "average", required = false)
-    var averageRating : String = "",
 
     @field:Element(name = "averageweight", required = false)
     var averageWeight : String = "",
@@ -83,6 +89,6 @@ data class BoardGame(
 
     // debugging
     override fun toString(): String {
-        return "BoardGame(name=$name, yearPublished=$yearPublished, minPlayers=$minPlayers, maxPlayers=$maxPlayers, playingTime=$playingTime, description=$description, age=$age, imageURL=$imageURL, averageRating=$averageRating, averageWeight=$averageWeight, overallRank=$overallRank)"
+        return "BoardGame(name=$name, yearPublished=$yearPublished, minPlayers=$minPlayers, maxPlayers=$maxPlayers, playingTime=$playingTime, description=$description, age=$age, imageURL=$imageURL, averageWeight=$averageWeight, overallRank=$overallRank)"
     }
 }

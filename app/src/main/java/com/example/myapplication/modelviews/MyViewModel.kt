@@ -85,6 +85,7 @@ class MyViewModel : ViewModel() {
                     .collection("favorites")
                     .document(id).set(gameID, SetOptions.merge()).await()
 
+
                 // Fetch the BoardGame details after adding to Firestore
                 val newFav = repository.getBoardGame(id)
 
