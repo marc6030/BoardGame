@@ -52,9 +52,6 @@ import com.example.myapplication.views.NavBar
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 
-
-    val logo: Painter = painterResource(id = R.drawable.banditlogo)
-    val navBar = NavBar()
     val context = LocalContext.current
     // Check internet Connection - this does not belong here.
     if (!isInternetAvailable(context)) {
@@ -95,6 +92,7 @@ fun boardgameSelections(
 ) {
     val navBar = NavBar()
     val items = viewModel.boardGameDataList.observeAsState().value
+    val logo: Painter = painterResource(id = R.drawable.banditlogo)
     if (items != null) {
         Column(
             modifier = Modifier
