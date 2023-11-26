@@ -429,7 +429,7 @@ fun starDisplay(stars: String, text: String){
     val num_of_stars: Double = stars.toDouble()
     Column {
         Box {
-            Text(text)
+            Text(text + ": $num_of_stars / 10")
         }
         Box(
             modifier = Modifier
@@ -476,7 +476,7 @@ fun ratingDisplay(text: String,
     }
     Column {
         Box {
-            Text(text)
+            Text(text + ": $num_of_stars / 10 - Rate by tapping a Star")
         }
         Box(
             modifier = Modifier

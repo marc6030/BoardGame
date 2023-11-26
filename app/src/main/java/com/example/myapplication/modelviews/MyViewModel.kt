@@ -32,7 +32,6 @@ class MyViewModel : ViewModel() {
 
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
-    //var favoriteBoardGameList: MutableState<List<BoardGame>> = mutableStateOf(emptyList())
 
     private lateinit var firebaseuser: FirebaseUser
 
@@ -48,49 +47,19 @@ class MyViewModel : ViewModel() {
     var userRating: LiveData<String> = _userRating
     var averageRating: LiveData<Int> = _averageRating
 
-    /*fun toggleRatings(boardGame: BoardGame?, rating: String) {
-        if (boardGame != null) {
-            if (boardGame.userRating != rating) {
-                insertAverageRating(boardGame.id, rating)
-            } else {
-                removeRatingFromDB(boardGame.id)
-            }
-            fetchAverageRating(boardGame)
-            fetchUserRating(boardGame)
-            _boardGameData.value = boardGame// Assuming _boardGameData is the MutableState
-        }
-    }
-*/
     fun toggleRatings(boardGame: BoardGame?, rating: String) {
         if (boardGame != null) {
             if (boardGame.userRating != rating) {
-                Log.v("notUpdatedboardgamevalue", "${_boardGameData.value}")
-                viewModelScope.launch(Dispatchers.IO) {
                     insertAverageRating(boardGame.id, rating)
-                    Log.v("temp1Updatedboardgamevalue", "${boardGame}")
-                    fetchAverageRating(boardGame)
-                    Log.v("temp2Updatedboardgamevalue", "${boardGame}")
-                    fetchUserRating(boardGame)
-                    Log.v("temp3Updatedboardgamevalue", "${boardGame}")
-                    val updatedBoardGame : BoardGame = boardGame.copy()
-                    withContext(Dispatchers.Main) {
-                        _boardGameData.value = updatedBoardGame
-                        Log.v("Updatedboardgamevalue", "${_boardGameData.value}")
-                    }
                 }
-            } else {
-                viewModelScope.launch(Dispatchers.IO) {
+            else {
                     removeRatingFromDB(boardGame.id)
-                    val updatedBoardGame : BoardGame = boardGame.copy()
-                    fetchAverageRating(updatedBoardGame)
-                    fetchUserRating(updatedBoardGame)
-                    withContext(Dispatchers.Main) {
-                        _boardGameData.value = boardGame.copy()
-                    }
+                    boardGame.userRating = ""
                 }
+        fetchAverageRating(boardGame)
+        fetchUserRating(boardGame)
             }
         }
-    }
 
     fun toggleFavorite(boardGame: BoardGame?) {
         if (boardGame != null) {
