@@ -467,7 +467,9 @@ fun ratingDisplay(text: String,
                   viewModel: MyViewModel,
                   boardGame: BoardGame){
     var num_of_stars = 0.0
-    if(boardGame.userRating != ""){
+    if(boardGame.userRating == ""){
+        num_of_stars = 0.0
+    }else{
         num_of_stars = boardGame.userRating.toDouble()
     }
     Column {

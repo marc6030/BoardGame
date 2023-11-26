@@ -45,17 +45,14 @@ class MyViewModel : ViewModel() {
 
     fun toggleRatings(boardGame: BoardGame?, rating: String) {
         if (boardGame != null) {
+            fetchAverageRating(boardGame)
+            fetchUserRating(boardGame)
             if (boardGame.userRating != rating) {
                 insertAverageRating(boardGame.id, rating)
-                fetchAverageRating(boardGame)
-                fetchUserRating(boardGame)
             } else {
                 removeRatingFromDB(boardGame.id)
-                fetchAverageRating(boardGame)
-                fetchUserRating(boardGame)
             }
-            _boardGameData.value =
-                boardGame// Assuming _boardGameData is the MutableState
+            _boardGameData.value = boardGame// Assuming _boardGameData is the MutableState
         }
     }
 
@@ -176,12 +173,12 @@ class MyViewModel : ViewModel() {
                     .collection("userRatings")
                     .document(getUserID()).get()
                     .await()
-                if(ratingSnapshot != null) {
+                if(ratingSnapshot.get("rating") != null) {
                     ratingString = ratingSnapshot["rating"].toString()
                 }
                 withContext(Dispatchers.Main) {
                     boardGame.userRating = ratingString
-                    Log.v("get userRating", "${ratingString} + ${ratingSnapshot["rating"].toString()}")
+                    Log.v("get userRating", "${ratingString} + ${ratingSnapshot["rating"]}")
                 }
             } catch (e: Exception) {
                 Log.e("fetchAverageRating", "Error fetching average rating", e)
@@ -265,6 +262,8 @@ class MyViewModel : ViewModel() {
                 if (favoriteBoardGameList.value!!.any { it?.id == boardGame.id }) {
                     boardGame.isfavorite = true
                 }
+                fetchAverageRating(boardGame)
+                fetchUserRating(boardGame)
                 _boardGameData.postValue(boardGame)
             } catch (e: Exception) {
                 _boardGameData.postValue(null)
