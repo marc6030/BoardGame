@@ -17,9 +17,6 @@ data class BoardGame(
     @field:Element(name = "ratingBGG", required = false)
     var ratingBGG: String = "",
 
-    @field:Element(name = "ratingBGGBandit", required = false)
-    var ratingBGGBandit: String = "",
-
     @field:Element(name = "ratingUser", required = false)
     var userRating: String = "",
 

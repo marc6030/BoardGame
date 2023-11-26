@@ -10,6 +10,7 @@ import com.example.myapplication.API.RetrofitClient
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
 import android.util.Log
+import com.example.myapplication.boardgameSelections
 import com.example.myapplication.models.BoardGameSearchItems
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseUser
@@ -26,6 +27,8 @@ class MyViewModel : ViewModel() {
     private var _boardGameSearch = MutableLiveData<BoardGameSearchItems?>()
     private var _userAuthenticated = MutableLiveData<Boolean>()
     private var _favoriteBoardGameList = MutableLiveData<List<BoardGame?>>()
+    private var _userRating = MutableLiveData<String>()
+    private var _averageRating = MutableLiveData<Int>()
 
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
@@ -42,17 +45,49 @@ class MyViewModel : ViewModel() {
     var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
     var boardGameData: LiveData<BoardGame?> = _boardGameData
     var favoriteBoardGameList: LiveData<List<BoardGame?>> = _favoriteBoardGameList
+    var userRating: LiveData<String> = _userRating
+    var averageRating: LiveData<Int> = _averageRating
 
-    fun toggleRatings(boardGame: BoardGame?, rating: String) {
+    /*fun toggleRatings(boardGame: BoardGame?, rating: String) {
         if (boardGame != null) {
-            fetchAverageRating(boardGame)
-            fetchUserRating(boardGame)
             if (boardGame.userRating != rating) {
                 insertAverageRating(boardGame.id, rating)
             } else {
                 removeRatingFromDB(boardGame.id)
             }
+            fetchAverageRating(boardGame)
+            fetchUserRating(boardGame)
             _boardGameData.value = boardGame// Assuming _boardGameData is the MutableState
+        }
+    }
+*/
+    fun toggleRatings(boardGame: BoardGame?, rating: String) {
+        if (boardGame != null) {
+            if (boardGame.userRating != rating) {
+                Log.v("notUpdatedboardgamevalue", "${_boardGameData.value}")
+                viewModelScope.launch(Dispatchers.IO) {
+                    insertAverageRating(boardGame.id, rating)
+                    val updatedBoardGame : BoardGame = boardGame.copy()
+                    Log.v("temp1Updatedboardgamevalue", "${updatedBoardGame}")
+                    fetchAverageRating(updatedBoardGame)
+                    Log.v("temp2Updatedboardgamevalue", "${updatedBoardGame}")
+                    fetchUserRating(updatedBoardGame)
+                    withContext(Dispatchers.Main) {
+                        _boardGameData.value = updatedBoardGame
+                        Log.v("Updatedboardgamevalue", "${_boardGameData.value}")
+                    }
+                }
+            } else {
+                viewModelScope.launch(Dispatchers.IO) {
+                    removeRatingFromDB(boardGame.id)
+                    val updatedBoardGame : BoardGame = boardGame.copy()
+                    fetchAverageRating(updatedBoardGame)
+                    fetchUserRating(updatedBoardGame)
+                    withContext(Dispatchers.Main) {
+                        _boardGameData.value = boardGame.copy()
+                    }
+                }
+            }
         }
     }
 
@@ -152,6 +187,7 @@ class MyViewModel : ViewModel() {
                     if (ratingSnapshot.documents.size != 0) {
                         average = rating / ratingSnapshot.documents.size
                     }
+                    _averageRating.value = average
                     boardGame.averageRatingBB = average
                     Log.v(
                         "add fav list",
@@ -177,6 +213,7 @@ class MyViewModel : ViewModel() {
                     ratingString = ratingSnapshot["rating"].toString()
                 }
                 withContext(Dispatchers.Main) {
+                    _userRating.value = ratingString
                     boardGame.userRating = ratingString
                     Log.v("get userRating", "${ratingString} + ${ratingSnapshot["rating"]}")
                 }
