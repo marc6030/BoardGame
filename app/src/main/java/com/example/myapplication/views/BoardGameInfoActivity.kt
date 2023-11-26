@@ -29,18 +29,15 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.MyViewModel
-import okio.blackholeSink
 
 
 @Composable
@@ -54,7 +51,6 @@ fun BoardGameInfoActivity(
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
         viewModel.fetchBoardGameData(gameID!!)
-        viewModel.fetchAverageRating(gameID)
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
 
@@ -471,8 +467,8 @@ fun ratingDisplay(text: String,
                   viewModel: MyViewModel,
                   boardGame: BoardGame){
     var num_of_stars = 0.0
-    if(boardGame.ratingUser != ""){
-        num_of_stars = boardGame.ratingUser.toDouble()
+    if(boardGame.userRating != ""){
+        num_of_stars = boardGame.userRating.toDouble()
     }
     Column {
         Box {

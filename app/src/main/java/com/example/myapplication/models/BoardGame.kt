@@ -21,7 +21,7 @@ data class BoardGame(
     var ratingBGGBandit: String = "",
 
     @field:Element(name = "ratingUser", required = false)
-    var ratingUser: String = "",
+    var userRating: String = "",
 
     @field:Element(name = "averageRatingBB", required = false)
     var averageRatingBB: Int = 0,
