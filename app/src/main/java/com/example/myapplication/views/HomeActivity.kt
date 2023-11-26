@@ -125,9 +125,12 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-
                     boardGameSelection("Hotness", items.boardGames, navController)
                     boardGameSelection("test", items.boardGames, navController)
+                    boardGameSelection("Superhot", items.boardGames, navController)
+                    boardGameSelection("rpggames", items.boardGames, navController)
+                    boardGameSelection("dungeon games", items.boardGames, navController)
+                    boardGameSelection("shooters", items.boardGames, navController)
 
                 }
             }
