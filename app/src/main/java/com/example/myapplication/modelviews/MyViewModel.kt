@@ -49,11 +49,11 @@ class MyViewModel : ViewModel() {
             if (boardGame.ratingUser != rating) {
                 insertAverageRating(boardGame.id, rating)
                 updatedBoardGame = boardGame.copy(ratingUser = rating)
-                fetchAverageRating(updatedBoardGame)
+                fetchAverageRating(boardGame.id)
             } else {
                 removeRatingFromDB(boardGame.id)
                 updatedBoardGame = boardGame.copy(ratingUser = "")
-                fetchAverageRating(updatedBoardGame)
+                fetchAverageRating(boardGame.id)
             }
                 _boardGameData.value =
                     updatedBoardGame // Assuming _boardGameData is the MutableState
@@ -135,11 +135,11 @@ class MyViewModel : ViewModel() {
         }
     }
 
-    fun fetchAverageRating(boardGame: BoardGame) {
+    fun fetchAverageRating(gameID : String) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     val ratingSnapshot = db.collection("Ratings")
-                        .document(boardGame.id)
+                        .document(gameID)
                         .collection("userRatings")
                         .get()
                         .await()
@@ -153,13 +153,15 @@ class MyViewModel : ViewModel() {
                         i++
                     }
 
+                    var updateBoardGame : BoardGame = repository.getBoardGame(gameID)
                     withContext(Dispatchers.Main) {
                         if (i != 0) {
-                            boardGame.averageRatingBB = rating / i
+                            updateBoardGame = updateBoardGame.copy(averageRatingBB = rating/i, ratingUser = rating.toString())
                         } else {
-                            boardGame.averageRatingBB = 0
+                            updateBoardGame = updateBoardGame.copy(averageRatingBB = 0, ratingUser = rating.toString())
                         }
-                        Log.v("add fav list", "${boardGame.averageRatingBB} + ${ratingSnapshot.documents.size}")
+                        _boardGameData.value = updateBoardGame
+                        Log.v("add fav list", "${updateBoardGame.averageRatingBB} + ${ratingSnapshot.documents.size}")
                     }
                 } catch (e: Exception) {
                     Log.e("fetchAverageRating", "Error fetching average rating", e)
@@ -167,30 +169,6 @@ class MyViewModel : ViewModel() {
             }
         }
 
-
-//    fun fetchAverageRating(id: String) {
-//        val tempRating: ArrayList<String> = ArrayList();
-//        _isLoading.postValue(true)
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                val ratingSnapshot = db.collection("Ratings").document(id)
-//                    .collection("userRating")
-//                    .get()
-//                    .await()
-//
-//                for (document in ratingSnapshot) {
-//                    tempRating.add(document.data["rating"].toString())
-//                }
-//
-//                //_boardGameData.postValue(boardGame)
-//            } catch (e: Exception) {
-//                _dbRating.postValue(null)
-//            } finally {
-//                _isLoading.postValue(false)
-//            }
-//            _dbRating.postValue(tempRating)
-//        }
-//    }
 
     fun removeRatingFromDB(id: String) {
         viewModelScope.launch(Dispatchers.IO) {

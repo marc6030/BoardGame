@@ -54,6 +54,7 @@ fun BoardGameInfoActivity(
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
         viewModel.fetchBoardGameData(gameID!!)
+        viewModel.fetchAverageRating(gameID)
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
 
