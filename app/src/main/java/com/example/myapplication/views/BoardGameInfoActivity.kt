@@ -415,9 +415,10 @@ fun complexInfo(title: String, infoList : List<String>) {
 
 @Composable
 fun ratingTab(boardGame: BoardGame, viewModel: MyViewModel){
+    val averageRating by viewModel.averageRating.observeAsState()
     Column {
         starDisplay(boardGame.ratingBGG, "BGG rating")
-        starDisplay(boardGame.averageRatingBB.toString(), text ="BoardBandit Average Rating")
+        starDisplay(averageRating.toString(), text ="BoardBandit Average Rating")
         ratingDisplay(text = "Your Rating" , viewModel =viewModel , boardGame =  boardGame)
         Log.v("BGG Rating", "${boardGame.ratingBGG}")
     }
@@ -467,10 +468,11 @@ fun ratingDisplay(text: String,
                   viewModel: MyViewModel,
                   boardGame: BoardGame){
     var num_of_stars = 0.0
-    if(boardGame.userRating == ""){
+    val userRating by viewModel.userRating.observeAsState()
+    if(userRating == ""){
         num_of_stars = 0.0
     }else{
-        num_of_stars = boardGame.userRating.toDouble()
+        num_of_stars = userRating!!.toDouble()
     }
     Column {
         Box {

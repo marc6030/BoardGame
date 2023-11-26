@@ -67,11 +67,12 @@ class MyViewModel : ViewModel() {
                 Log.v("notUpdatedboardgamevalue", "${_boardGameData.value}")
                 viewModelScope.launch(Dispatchers.IO) {
                     insertAverageRating(boardGame.id, rating)
+                    Log.v("temp1Updatedboardgamevalue", "${boardGame}")
+                    fetchAverageRating(boardGame)
+                    Log.v("temp2Updatedboardgamevalue", "${boardGame}")
+                    fetchUserRating(boardGame)
+                    Log.v("temp3Updatedboardgamevalue", "${boardGame}")
                     val updatedBoardGame : BoardGame = boardGame.copy()
-                    Log.v("temp1Updatedboardgamevalue", "${updatedBoardGame}")
-                    fetchAverageRating(updatedBoardGame)
-                    Log.v("temp2Updatedboardgamevalue", "${updatedBoardGame}")
-                    fetchUserRating(updatedBoardGame)
                     withContext(Dispatchers.Main) {
                         _boardGameData.value = updatedBoardGame
                         Log.v("Updatedboardgamevalue", "${_boardGameData.value}")
