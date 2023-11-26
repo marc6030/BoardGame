@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.compose.foundation.Image
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,8 +35,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,6 +51,10 @@ import com.example.myapplication.views.NavBar
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
+
+
+    val logo: Painter = painterResource(id = R.drawable.banditlogo)
+    val navBar = NavBar()
     val context = LocalContext.current
     // Check internet Connection - this does not belong here.
     if (!isInternetAvailable(context)) {
@@ -92,34 +99,32 @@ fun boardgameSelections(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth()
-                    .background(Color.White)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = null,
+            ){
+                Box(
                     modifier = Modifier
-                        .height(80.dp)
-                        .width(80.dp)
-                        .align(Alignment.Center)
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .height(2.dp)
-                    .fillMaxWidth()
-                    .background(Color.Black)
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(Color.White)
-            )
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .background(Color.White)
+                ) {
+                    Image(
+                        painter = logo,
+                        contentDescription = null, // Set a meaningful content description if needed
+                        modifier = Modifier
+                            .height(120.dp)
+                            .width(120.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+                Box(
+                        modifier = Modifier
+                            .height(2.dp)
+                            .fillMaxWidth()
+                            .background(Color.Black)
+                        )
+            LazyColumn( modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .background(Color.White))
             {
                 item {
 
