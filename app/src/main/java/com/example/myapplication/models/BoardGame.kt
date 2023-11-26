@@ -11,6 +11,9 @@ data class BoardGame(
     @field:Element(name = "isfavorite", required = false)
     var isfavorite: Boolean = false,
 
+    @field:Element(name = "isRated", required = false)
+    var isRated: Boolean = false,
+
     @field:Element(name = "ratingBGG", required = false)
     var ratingBGG: String = "",
 
@@ -19,6 +22,9 @@ data class BoardGame(
 
     @field:Element(name = "ratingUser", required = false)
     var ratingUser: String = "",
+
+    @field:Element(name = "averageRatingBB", required = false)
+    var averageRatingBB: Int = 0,
 
     @field:Element(name = "id", required = false)
     var id: String = "",
@@ -48,36 +54,36 @@ data class BoardGame(
     var imageURL: String = "",
 
     @field:Element(name = "averageweight", required = false)
-    var averageWeight : String = "",
+    var averageWeight: String = "",
 
     @field:Element(name = "OverallRank", required = false)
-    var overallRank : String = "",
+    var overallRank: String = "",
 
     @field:Element(name = "CategoryRank", required = false)
-    var categoryRank : String = "",
+    var categoryRank: String = "",
 
     @field:Element(name = "Category", required = false)
-    var category : String = "",
+    var category: String = "",
 
     @field:Element(name = "Mechanisms", required = false)
-    var mechanisms : List<String> = emptyList(),
+    var mechanisms: List<String> = emptyList(),
 
     @field:Element(name = "Publishers", required = false)
-    var publishers : List<String> = emptyList(),
+    var publishers: List<String> = emptyList(),
 
     @field:Element(name = "Categories", required = false)
-    var categories : List<String> = emptyList(),
+    var categories: List<String> = emptyList(),
 
     @field:Element(name = "Families", required = false)
-    var families : List<String> = emptyList(),
+    var families: List<String> = emptyList(),
 
     @field:Element(name = "Designers", required = false)
-    var designers : List<String> = emptyList(),
+    var designers: List<String> = emptyList(),
 
     @field:Element(name = "Artists", required = false)
-    var artists : List<String> = emptyList(),
+    var artists: List<String> = emptyList(),
 
-) {
+    ) {
     fun shortTitel(): String{
         val index = name.indexOf(":")
         return if (index != -1) {

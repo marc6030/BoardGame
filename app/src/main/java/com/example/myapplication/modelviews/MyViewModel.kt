@@ -43,7 +43,22 @@ class MyViewModel : ViewModel() {
     var boardGameData: LiveData<BoardGame?> = _boardGameData
     var favoriteBoardGameList: LiveData<List<BoardGame?>> = _favoriteBoardGameList
 
-
+    fun toggleRatings(boardGame: BoardGame?, rating: String) {
+        if (boardGame != null) {
+            val updatedBoardGame: BoardGame
+            if (boardGame.ratingUser != rating) {
+                insertAverageRating(boardGame.id, rating)
+                updatedBoardGame = boardGame.copy(ratingUser = rating)
+                fetchAverageRating(updatedBoardGame)
+            } else {
+                removeRatingFromDB(boardGame.id)
+                updatedBoardGame = boardGame.copy(ratingUser = "")
+                fetchAverageRating(updatedBoardGame)
+            }
+                _boardGameData.value =
+                    updatedBoardGame // Assuming _boardGameData is the MutableState
+            }
+    }
 
     fun toggleFavorite(boardGame: BoardGame?) {
         if (boardGame != null) {
@@ -94,7 +109,7 @@ class MyViewModel : ViewModel() {
                     // Use plus to add the new favorite BoardGame to the list
                     _favoriteBoardGameList.value = _favoriteBoardGameList.value?.plus(newFav)
 
-                    Log.v("add fav list", "${favoriteBoardGameList.value?.map {it?.id}}")
+                    Log.v("add fav list", "${favoriteBoardGameList.value?.map { it?.id }}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error in insertIntoUserFavoriteDB", e)
@@ -103,20 +118,94 @@ class MyViewModel : ViewModel() {
         }
     }
 
-    fun insertAverageRating(id: String, rating: String){
-        val previous_entity = db.collection("Ratings").document(id).get()
+    fun insertAverageRating(id: String, rating: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val userRating = hashMapOf("rating" to rating)
 
-        if (previous_entity != null) {
-            db.collection("Ratings").document(id).set(hashMapOf("rating" to rating))
+                db.collection("Ratings").document(id)
+                    .collection("userRatings").document(getUserID())
+                    .set(userRating, SetOptions.merge())
+                    .await()
+
+            } catch (e: Exception) {
+                Log.v("FirebaseTest", "Error in insertAverageRating", e)
+                // Write something handling exceptins exception
+            }
         }
     }
 
-    fun fetchAverageRating(id: String){
+    fun fetchAverageRating(boardGame: BoardGame) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val ratingSnapshot = db.collection("Ratings")
+                        .document(boardGame.id)
+                        .collection("userRatings")
+                        .get()
+                        .await()
 
-        val previous_entity = db.collection("Ratings").document(id).get()
+                    var rating = 0
+                    var i = 0
+
+                    for (document in ratingSnapshot.documents) {
+                        val ratingString: String = document["rating"].toString()
+                        rating += ratingString.toInt()
+                        i++
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        if (i != 0) {
+                            boardGame.averageRatingBB = rating / i
+                        } else {
+                            boardGame.averageRatingBB = 0
+                        }
+                        Log.v("add fav list", "${boardGame.averageRatingBB} + ${ratingSnapshot.documents.size}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("fetchAverageRating", "Error fetching average rating", e)
+                }
+            }
+        }
 
 
+//    fun fetchAverageRating(id: String) {
+//        val tempRating: ArrayList<String> = ArrayList();
+//        _isLoading.postValue(true)
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                val ratingSnapshot = db.collection("Ratings").document(id)
+//                    .collection("userRating")
+//                    .get()
+//                    .await()
+//
+//                for (document in ratingSnapshot) {
+//                    tempRating.add(document.data["rating"].toString())
+//                }
+//
+//                //_boardGameData.postValue(boardGame)
+//            } catch (e: Exception) {
+//                _dbRating.postValue(null)
+//            } finally {
+//                _isLoading.postValue(false)
+//            }
+//            _dbRating.postValue(tempRating)
+//        }
+//    }
 
+    fun removeRatingFromDB(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                db.collection("Ratings").document(id)
+                    .collection("userRatings")
+                    .document(getUserID())
+                    .delete()
+                    .await()
+
+            } catch (e: Exception) {
+                Log.v("FirebaseTest", "Error writing document", e)
+                // Write something handling exceptins exception
+            }
+        }
     }
 
 
@@ -129,20 +218,20 @@ class MyViewModel : ViewModel() {
                     .await()
                 withContext(Dispatchers.Main) {
                     // We are using filter instead of minus because minus compares the objects hash value which might differ
-                    _favoriteBoardGameList.value = _favoriteBoardGameList.value?.filter { it!!.id != id } // "it" is a lambda function and checks all elements in the lsit..
+                    _favoriteBoardGameList.value =
+                        _favoriteBoardGameList.value?.filter { it!!.id != id } // "it" is a lambda function and checks all elements in the list..
                     Log.v("remove fav list", "${favoriteBoardGameList.value?.map { it?.id }}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error writing document", e)
-                // Write something handling exceptins exception
+                // Write something handling exceptions exception
             }
         }
     }
 
 
-
     fun fetchFavoriteListFromDB() {
-        val tempBg : ArrayList<BoardGame> = ArrayList();
+        val tempBg: ArrayList<BoardGame> = ArrayList();
         _isLoading.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -175,7 +264,7 @@ class MyViewModel : ViewModel() {
             try {
                 val boardGame: BoardGame = repository.getBoardGame(id)
                 Log.v("bgload", "bgnotloading: $boardGame")
-                if (favoriteBoardGameList.value!!.any {it?.id == boardGame.id}) {
+                if (favoriteBoardGameList.value!!.any { it?.id == boardGame.id }) {
                     boardGame.isfavorite = true
                 }
                 _boardGameData.postValue(boardGame)

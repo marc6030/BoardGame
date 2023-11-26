@@ -13,7 +13,6 @@ import com.example.myapplication.BoardGameItem
 import com.example.myapplication.BoardGameItems
 import com.example.myapplication.models.BoardGameSearch
 import com.example.myapplication.models.BoardGameSearchItems
-import okhttp3.internal.wait
 
 class Repository(private val apiService: ApiService) {
 

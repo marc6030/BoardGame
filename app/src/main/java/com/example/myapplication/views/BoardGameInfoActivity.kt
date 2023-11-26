@@ -36,6 +36,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.MyViewModel
@@ -55,6 +56,7 @@ fun BoardGameInfoActivity(
         viewModel.fetchBoardGameData(gameID!!)
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
+
     }
 
     val isLoading by viewModel.isLoading.observeAsState(initial = false)
@@ -138,7 +140,7 @@ fun BoardGameInfoActivity(
                                 )
 
                                 2 -> ratingTab(
-                                    boardGame!!
+                                    boardGame!!, viewModel
                                 )
                             }
                         }
@@ -415,9 +417,11 @@ fun complexInfo(title: String, infoList : List<String>) {
 }
 
 @Composable
-fun ratingTab(boardGame: BoardGame){
+fun ratingTab(boardGame: BoardGame, viewModel: MyViewModel){
     Column {
         starDisplay(boardGame.ratingBGG, "BGG rating")
+        starDisplay(boardGame.averageRatingBB.toString(), text ="BoardBandit Average Rating")
+        ratingDisplay(text = "Your Rating" , viewModel =viewModel , boardGame =  boardGame)
         Log.v("BGG Rating", "${boardGame.ratingBGG}")
     }
 }
@@ -462,9 +466,39 @@ fun starDisplay(stars: String, text: String){
 }
 
 @Composable
-fun interactebleStars(){
+fun ratingDisplay(text: String,
+                  viewModel: MyViewModel,
+                  boardGame: BoardGame){
+    var num_of_stars = 0.0
+    if(boardGame.ratingUser != ""){
+        num_of_stars = boardGame.ratingUser.toDouble()
+    }
+    Column {
+        Box {
+            Text(text)
+        }
+        Box(
+            modifier = Modifier
+                .padding(2.dp)
+                .wrapContentWidth(Alignment.Start)
+        ) {
+            Row() {
+                for (i in 1..10) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Favorite Icon",
+                            tint = if(num_of_stars >= i) Color.Yellow else Color.Black,
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clickable { viewModel.toggleRatings(boardGame, i.toString()) }
+                            // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
+                        )
+                    }
+                }
+            }
+        }
+    }
 
-}
 
 @Composable
 fun favoriteButton(navController: NavHostController,
