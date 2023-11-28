@@ -1,7 +1,9 @@
 
 
-Feature: Search for boardgames
-  Scenario: The user searches for monopoly
-    Given The user searches for a board game
-    When The users enters his search
-    Then The search results is returned
+Feature: Search for Board Games
+
+  Scenario: The user searches for Monopoly
+    Given the board game search functionality is available
+    When the user submits a search for "Monopoly"
+    Then the search results should include "Monopoly" among the returned games
+

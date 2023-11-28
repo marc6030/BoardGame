@@ -1,23 +1,26 @@
 package io.cucumber.skeleton
 
+import androidx.activity.viewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapplication.modelviews.MyViewModel
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
-
 class UserTest1 {
-    @Given("The user searches for a board game")
+    @Given("the board game search functionality is available")
     fun i_work() {
-        println("im not crashing")
+        val viewModel: MyViewModel = MyViewModel()
+
     }
 
 
-    @When("The users enters his search")
+    @When("the user submits a search for \"Monopoly\"")
     fun sfds() {
         println("nej")
     }
 
-    @Then("The search results is returned")
+    @Then("the search results should include \"Monopoly\" among the returned games")
     fun qq() {
         println("hej")
     }
