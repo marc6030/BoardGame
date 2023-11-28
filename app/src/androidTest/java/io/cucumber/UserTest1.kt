@@ -1,25 +1,23 @@
-package io.cucumber.skeleton
+package io.cucumber
 
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
-class omfg {
-    @Given("The user is on the search page2")
+class UserTest1 {
+    @Given("The user searches for a board game")
     fun i_work() {
         println("im not crashing")
     }
 
 
-    @When("The user enters \"monopoly\" into the search bar2")
+    @When("The users enters his search")
     fun sfds() {
         println("nej")
     }
 
-    @Then("The user should be able to find all monopoly games2")
+    @Then("The search results is returned")
     fun qq() {
         println("hej")
     }
 }
-
-

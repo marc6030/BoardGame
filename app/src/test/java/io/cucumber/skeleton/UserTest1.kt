@@ -4,19 +4,20 @@ import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
+
 class UserTest1 {
-    @Given("The user is on the search page")
+    @Given("The user searches for a board game")
     fun i_work() {
         println("im not crashing")
     }
 
 
-    @When("The user enters \"monopoly\" into the search bar")
+    @When("The users enters his search")
     fun sfds() {
         println("nej")
     }
 
-    @Then("The user should be able to find all monopoly games")
+    @Then("The search results is returned")
     fun qq() {
         println("hej")
     }
