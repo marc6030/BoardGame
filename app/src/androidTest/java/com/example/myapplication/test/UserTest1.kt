@@ -29,15 +29,18 @@ class UserTest1 {
     @When("the user submits a search for \"Monopoly\"")
     fun sfds() {
 
-        viewModel.fetchGameBoardSearch("monopoly")
+        try{
+            viewModel.fetchGameBoardSearch("monopoly")
+            Assert.assertTrue(true)
+        } catch(e: Exception) {
+            Assert.assertTrue(false)
+        }
 
 
     }
 
     @Then("the search results should include \"Monopoly\" among the returned games")
     fun qq() {
-        viewModel.fetchGameBoardSearch("monopoly")
-
         Thread.sleep(5000)
         val searchResults = viewModel.boardGameSearchResults.value?.boardGameSearchItems ?: emptyList()
         Log.v("monopolyGame", "$searchResults")
