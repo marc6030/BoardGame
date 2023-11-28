@@ -25,19 +25,16 @@ import com.google.android.gms.common.api.ApiException
 class MainActivity : ComponentActivity() {
 
     private lateinit var authManager: AuthenticationManager
+    val viewModel: MyViewModel by viewModels()
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = GoogleSignIn.getLastSignedInAccount(this)
-        val viewModel: MyViewModel by viewModels()
-        authManager = AuthenticationManager(this, viewModel)
+        authManager = AuthenticationManager(this)
         setContent {
             boardgameApp(viewModel, authManager, account)
         }
-
     }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -57,15 +54,14 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun boardgameApp(viewModel: MyViewModel, authManager: AuthenticationManager, account: GoogleSignInAccount?) {
-
+fun boardgameApp(viewModel:MyViewModel, authManager: AuthenticationManager, account: GoogleSignInAccount?) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = "login"
     ) {
         composable("login") {
-            LoginScreen(viewModel, navController) { authManager.signIn() }
+            LoginScreen(viewModel, navController) { authManager.signIn(viewModel) }
         }
         composable("home") {
             HomeActivity(navController, viewModel)

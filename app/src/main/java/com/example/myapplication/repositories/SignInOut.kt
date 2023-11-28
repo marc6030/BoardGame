@@ -10,11 +10,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class AuthenticationManager(private val activity: Activity, private val viewModel: MyViewModel) {
+class AuthenticationManager(private val activity: Activity) {
     interface SignInResult {
         fun onSignInResult(success: Boolean, userId: String?)
     }
-
+    lateinit private var viewModel: MyViewModel
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var googleSignInClient: GoogleSignInClient
     init {
@@ -25,9 +25,10 @@ class AuthenticationManager(private val activity: Activity, private val viewMode
         googleSignInClient = GoogleSignIn.getClient(activity, gso)
     }
 
-    fun signIn() {
+    fun signIn(viewModel: MyViewModel) {
         val signInIntent = googleSignInClient.signInIntent
         activity.startActivityForResult(signInIntent, RC_SIGN_IN)
+        this.viewModel = viewModel
     }
 
     fun firebaseAuthWithGoogle(acct: GoogleSignInAccount?) {

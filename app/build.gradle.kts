@@ -5,9 +5,10 @@ plugins {
 }
 
 
+
 android {
     namespace = "com.example.myapplication"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.myapplication"
@@ -20,7 +21,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
     }
+
+
 
     buildTypes {
         release {
@@ -31,6 +35,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -49,7 +54,10 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    buildToolsVersion = "34.0.0"
 }
+
+
 
 dependencies {
 
@@ -99,18 +107,43 @@ dependencies {
 
     // Also add the dependency for the Google Play services library and specify its version
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
 
+    // cucumber
+    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation(platform("io.cucumber:cucumber-bom:7.14.1"))
+
+    testImplementation("io.cucumber:cucumber-java")
+    testImplementation("io.cucumber:cucumber-junit-platform-engine")
+    testImplementation("org.junit.platform:junit-platform-suite")
+    testImplementation("org.junit.jupiter:junit-jupiter")
+
+    // Cucumber in androidtest
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
+
+    // For logintest - using android
     // Importing cucumber for testing
-    testImplementation("io.cucumber:cucumber-java:7.14.0")
-    testImplementation("io.cucumber:cucumber-junit:7.14.0")
+    androidTestImplementation("io.cucumber:cucumber-java:7.14.1")
+    androidTestImplementation("io.cucumber:cucumber-junit:7.14.1")
 
-    testImplementation("androidx.navigation:navigation-testing:2.7.5")
     // AndroidJUnit Runner and JUnit Rules
-    testImplementation("androidx.test.ext:junit:1.1.3")
-    testImplementation("androidx.test:rules:1.1.3")
-    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:rules:1.5.0")
 
     // Espresso core
-    testImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test:rules:1.4.0")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.5")
+
 }
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+    // Work around. Gradle does not include enough information to disambiguate
+    // between different examples and scenarios.
+    systemProperty("cucumber.junit-platform.naming-strategy", "long")
+}
+
 

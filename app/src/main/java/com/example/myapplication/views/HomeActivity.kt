@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -157,6 +158,7 @@ fun boardGameSelection(headline: String,
             Box(
                 modifier = Modifier
                     .size(175.dp)
+                    .testTag("items_1234")
                     .padding(5.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .clickable { navController.navigate("boardgameinfo/$gameID")
@@ -168,7 +170,7 @@ fun boardGameSelection(headline: String,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize().testTag("game_picture")
                 )
                 Box(
                     modifier = Modifier
