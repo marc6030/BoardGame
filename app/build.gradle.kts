@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.example.myapplication.test.RunCucumberTest"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -52,6 +52,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
         }
     }
     buildToolsVersion = "34.0.0"
@@ -109,33 +111,14 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("androidx.test.uiautomator:uiautomator:2.2.0")
 
-    // cucumber
-    testImplementation(platform("org.junit:junit-bom:5.10.1"))
-    testImplementation(platform("io.cucumber:cucumber-bom:7.14.1"))
-
-    testImplementation("io.cucumber:cucumber-java")
-    testImplementation("io.cucumber:cucumber-junit-platform-engine")
-    testImplementation("org.junit.platform:junit-platform-suite")
-    testImplementation("org.junit.jupiter:junit-jupiter")
 
     // Cucumber in androidtest
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
 
-    // For logintest - using android
-    // Importing cucumber for testing
-    androidTestImplementation("io.cucumber:cucumber-java:7.14.1")
-    androidTestImplementation("io.cucumber:cucumber-junit:7.14.1")
 
-    // AndroidJUnit Runner and JUnit Rules
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("io.cucumber:cucumber-android:7.14.0")
+    androidTestImplementation("io.cucumber:cucumber-picocontainer:7.14.1")
 
-    // Espresso core
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("androidx.navigation:navigation-testing:2.7.5")
 
 }
 

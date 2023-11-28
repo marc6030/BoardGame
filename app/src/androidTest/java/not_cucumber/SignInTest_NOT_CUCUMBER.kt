@@ -1,7 +1,6 @@
-package com.example.myapplication
-
+package not_cucumber
+/*
 import android.util.Log
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
@@ -13,12 +12,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import com.example.myapplication.MainActivity
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.concurrent.TimeoutException
+
 
 @RunWith(AndroidJUnit4::class)
 class UserTest1 {
@@ -109,4 +110,8 @@ class UserTest1 {
         // Check if BoardGameInfoActivity is displayed or if the navigation occurred
     }
 }
+
+
+ */
+
 
