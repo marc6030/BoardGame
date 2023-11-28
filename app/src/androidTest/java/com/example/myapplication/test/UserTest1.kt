@@ -8,8 +8,6 @@ import io.cucumber.java.en.When
 import org.junit.Assert
 
 class UserTest1 {
-
-
     private val viewModel = MyViewModel()
 
     @Given("the board game search functionality is available")
@@ -22,8 +20,6 @@ class UserTest1 {
         } catch (e: Exception) {
             Assert.assertTrue(false)
         }
-
-
     }
 
     @When("the user submits a search for \"Monopoly\"")
@@ -35,8 +31,6 @@ class UserTest1 {
         } catch(e: Exception) {
             Assert.assertTrue(false)
         }
-
-
     }
 
     @Then("the search results should include \"Monopoly\" among the returned games")
@@ -49,14 +43,8 @@ class UserTest1 {
 
         if (monopolyGame) {
             Assert.assertTrue(true)
-            // Element with title "Monopoly" found
-            // You can perform further operations with `monopolyGame`
         } else {
-            // No element with title "Monopoly" was found in the list
             Assert.assertTrue(false)
         }
-
-
-
     }
 }
