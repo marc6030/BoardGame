@@ -1,5 +1,6 @@
 package com.example.myapplication.test
 
+import android.util.Log
 import com.example.myapplication.modelviews.MyViewModel
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
@@ -7,10 +8,13 @@ import io.cucumber.java.en.When
 import org.junit.Assert
 
 class UserTest1 {
+
+
+    private val viewModel = MyViewModel()
+
     @Given("the board game search functionality is available")
     fun i_work() {
         println("NICE")
-        val viewModel = MyViewModel()
 
         try {
             viewModel.fetchBoardGameData("test")
@@ -24,23 +28,23 @@ class UserTest1 {
 
     @When("the user submits a search for \"Monopoly\"")
     fun sfds() {
-        /*
-        val viewModel: MyViewModel = MyViewModel()
+
         viewModel.fetchGameBoardSearch("monopoly")
 
-         */
+
     }
 
     @Then("the search results should include \"Monopoly\" among the returned games")
     fun qq() {
-        /*
-        val viewModel: MyViewModel = MyViewModel()
+        viewModel.fetchGameBoardSearch("monopoly")
+
+        Thread.sleep(5000)
         val searchResults = viewModel.boardGameSearchResults.value?.boardGameSearchItems ?: emptyList()
+        Log.v("monopolyGame", "$searchResults")
 
-        val monopolyGame = searchResults.find { it.name.equals("Monopoly", ignoreCase = true) }
+        val monopolyGame = searchResults.any { it.name.contains("Monopoly", ignoreCase = true) }
 
-
-        if (monopolyGame!!.equals("monopoly")) {
+        if (monopolyGame) {
             Assert.assertTrue(true)
             // Element with title "Monopoly" found
             // You can perform further operations with `monopolyGame`
@@ -49,6 +53,7 @@ class UserTest1 {
             Assert.assertTrue(false)
         }
 
-         */
+
+
     }
 }
