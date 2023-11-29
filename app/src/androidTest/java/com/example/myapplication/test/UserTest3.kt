@@ -7,35 +7,28 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import org.junit.Assert
 
-class UserTest2 {
+class UserTest3 {
     private val viewModel = MyViewModel()
 
-    @Given("the game is in the search results")
+    @Given("the user is on the front page")
     fun doGiven() {
         try {
-            viewModel.fetchGameBoardSearch("Anima")
-            val start_time = System.currentTimeMillis()
-            val timeout = start_time + 15000
-
-            while (System.currentTimeMillis() < timeout && viewModel.boardGameSearch == null) {
-                Thread.sleep(200)
-            }
-            val searchResults = viewModel.boardGameSearch?.boardGameSearchItems
-            val isAnimaPresent = searchResults?.any { it.name.contains("Anima", ignoreCase = true)}
-            Assert.assertTrue(isAnimaPresent != null && isAnimaPresent)
+            viewModel.fetchBoardGameList()
+            waitForResponse(viewModel.boardGameList)
+            Assert.assertTrue(viewModel.boardGameList != null)
         } catch(e: Exception) {
             Assert.assertTrue(false)
             e.printStackTrace()
         }
     }
 
-    @When ("the user selects Anima")
+    @When ("the user selects a game from trending section")
     fun doWhen() {
         // should probably be a ui test
         Assert.assertTrue(true)
     }
 
-    @Then ("the details of the game should be accessible")
+    @Then ("the game details are obtained")
     fun doThen() {
         val animaGameSearchResult = viewModel.boardGameSearch!!.boardGameSearchItems.find{ it.name == "Anima" }
         try {
@@ -56,5 +49,14 @@ class UserTest2 {
         Assert.assertTrue(viewModel.boardGameData?.mechanisms!!.contains("Dice Rolling"))
         Log.v("AnimaAge", viewModel.boardGameData!!.ratingBGG)
         Assert.assertFalse(viewModel.boardGameData?.ratingBGG.isNullOrEmpty())
+    }
+
+    fun <T : Any> waitForResponse(valToChange: T?) {
+        val start_time = System.currentTimeMillis()
+        val timeout = start_time + 15000
+
+        while (System.currentTimeMillis() < timeout && valToChange == null) {
+            Thread.sleep(200)
+        }
     }
 }
