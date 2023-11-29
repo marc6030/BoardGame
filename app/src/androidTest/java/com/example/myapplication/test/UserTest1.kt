@@ -35,8 +35,15 @@ class UserTest1 {
 
     @Then("the search results should include \"Monopoly\" among the returned games")
     fun qq() {
-        Thread.sleep(15000)
-        val searchResults = viewModel.boardGameSearch?.boardGameSearchItems ?: emptyList()
+        val start_time = System.currentTimeMillis()
+        val timeout = start_time + 15000
+
+        var searchResults = viewModel.boardGameSearch?.boardGameSearchItems ?: emptyList()
+
+        while (System.currentTimeMillis() < timeout && searchResults.isEmpty()) {
+            Thread.sleep(200);
+            searchResults = viewModel.boardGameSearch?.boardGameSearchItems ?: emptyList();
+        }
 
         Log.v("monopolyGame", "$searchResults")
 
