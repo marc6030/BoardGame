@@ -15,7 +15,6 @@ object RetrofitClient {
     val instance: ApiService by lazy {
         // Create Retrofit builder
         val retrofit = Retrofit.Builder()
-
             .baseUrl(BASE_URL)
             // Ensure that Retrofit can handle plain text responses
             .addConverterFactory(ScalarsConverterFactory.create())

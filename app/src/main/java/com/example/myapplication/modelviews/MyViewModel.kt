@@ -1,34 +1,37 @@
 package com.example.myapplication.modelviews
 
 import android.content.Context
-import com.example.myapplication.repositories.Repository
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.API.RetrofitClient
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
-import android.util.Log
-import com.example.myapplication.boardgameSelections
 import com.example.myapplication.models.BoardGameSearchItems
+import com.example.myapplication.repositories.Repository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 
 class MyViewModel : ViewModel() {
-    private var _isLoading = MutableLiveData<Boolean>()
-    private var _boardGameData = MutableLiveData<BoardGame?>()
-    private var _boardGameList = MutableLiveData<BoardGameItems?>()
-    private var _boardGameSearch = MutableLiveData<BoardGameSearchItems?>()
-    private var _userAuthenticated = MutableLiveData<Boolean>()
-    private var _favoriteBoardGameList = MutableLiveData<List<BoardGame?>>()
-    private var _userRating = MutableLiveData<String>()
-    private var _averageRating = MutableLiveData<Int>()
+    var isLoading by mutableStateOf(false)
+    var boardGameData by mutableStateOf<BoardGame?>(null)
+    var boardGameList by mutableStateOf<BoardGameItems?>(null)
+    var boardGameSearch by mutableStateOf<BoardGameSearchItems?>(null)
+    var userAuthenticated by mutableStateOf(false)
+    var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
+    var userRating by mutableStateOf("")
+    var averageRating by mutableStateOf<Int?>(null)
+
 
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
@@ -37,15 +40,8 @@ class MyViewModel : ViewModel() {
 
     // Exposing the values for the views
     val db = FirebaseFirestore.getInstance()
-    val isUserLoggedInGoogle: LiveData<Boolean> = _userAuthenticated
-    val boardGameSearchResults: LiveData<BoardGameSearchItems?> = _boardGameSearch
 
-    var isLoading: LiveData<Boolean> = _isLoading
-    var boardGameDataList: LiveData<BoardGameItems?> = _boardGameList
-    var boardGameData: LiveData<BoardGame?> = _boardGameData
-    var favoriteBoardGameList: LiveData<List<BoardGame?>> = _favoriteBoardGameList
-    var userRating: LiveData<String> = _userRating
-    var averageRating: LiveData<Int> = _averageRating
+
 
     fun toggleRatings(boardGame: BoardGame?, rating: String) {
         if (boardGame != null) {
@@ -69,24 +65,20 @@ class MyViewModel : ViewModel() {
             } else {
                 removeFromUserFavoriteDB(boardGame.id)
             }
-            _boardGameData.value = updatedBoardGame // Assuming _boardGameData is the MutableState
+            boardGameData = updatedBoardGame // Assuming _boardGameData is the MutableState
         }
     }
 
-    fun fetchBoardGameList() {             // Lige nu er det hot listen
-        _isLoading.postValue(true)
+    fun fetchBoardGameList() {
+        isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val boardGameList: BoardGameItems = repository.getBoardGameList()
-
-                withContext(Dispatchers.Main) {
-
-                    _boardGameList.postValue(boardGameList)
-                }
+                boardGameList = repository.getBoardGameList()
+                withContext(Dispatchers.Main) {}
             } catch (e: Exception) {
-                _boardGameList.postValue(null)
+                boardGameList = null
             } finally {
-                _isLoading.postValue(false)
+                isLoading = false
             }
         }
     }
@@ -108,9 +100,9 @@ class MyViewModel : ViewModel() {
                 // Update the LiveData on the main thread
                 withContext(Dispatchers.Main) {
                     // Use plus to add the new favorite BoardGame to the list
-                    _favoriteBoardGameList.value = _favoriteBoardGameList.value?.plus(newFav)
+                    favoriteBoardGameList += newFav
 
-                    Log.v("add fav list", "${favoriteBoardGameList.value?.map { it?.id }}")
+                    Log.v("add fav list", "${favoriteBoardGameList}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error in insertIntoUserFavoriteDB", e)
@@ -157,7 +149,7 @@ class MyViewModel : ViewModel() {
                     if (ratingSnapshot.documents.size != 0) {
                         average = rating / ratingSnapshot.documents.size
                     }
-                    _averageRating.value = average
+                    averageRating = average
                     boardGame.averageRatingBB = average
                     Log.v(
                         "add fav list",
@@ -183,7 +175,7 @@ class MyViewModel : ViewModel() {
                     ratingString = ratingSnapshot["rating"].toString()
                 }
                 withContext(Dispatchers.Main) {
-                    _userRating.value = ratingString
+                    userRating = ratingString
                     boardGame.userRating = ratingString
                     Log.v("get userRating", "${ratingString} + ${ratingSnapshot["rating"]}")
                 }
@@ -219,22 +211,18 @@ class MyViewModel : ViewModel() {
                     .document(id).delete()
                     .await()
                 withContext(Dispatchers.Main) {
-                    // We are using filter instead of minus because minus compares the objects hash value which might differ
-                    _favoriteBoardGameList.value =
-                        _favoriteBoardGameList.value?.filter { it!!.id != id } // "it" is a lambda function and checks all elements in the list..
-                    Log.v("remove fav list", "${favoriteBoardGameList.value?.map { it?.id }}")
+                    favoriteBoardGameList = favoriteBoardGameList.filter { it!!.id != id }
+                    Log.v("remove fav list", "${favoriteBoardGameList.map { it?.id }}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error writing document", e)
-                // Write something handling exceptions exception
             }
         }
     }
 
-
     fun fetchFavoriteListFromDB() {
-        val tempBg: ArrayList<BoardGame> = ArrayList();
-        _isLoading.postValue(true)
+        val tempBg: ArrayList<BoardGame> = ArrayList()
+        isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val favSnapshot = db.collection("BBUsers").document(getUserID())
@@ -247,52 +235,52 @@ class MyViewModel : ViewModel() {
                     boardGame.isfavorite = true
                     tempBg.add(boardGame)
                 }
-
-
-                //_boardGameData.postValue(boardGame)
             } catch (e: Exception) {
-                _favoriteBoardGameList.postValue(null)
+                favoriteBoardGameList = emptyList()
             } finally {
-                _isLoading.postValue(false)
+                isLoading = false
+                favoriteBoardGameList = tempBg
             }
-            _favoriteBoardGameList.postValue(tempBg)
         }
     }
 
 
     fun fetchBoardGameData(id: String) {
-        _isLoading.postValue(true)
+        isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val boardGame: BoardGame = repository.getBoardGame(id)
                 Log.v("bgload", "bgnotloading: $boardGame")
-                if (favoriteBoardGameList.value!!.any { it?.id == boardGame.id }) {
+                if (favoriteBoardGameList.any { it?.id == boardGame.id }) {
                     boardGame.isfavorite = true
                 }
                 fetchAverageRating(boardGame)
                 fetchUserRating(boardGame)
-                _boardGameData.postValue(boardGame)
+                withContext(Dispatchers.Main) {
+                    boardGameData = boardGame
+                }
             } catch (e: Exception) {
-                _boardGameData.postValue(null)
+                boardGameData = null
             } finally {
-                _isLoading.postValue(false) // why?
+                isLoading = false
             }
         }
     }
 
     fun fetchGameBoardSearch(userSearch: String) {
-        _isLoading.postValue(true)
+        isLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val boardGameSearchItems: BoardGameSearchItems =
-                    repository.getBoardGameSearch(userSearch)
+                val boardGameSearchItems: BoardGameSearchItems = repository.getBoardGameSearch(userSearch)
                 Log.v("bgsearch", "searchlogs: $boardGameSearchItems")
-                _boardGameSearch.postValue(boardGameSearchItems)
+                withContext(Dispatchers.Main) {
+                    boardGameSearch = boardGameSearchItems
+                }
             } catch (e: Exception) {
                 Log.v("bgsearch", "searchlogs: $e")
-                _boardGameSearch.postValue(null)
+                boardGameSearch = null
             } finally {
-                _isLoading.postValue(false) // why?
+                isLoading = false
             }
         }
     }
@@ -312,7 +300,7 @@ class MyViewModel : ViewModel() {
     // Updates the FirebaseUser and the user authentication status
     fun setUser(firebaseUser: FirebaseUser) {
         this.firebaseuser = firebaseUser
-        _userAuthenticated.value = true
+        userAuthenticated = true
     }
 
     fun getUserEmail(): String? {
@@ -329,8 +317,8 @@ class MyViewModel : ViewModel() {
 
 
     // LiveData to observe the user's sign-in status
-    fun verifySignedIn(): LiveData<Boolean> {
-        return _userAuthenticated
+    fun verifySignedIn(): Boolean {
+        return userAuthenticated
     }
 }
 

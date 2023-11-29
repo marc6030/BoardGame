@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import androidx.compose.foundation.Image
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,18 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,7 +55,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
         viewModel.fetchFavoriteListFromDB()
     }
 
-    val isLoading by viewModel.isLoading.observeAsState(initial = false)
+    val isLoading = viewModel.isLoading
 
     if (isLoading) {
         Row(
@@ -92,7 +84,7 @@ fun boardgameSelections(
     viewModel: MyViewModel
 ) {
     val navBar = NavBar()
-    val items = viewModel.boardGameDataList.observeAsState().value
+    val items = viewModel.boardGameList
     val logo: Painter = painterResource(id = R.drawable.banditlogo)
     if (items != null) {
         Column(

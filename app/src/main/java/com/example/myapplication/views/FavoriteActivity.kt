@@ -17,14 +17,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +48,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
         viewModel.fetchFavoriteListFromDB()
     }
 
-    val favoriteBoardGame by viewModel.favoriteBoardGameList.observeAsState(initial = emptyList())
+    val favoriteBoardGame = viewModel.favoriteBoardGameList
 
     Column(
         modifier = Modifier.fillMaxSize()
