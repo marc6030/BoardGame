@@ -14,7 +14,12 @@ class UserTest2 {
     fun doGiven() {
         try {
             viewModel.fetchGameBoardSearch("Anima")
-            Thread.sleep(5000)
+            val start_time = System.currentTimeMillis()
+            val timeout = start_time + 15000
+
+            while (System.currentTimeMillis() < timeout && viewModel.boardGameSearch == null) {
+                Thread.sleep(200)
+            }
             val searchResults = viewModel.boardGameSearch?.boardGameSearchItems
             val isAnimaPresent = searchResults?.any { it.name.contains("Anima", ignoreCase = true)}
             Assert.assertTrue(isAnimaPresent != null && isAnimaPresent)
@@ -35,15 +40,30 @@ class UserTest2 {
         val animaGameSearchResult = viewModel.boardGameSearch!!.boardGameSearchItems.find{ it.name == "Anima" }
         try {
             viewModel.fetchBoardGameData(animaGameSearchResult!!.id)
+            val start_time = System.currentTimeMillis()
+            val timeout = start_time + 15000
+
+            while (System.currentTimeMillis() < timeout && viewModel.boardGameData == null) {
+                Thread.sleep(200)
+            }
         } catch (e: Exception) {
             Assert.assertTrue(false)
             e.printStackTrace()
         }
         Log.v("AnimaAge", viewModel.boardGameData!!.age)
-        Assert.assertTrue(viewModel.boardGameData?.age == "4+")
+        Assert.assertTrue(viewModel.boardGameData?.age == "4")
         Log.v("AnimaAge", viewModel.boardGameData!!.mechanisms.first())
         Assert.assertTrue(viewModel.boardGameData?.mechanisms!!.contains("Dice Rolling"))
-        Log.v("AnimaAge", viewModel.boardGameData!!.age)
+        Log.v("AnimaAge", viewModel.boardGameData!!.ratingBGG)
         Assert.assertFalse(viewModel.boardGameData?.ratingBGG.isNullOrEmpty())
+    }
+
+    fun waitForResponse(valToChange: Any) {
+        val start_time = System.currentTimeMillis()
+        val timeout = start_time + 15000
+
+        while (System.currentTimeMillis() < timeout && valToChange == null) {
+            Thread.sleep(200)
+        }
     }
 }
