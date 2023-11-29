@@ -35,8 +35,9 @@ class UserTest1 {
 
     @Then("the search results should include \"Monopoly\" among the returned games")
     fun qq() {
-        Thread.sleep(5000)
-        val searchResults = viewModel.boardGameSearchResults.value?.boardGameSearchItems ?: emptyList()
+        Thread.sleep(15000)
+        val searchResults = viewModel.boardGameSearch?.boardGameSearchItems ?: emptyList()
+
         Log.v("monopolyGame", "$searchResults")
 
         val monopolyGame = searchResults.any { it.name.contains("Monopoly", ignoreCase = true) }
