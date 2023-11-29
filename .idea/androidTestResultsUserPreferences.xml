@@ -68,6 +68,19 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-1369690439">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-S908B" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-1330618840">
           <value>
             <AndroidTestResultsTableState>
@@ -89,6 +102,19 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_7_Pro_API_34v2" value="120" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-521441345">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-S908B" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -117,6 +143,19 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_7_Pro_API_34" value="120" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="719475384">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-S908B" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -197,6 +236,19 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_7_Pro_API_34v2" value="120" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1684360128">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung SM-S908B" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
