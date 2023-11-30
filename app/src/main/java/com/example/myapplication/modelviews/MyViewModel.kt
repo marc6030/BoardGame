@@ -39,7 +39,11 @@ class MyViewModel : ViewModel() {
     private lateinit var firebaseuser: FirebaseUser
 
     // Exposing the values for the views
-    val db = FirebaseFirestore.getInstance()
+    lateinit var db: FirebaseFirestore
+
+    fun setDB(fbinstance: FirebaseFirestore) {
+        this.db = fbinstance
+    }
 
 
 

@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AuthenticationManager(private val activity: Activity) {
     interface SignInResult {
@@ -41,6 +42,7 @@ class AuthenticationManager(private val activity: Activity) {
                     val user = firebaseAuth.currentUser
                     if (user != null) {
                         viewModel.setUser(user)
+                        viewModel.setDB(FirebaseFirestore.getInstance())
                     } else {
                         TODO("Implement error handling")
                         println("error")
