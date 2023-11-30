@@ -25,6 +25,7 @@ class AuthenticationManager(private val activity: Activity) {
     }
 
     fun signIn(viewModel: SharedViewModel) {
+
         val signInIntent = googleSignInClient.signInIntent
         activity.startActivityForResult(signInIntent, RC_SIGN_IN)
         this.viewModel = viewModel

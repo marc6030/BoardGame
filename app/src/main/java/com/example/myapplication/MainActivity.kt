@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
 
         setContent {
+
             boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
                 viewModel, authManager, account)
         }
