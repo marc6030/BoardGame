@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +30,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -120,7 +123,7 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    boardGameSelection("Hotness", items.boardGames.shuffled(), navController)
+                    SwipeableHotnessRow(items.boardGames.shuffled(), navController)
                     boardGameSelection("test", items.boardGames.shuffled(), navController)
                     boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
                     boardGameSelection("rpggames", items.boardGames.shuffled(), navController)
@@ -132,6 +135,59 @@ fun boardgameSelections(
             navBar.BottomNavigationBar(navController, "Home")
         }
 
+    }
+}
+
+@Composable
+fun SwipeableHotnessRow(
+    items: List<BoardGameItem>,
+    navController: NavHostController
+) {
+    val lazyListState = rememberLazyListState()
+
+    LazyRow(
+        state = lazyListState,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+    ) {
+        items(items) { item ->
+            Box(
+                modifier = Modifier
+                    .width(with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp })
+                    .padding(5.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .clickable { navController.navigate("boardgameinfo/${item.id}") }
+            ) {
+                AsyncImage(
+                    model = item.imgUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                )
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(60.dp) // Adjust as needed for text box height
+                        .background(
+                            Color(0x66000000), // Semi-transparent black
+                            shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
+                        )
+                ) {
+                    Text(
+                        text = item.name,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(8.dp)
+                    )
+                }
+            }
+        }
     }
 }
 

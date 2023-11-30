@@ -110,6 +110,7 @@ dependencies {
     // Also add the dependency for the Google Play services library and specify its version
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("androidx.test.uiautomator:uiautomator:2.2.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 
 
     // Cucumber in androidtest
