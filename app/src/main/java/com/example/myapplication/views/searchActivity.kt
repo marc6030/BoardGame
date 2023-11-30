@@ -60,6 +60,7 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
                     .padding(bottom = 32.dp)
             )
 
+
             // List of search results
             LazyColumn(
                 modifier = Modifier
