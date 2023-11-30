@@ -39,12 +39,13 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
 
 
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
-fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel, favoriteViewModel: FavoriteViewModel) {
+fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel, favoriteViewModel: FavoriteViewModel, sharedViewModel: SharedViewModel) {
 
     val context = LocalContext.current
     // Check internet Connection - this does not belong here.
@@ -56,7 +57,7 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
         favoriteViewModel.fetchFavoriteListFromDB()
     }
 
-    val isLoading = viewModel.isLoading
+    val isLoading = sharedViewModel.isLoading
 
     if (isLoading) {
         Row(

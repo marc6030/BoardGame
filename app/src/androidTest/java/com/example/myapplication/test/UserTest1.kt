@@ -13,8 +13,8 @@ import org.junit.Assert
 class UserTest1 {
     private val viewModel = SharedViewModel()
     private val ratingsViewModel = RatingsViewModel(viewModel)
-    private val boardGameDataViewModel = BoardDataViewModel()
-    private val boardGameSearchViewModel = BoardSearchViewModel()
+    private val boardGameDataViewModel = BoardDataViewModel(viewModel)
+    private val boardGameSearchViewModel = BoardSearchViewModel(viewModel)
 
     @Given("the board game search functionality is available")
     fun i_work() {

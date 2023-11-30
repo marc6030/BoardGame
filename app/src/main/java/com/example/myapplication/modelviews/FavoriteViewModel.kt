@@ -18,7 +18,6 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
-    var isLoading by mutableStateOf(false)
     var boardGameData by mutableStateOf<BoardGame?>(null)
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
@@ -33,11 +32,14 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
         return sharedViewModel.getUserID()
     }
 
+    fun setIsLoading(setme : Boolean) {
+        sharedViewModel.isLoading = setme
+    }
 
 
     fun fetchFavoriteListFromDB() {
         val tempBg: ArrayList<BoardGame> = ArrayList()
-        isLoading = true
+        setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val favSnapshot = db.collection("BBUsers").document(getUserID())
@@ -53,7 +55,7 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
             } catch (e: Exception) {
                 favoriteBoardGameList = emptyList()
             } finally {
-                isLoading = false
+                setIsLoading(false)
                 favoriteBoardGameList = tempBg
             }
         }

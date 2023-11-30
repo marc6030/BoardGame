@@ -9,7 +9,7 @@ import org.junit.Assert
 
 class UserTest3 {
     private val viewModel = SharedViewModel()
-    private val boardGameDataViewModel = BoardDataViewModel()
+    private val boardGameDataViewModel = BoardDataViewModel(viewModel)
 
 
     @Given("the user is on the front page")

@@ -14,17 +14,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BoardSearchViewModel : ViewModel() {
-    var isLoading by mutableStateOf(false)
+class BoardSearchViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var boardGameSearch by mutableStateOf<BoardGameSearchItems?>(null)
 
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
     private val repository = Repository(apiService) // factory builder and singleton
 
+    fun setIsLoading(setme : Boolean) {
+        sharedViewModel.isLoading = setme
+    }
 
     fun fetchGameBoardSearch(userSearch: String) {
-        isLoading = true
+        setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val boardGameSearchItems: BoardGameSearchItems = repository.getBoardGameSearch(userSearch)
@@ -36,7 +38,7 @@ class BoardSearchViewModel : ViewModel() {
                 Log.v("bgsearch", "searchlogs: $e")
                 boardGameSearch = null
             } finally {
-                isLoading = false
+                setIsLoading(false)
             }
         }
     }

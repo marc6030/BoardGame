@@ -15,7 +15,7 @@ import org.junit.Assert
 
 class UserTest4 {
     private val viewModel = SharedViewModel()
-    private val boardGameDataViewModel = BoardDataViewModel()
+    private val boardGameDataViewModel = BoardDataViewModel(viewModel)
     private val favoriteViewModel = FavoriteViewModel(viewModel)
 
     @Given("The user is logged in and is on a game page")

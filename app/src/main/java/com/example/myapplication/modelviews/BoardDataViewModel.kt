@@ -14,8 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BoardDataViewModel : ViewModel(){
-    var isLoading by mutableStateOf(false)
+class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewModel(){
     var boardGameData by mutableStateOf<BoardGame?>(null)
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
@@ -24,8 +23,14 @@ class BoardDataViewModel : ViewModel(){
     private val repository = Repository(apiService) // factory builder and singleton
 
 
+    fun setIsLoading(setme : Boolean) {
+        sharedViewModel.isLoading = setme
+    }
+
+
+
     fun fetchBoardGameList() {
-        isLoading = true
+        setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 boardGameList = repository.getBoardGameList()
@@ -33,13 +38,13 @@ class BoardDataViewModel : ViewModel(){
             } catch (e: Exception) {
                 boardGameList = null
             } finally {
-                isLoading = false
+                setIsLoading(false)
             }
         }
     }
 
     fun fetchBoardGameData(id: String) {
-        isLoading = true
+        setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val boardGame: BoardGame = repository.getBoardGame(id)
@@ -53,7 +58,7 @@ class BoardDataViewModel : ViewModel(){
             } catch (e: Exception) {
                 boardGameData = null
             } finally {
-                isLoading = false
+                setIsLoading(false)
             }
         }
     }

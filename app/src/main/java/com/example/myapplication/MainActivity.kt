@@ -30,8 +30,6 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var authManager: AuthenticationManager
     val viewModel: SharedViewModel by viewModels()
-    val boardDataViewModel: BoardDataViewModel by viewModels()
-    val boardSearchViewModel: BoardSearchViewModel by viewModels()
 
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +38,8 @@ class MainActivity : ComponentActivity() {
         authManager = AuthenticationManager(this)
         val favoriteViewModel = FavoriteViewModel(viewModel)
         val ratingsViewModel = RatingsViewModel(viewModel)
+        val boardDataViewModel = BoardDataViewModel(viewModel)
+        val boardSearchViewModel = BoardSearchViewModel(viewModel)
 
         setContent {
             boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
@@ -75,7 +75,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             LoginScreen(sharedViewModel, navController) { authManager.signIn(sharedViewModel) }
         }
         composable("home") {
-            HomeActivity(navController, boardDataViewModel, favoriteViewModel)
+            HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
         composable("search") {
             searchActivity(navController, boardSearchViewModel)
@@ -89,7 +89,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val gameID = arguments.getString("gameID")
-            BoardGameInfoActivity(navController, gameID, boardDataViewModel, ratingsViewModel, favoriteViewModel)
+            BoardGameInfoActivity(navController, gameID, boardDataViewModel, ratingsViewModel, favoriteViewModel, sharedViewModel)
         }
     }
 

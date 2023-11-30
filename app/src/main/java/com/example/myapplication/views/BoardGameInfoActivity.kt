@@ -55,6 +55,7 @@ import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 
 
 @Composable
@@ -63,7 +64,8 @@ fun BoardGameInfoActivity(
     gameID: String?,
     boardDataViewModel: BoardDataViewModel,
     ratingsViewModel: RatingsViewModel,
-    favoriteViewModel: FavoriteViewModel
+    favoriteViewModel: FavoriteViewModel,
+    sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
 
@@ -77,7 +79,7 @@ fun BoardGameInfoActivity(
 
     }
 
-    val isLoading = boardDataViewModel.isLoading
+    val isLoading = sharedViewModel.isLoading
     val boardGame = boardDataViewModel.boardGameData
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 

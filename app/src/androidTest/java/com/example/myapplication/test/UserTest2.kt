@@ -13,8 +13,8 @@ import org.junit.Assert
 class UserTest2 {
     private val viewModel = SharedViewModel()
     private val ratingsViewModel = RatingsViewModel(viewModel)
-    private val boardGameDataViewModel = BoardDataViewModel()
-    private val boardGameSearchViewModel = BoardSearchViewModel()
+    private val boardGameDataViewModel = BoardDataViewModel(viewModel)
+    private val boardGameSearchViewModel = BoardSearchViewModel(viewModel)
 
     @Given("the game is in the search results")
     fun doGiven() {

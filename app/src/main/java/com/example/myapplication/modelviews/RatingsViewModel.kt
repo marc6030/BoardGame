@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.API.RetrofitClient
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,9 +22,6 @@ class RatingsViewModel(private var sharedViewModel: SharedViewModel) : ViewModel
     var averageRating by mutableStateOf<Int?>(null)
 
     private var db = FirebaseFirestore.getInstance()
-
-    private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
-
 
     private fun getUserID() : String {
         return sharedViewModel.getUserID()
