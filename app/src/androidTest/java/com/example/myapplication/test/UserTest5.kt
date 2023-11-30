@@ -17,7 +17,6 @@ class UserTest5 {
     private val viewModel = SharedViewModel()
     private val ratingsViewModel = RatingsViewModel(viewModel)
     private val boardGameData = BoardDataViewModel()
-    private val boardGameDataViewModel = BoardDataViewModel()
 
     @Given("The user is logged in and has selected a game")
     fun doGiven() {
@@ -35,9 +34,9 @@ class UserTest5 {
         }
         boardGameData.fetchBoardGameList()
         val start_time = System.currentTimeMillis()
-        val timeout = start_time + 25000
+        val timeout = start_time + 15000
 
-        while (System.currentTimeMillis() < timeout && boardGameDataViewModel.boardGameList == null) {
+        while (System.currentTimeMillis() < timeout && boardGameData.boardGameList == null) {
             Thread.sleep(200)
         }
         Assert.assertTrue(viewModel.userAuthenticated)
@@ -45,15 +44,15 @@ class UserTest5 {
 
     @When("the user adds a rating to a game")
     fun doWhen() {
-        ratingsViewModel.insertAverageRating(boardGameDataViewModel.boardGameList!!.boardGames.first().id, "5")
+        ratingsViewModel.insertAverageRating(boardGameData.boardGameList!!.boardGames.first().id, "5")
         Assert.assertTrue(true)
     }
 
     @Then("the users rating for that game should change")
     fun doThen() {
-        boardGameData.fetchBoardGameData(boardGameDataViewModel.boardGameList!!.boardGames.first().id)
+        boardGameData.fetchBoardGameData(boardGameData.boardGameList!!.boardGames.first().id)
         var start_time = System.currentTimeMillis()
-        var timeout = start_time + 25000
+        var timeout = start_time + 15000
 
         while (System.currentTimeMillis() < timeout && boardGameData.boardGameData == null) {
             Thread.sleep(200)
