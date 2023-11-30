@@ -19,10 +19,10 @@ class UserTest3 {
             val start_time = System.currentTimeMillis()
             val timeout = start_time + 25000
 
-            while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
+            while (System.currentTimeMillis() < timeout && boardGameDataViewModel.boardGameList == null) {
                 Thread.sleep(200)
             }
-            Assert.assertTrue(viewModel.boardGameList != null)
+            Assert.assertTrue(boardGameDataViewModel.boardGameList != null)
         } catch(e: Exception) {
             e.printStackTrace()
             Assert.assertTrue(false)
@@ -37,7 +37,7 @@ class UserTest3 {
 
     @Then ("the game details are obtained")
     fun doThen() {
-        boardGameDataViewModel.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
+        boardGameDataViewModel.fetchBoardGameData(boardGameDataViewModel.boardGameList!!.boardGames.first().id)
         val start_time = System.currentTimeMillis()
         val timeout = start_time + 25000
 

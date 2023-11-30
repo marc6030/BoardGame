@@ -43,11 +43,11 @@ class UserTest4 {
             val start_time = System.currentTimeMillis()
             val timeout = start_time + 25000
 
-            while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
+            while (System.currentTimeMillis() < timeout && boardGameDataViewModel.boardGameList == null) {
                 Thread.sleep(200)
             }
 
-            favoriteViewModel.insertIntoUserFavoriteDB(viewModel.boardGameList!!.boardGames.first().id)
+            favoriteViewModel.insertIntoUserFavoriteDB(boardGameDataViewModel.boardGameList!!.boardGames.first().id)
             Assert.assertTrue(true)
         } catch (e: Exception) {
             Assert.assertTrue(false)
@@ -64,6 +64,6 @@ class UserTest4 {
         while (System.currentTimeMillis() < timeout && favoriteViewModel.favoriteBoardGameList.isEmpty()) {
             Thread.sleep(200)
         }
-        Assert.assertTrue(favoriteViewModel.favoriteBoardGameList.any {it?.id == viewModel.boardGameList!!.boardGames.first().id})
+        Assert.assertTrue(favoriteViewModel.favoriteBoardGameList.any {it?.id == boardGameDataViewModel.boardGameList!!.boardGames.first().id})
     }
 }

@@ -6,13 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.API.RetrofitClient
-import com.example.myapplication.BoardGameItems
 import com.example.myapplication.repositories.Repository
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SharedViewModel : ViewModel() {
-    var boardGameList by mutableStateOf<BoardGameItems?>(null)
+    //var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var userAuthenticated by mutableStateOf(false)
 
     private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
