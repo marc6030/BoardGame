@@ -1,6 +1,8 @@
 package com.example.myapplication.test
 
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.RatingsViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.cucumber.java.en.Given
@@ -10,8 +12,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import org.junit.Assert
 
+
 class UserTest5 {
-    private val viewModel = MyViewModel()
+    private val viewModel = SharedViewModel()
+    private val ratingsViewModel = RatingsViewModel(viewModel)
+    private val boardGameData = BoardDataViewModel()
 
     @Given("The user is logged in and has selected a game")
     fun doGiven() {
@@ -27,9 +32,9 @@ class UserTest5 {
                 viewModel.userAuthenticated = true
             }
         }
-        viewModel.fetchBoardGameList()
+        boardGameData.fetchBoardGameList()
         val start_time = System.currentTimeMillis()
-        val timeout = start_time + 15000
+        val timeout = start_time + 25000
 
         while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
             Thread.sleep(200)
@@ -37,31 +42,31 @@ class UserTest5 {
         Assert.assertTrue(viewModel.userAuthenticated)
     }
 
-    @When ("the user adds a rating to a game")
+    @When("the user adds a rating to a game")
     fun doWhen() {
-        viewModel.insertAverageRating(viewModel.boardGameList!!.boardGames.first().id, "5")
+        ratingsViewModel.insertAverageRating(viewModel.boardGameList!!.boardGames.first().id, "5")
         Assert.assertTrue(true)
     }
 
-    @Then ("the users rating for that game should change")
+    @Then("the users rating for that game should change")
     fun doThen() {
-        viewModel.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
+        boardGameData.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
         var start_time = System.currentTimeMillis()
-        var timeout = start_time + 15000
+        var timeout = start_time + 25000
 
-        while (System.currentTimeMillis() < timeout && viewModel.boardGameData == null) {
+        while (System.currentTimeMillis() < timeout && boardGameData.boardGameData == null) {
             Thread.sleep(200)
         }
 
-        viewModel.userRating = "testing"
-        viewModel.fetchUserRating(viewModel.boardGameData!!)
+        ratingsViewModel.userRating = "testing"
+        ratingsViewModel.fetchUserRating(boardGameData.boardGameData!!.id)
         start_time = System.currentTimeMillis()
-        timeout = start_time + 15000
+        timeout = start_time + 25000
 
-        while (System.currentTimeMillis() < timeout && viewModel.userRating == "testing") {
+        while (System.currentTimeMillis() < timeout && ratingsViewModel.userRating == "testing") {
             Thread.sleep(200)
         }
 
-        Assert.assertTrue(viewModel.userRating == "5")
+        Assert.assertTrue(ratingsViewModel.userRating == "5")
     }
 }

@@ -21,10 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.BoardSearchViewModel
 
 @Composable
-fun searchActivity(navController: NavHostController, myViewModel: MyViewModel) {
+fun searchActivity(navController: NavHostController, myViewModel: BoardSearchViewModel) {
     var input by remember { mutableStateOf("") }
     val searchQuery = input
 

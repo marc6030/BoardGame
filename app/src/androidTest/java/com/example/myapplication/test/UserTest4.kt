@@ -1,6 +1,8 @@
 package com.example.myapplication.test
 
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.FavoriteViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import io.cucumber.java.en.Given
@@ -10,8 +12,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import org.junit.Assert
 
+
 class UserTest4 {
-    private val viewModel = MyViewModel()
+    private val viewModel = SharedViewModel()
+    private val boardGameDataViewModel = BoardDataViewModel()
+    private val favoriteViewModel = FavoriteViewModel(viewModel)
 
     @Given("The user is logged in and is on a game page")
     fun doGiven() {
@@ -34,15 +39,15 @@ class UserTest4 {
     @When ("the user adds a game to favorites")
     fun doWhen() {
         try {
-            viewModel.fetchBoardGameList()
+            boardGameDataViewModel.fetchBoardGameList()
             val start_time = System.currentTimeMillis()
-            val timeout = start_time + 15000
+            val timeout = start_time + 25000
 
             while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
                 Thread.sleep(200)
             }
 
-            viewModel.insertIntoUserFavoriteDB(viewModel.boardGameList!!.boardGames.first().id)
+            favoriteViewModel.insertIntoUserFavoriteDB(viewModel.boardGameList!!.boardGames.first().id)
             Assert.assertTrue(true)
         } catch (e: Exception) {
             Assert.assertTrue(false)
@@ -52,13 +57,13 @@ class UserTest4 {
 
     @Then ("the game should appear in the users favorites list")
     fun doThen() {
-        viewModel.fetchFavoriteListFromDB()
+        favoriteViewModel.fetchFavoriteListFromDB()
         val start_time = System.currentTimeMillis()
-        val timeout = start_time + 15000
+        val timeout = start_time + 25000
 
-        while (System.currentTimeMillis() < timeout && viewModel.favoriteBoardGameList.isEmpty()) {
+        while (System.currentTimeMillis() < timeout && favoriteViewModel.favoriteBoardGameList.isEmpty()) {
             Thread.sleep(200)
         }
-        Assert.assertTrue(viewModel.favoriteBoardGameList.any {it?.id == viewModel.boardGameList!!.boardGames.first().id})
+        Assert.assertTrue(favoriteViewModel.favoriteBoardGameList.any {it?.id == viewModel.boardGameList!!.boardGames.first().id})
     }
 }

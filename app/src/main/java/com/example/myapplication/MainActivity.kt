@@ -13,7 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.BoardSearchViewModel
+import com.example.myapplication.modelviews.FavoriteViewModel
+import com.example.myapplication.modelviews.RatingsViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.repositories.AuthenticationManager
 import com.example.myapplication.views.LoginScreen
 import com.example.myapplication.views.searchActivity
@@ -25,14 +29,21 @@ import com.google.android.gms.common.api.ApiException
 class MainActivity : ComponentActivity() {
 
     private lateinit var authManager: AuthenticationManager
-    val viewModel: MyViewModel by viewModels()
+    val viewModel: SharedViewModel by viewModels()
+    val boardDataViewModel: BoardDataViewModel by viewModels()
+    val boardSearchViewModel: BoardSearchViewModel by viewModels()
+
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = GoogleSignIn.getLastSignedInAccount(this)
         authManager = AuthenticationManager(this)
+        val favoriteViewModel = FavoriteViewModel(viewModel)
+        val ratingsViewModel = RatingsViewModel(viewModel)
+
         setContent {
-            boardgameApp(viewModel, authManager, account)
+            boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
+                viewModel, authManager, account)
         }
     }
 
@@ -54,23 +65,23 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun boardgameApp(viewModel:MyViewModel, authManager: AuthenticationManager, account: GoogleSignInAccount?) {
+fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel, boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, authManager: AuthenticationManager, account: GoogleSignInAccount?) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = "login"
     ) {
         composable("login") {
-            LoginScreen(viewModel, navController) { authManager.signIn(viewModel) }
+            LoginScreen(sharedViewModel, navController) { authManager.signIn(sharedViewModel) }
         }
         composable("home") {
-            HomeActivity(navController, viewModel)
+            HomeActivity(navController, boardDataViewModel, favoriteViewModel)
         }
         composable("search") {
-            searchActivity(navController, viewModel)
+            searchActivity(navController, boardSearchViewModel)
         }
         composable("favorite") {
-            FavoriteActivity(navController, viewModel)
+            FavoriteActivity(navController, favoriteViewModel)
         }
         composable(
             route = "boardgameinfo/{gameID}",
@@ -78,7 +89,7 @@ fun boardgameApp(viewModel:MyViewModel, authManager: AuthenticationManager, acco
         ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val gameID = arguments.getString("gameID")
-            BoardGameInfoActivity(navController, gameID, viewModel)
+            BoardGameInfoActivity(navController, gameID, boardDataViewModel, ratingsViewModel, favoriteViewModel)
         }
     }
 

@@ -2,7 +2,7 @@ package com.example.myapplication.repositories
 
 import android.app.Activity
 import android.util.Log
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -12,10 +12,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AuthenticationManager(private val activity: Activity) {
-    interface SignInResult {
-        fun onSignInResult(success: Boolean, userId: String?)
-    }
-    lateinit private var viewModel: MyViewModel
+    lateinit private var viewModel: SharedViewModel
+
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private var googleSignInClient: GoogleSignInClient
     init {
@@ -26,7 +24,7 @@ class AuthenticationManager(private val activity: Activity) {
         googleSignInClient = GoogleSignIn.getClient(activity, gso)
     }
 
-    fun signIn(viewModel: MyViewModel) {
+    fun signIn(viewModel: SharedViewModel) {
         val signInIntent = googleSignInClient.signInIntent
         activity.startActivityForResult(signInIntent, RC_SIGN_IN)
         this.viewModel = viewModel

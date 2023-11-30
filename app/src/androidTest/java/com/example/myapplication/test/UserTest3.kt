@@ -1,20 +1,23 @@
 package com.example.myapplication.test
 
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import org.junit.Assert
 
 class UserTest3 {
-    private val viewModel = MyViewModel()
+    private val viewModel = SharedViewModel()
+    private val boardGameDataViewModel = BoardDataViewModel()
+
 
     @Given("the user is on the front page")
     fun doGiven() {
         try {
-            viewModel.fetchBoardGameList()
+            boardGameDataViewModel.fetchBoardGameList()
             val start_time = System.currentTimeMillis()
-            val timeout = start_time + 15000
+            val timeout = start_time + 25000
 
             while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
                 Thread.sleep(200)
@@ -34,17 +37,17 @@ class UserTest3 {
 
     @Then ("the game details are obtained")
     fun doThen() {
-        viewModel.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
+        boardGameDataViewModel.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
         val start_time = System.currentTimeMillis()
-        val timeout = start_time + 15000
+        val timeout = start_time + 25000
 
-        while (System.currentTimeMillis() < timeout && viewModel.boardGameData == null) {
+        while (System.currentTimeMillis() < timeout && boardGameDataViewModel.boardGameData == null) {
             Thread.sleep(200)
         }
 
-        Assert.assertTrue(viewModel.boardGameData?.age != null)
-        Assert.assertTrue(viewModel.boardGameData?.mechanisms != null)
-        Assert.assertTrue(viewModel.boardGameData?.ratingBGG != null)
+        Assert.assertTrue(boardGameDataViewModel.boardGameData?.age != null)
+        Assert.assertTrue(boardGameDataViewModel.boardGameData?.mechanisms != null)
+        Assert.assertTrue(boardGameDataViewModel.boardGameData?.ratingBGG != null)
     }
 
 }

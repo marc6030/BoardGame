@@ -34,13 +34,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.views.NavBar
 
 
 
 @Composable
-fun FavoriteActivity(navController: NavHostController, viewModel: MyViewModel) {
+fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel) {
     val logo: Painter = painterResource(id = R.drawable.banditlogo)
 
 

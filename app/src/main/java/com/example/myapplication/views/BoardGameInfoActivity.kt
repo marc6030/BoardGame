@@ -52,27 +52,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.FavoriteViewModel
+import com.example.myapplication.modelviews.RatingsViewModel
 
 
 @Composable
 fun BoardGameInfoActivity(
     navController: NavHostController,
     gameID: String?,
-    viewModel: MyViewModel
+    boardDataViewModel: BoardDataViewModel,
+    ratingsViewModel: RatingsViewModel,
+    favoriteViewModel: FavoriteViewModel
 ) {
     val context = LocalContext.current
 
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
-        viewModel.fetchBoardGameData(gameID!!)
+        boardDataViewModel.fetchBoardGameData(gameID!!)
+        ratingsViewModel.fetchRatings(gameID!!)
+
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
 
     }
 
-    val isLoading = viewModel.isLoading
-    val boardGame = viewModel.boardGameData
+    val isLoading = boardDataViewModel.isLoading
+    val boardGame = boardDataViewModel.boardGameData
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
     if (gameID != null) {
@@ -152,13 +158,13 @@ fun BoardGameInfoActivity(
                                 )
 
                                 2 -> ratingTab(
-                                    boardGame!!, viewModel
+                                    boardGame!!, ratingsViewModel
                                 )
                             }
                         }
                     }
                 }
-                favoriteButton(navController, viewModel, boardGame!!)
+                favoriteButton(navController, favoriteViewModel, boardGame!!)
             }
         }
     }
@@ -429,7 +435,7 @@ fun complexInfo(title: String, infoList : List<String>) {
 }
 
 @Composable
-fun ratingTab(boardGame: BoardGame, viewModel: MyViewModel){
+fun ratingTab(boardGame: BoardGame, viewModel: RatingsViewModel){
     val averageRating = viewModel.averageRating
     Column {
         starDisplay(boardGame.ratingBGG, "BGG rating")
@@ -480,7 +486,7 @@ fun starDisplay(stars: String, text: String){
 
 @Composable
 fun ratingDisplay(text: String,
-                  viewModel: MyViewModel,
+                  viewModel: RatingsViewModel,
                   boardGame: BoardGame){
     var num_of_stars = 0.0
     val userRating = viewModel.userRating
@@ -518,7 +524,7 @@ fun ratingDisplay(text: String,
 
 @Composable
 fun favoriteButton(navController: NavHostController,
-                   viewModel: MyViewModel,
+                   viewModel: FavoriteViewModel,
                    boardGame: BoardGame){
     Box(
         modifier = Modifier

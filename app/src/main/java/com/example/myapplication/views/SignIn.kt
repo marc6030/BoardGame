@@ -15,10 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 
 @Composable
-fun LoginScreen(viewmodel: MyViewModel, navController: NavController, onSignInClick: () -> Unit) {
+fun LoginScreen(viewmodel: SharedViewModel, navController: NavController, onSignInClick: () -> Unit) {
 
     val firebaseUser = viewmodel.userAuthenticated
 

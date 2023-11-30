@@ -37,13 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.myapplication.modelviews.MyViewModel
+import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.views.NavBar
 
 
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
-fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
+fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel, favoriteViewModel: FavoriteViewModel) {
 
     val context = LocalContext.current
     // Check internet Connection - this does not belong here.
@@ -52,7 +53,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
     }
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameList()
-        viewModel.fetchFavoriteListFromDB()
+        favoriteViewModel.fetchFavoriteListFromDB()
     }
 
     val isLoading = viewModel.isLoading
@@ -81,7 +82,7 @@ fun HomeActivity(navController: NavHostController, viewModel: MyViewModel) {
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
-    viewModel: MyViewModel
+    viewModel: BoardDataViewModel
 ) {
     val navBar = NavBar()
     val items = viewModel.boardGameList
