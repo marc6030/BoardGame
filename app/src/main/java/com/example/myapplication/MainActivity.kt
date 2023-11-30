@@ -36,10 +36,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val account = GoogleSignIn.getLastSignedInAccount(this)
         authManager = AuthenticationManager(this)
-        val favoriteViewModel = FavoriteViewModel(viewModel)
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
+        val favoriteViewModel = FavoriteViewModel(viewModel, boardDataViewModel)
 
         setContent {
 

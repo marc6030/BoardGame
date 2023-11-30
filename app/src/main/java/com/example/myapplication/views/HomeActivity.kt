@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +18,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -30,9 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -138,54 +138,59 @@ fun boardgameSelections(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
     navController: NavHostController
 ) {
-    val lazyListState = rememberLazyListState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        items.size
+    }
 
-    LazyRow(
-        state = lazyListState,
+    HorizontalPager(
+        state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-    ) {
-        items(items) { item ->
+            .height(300.dp)
+    ) { page ->
+        val item = items[page]
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { navController.navigate("boardgameinfo/${item.id}") }
+        ) {
+            AsyncImage(
+                model = item.imgUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            )
             Box(
                 modifier = Modifier
-                    .width(with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp })
-                    .padding(5.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .clickable { navController.navigate("boardgameinfo/${item.id}") }
-            ) {
-                AsyncImage(
-                    model = item.imgUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillWidth,
-                    alignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
-                )
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(60.dp) // Adjust as needed for text box height
-                        .background(
-                            Color(0x66000000), // Semi-transparent black
-                            shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
-                        )
-                ) {
-                    Text(
-                        text = item.name,
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(8.dp)
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .background(
+                        Color(0x66000000), // Semi-transparent black
+                        shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                     )
-                }
+            ) {
+                Text(
+                    text = item.name,
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(8.dp)
+                )
             }
         }
     }
@@ -201,6 +206,7 @@ fun boardGameSelection(headline: String,
         modifier = Modifier
             .background(Color.White)
     )
+
     {
         items(items) { item ->
             val gameName: String = item.name

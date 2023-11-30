@@ -17,8 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
-    var boardGameData by mutableStateOf<BoardGame?>(null)
+class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private var boardDataViewModel: BoardDataViewModel) : ViewModel() {
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
 
@@ -65,12 +64,17 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
     fun toggleFavorite(boardGame: BoardGame?) {
         if (boardGame != null) {
             val updatedBoardGame = boardGame.copy(isfavorite = !boardGame.isfavorite)
-            if (updatedBoardGame.isfavorite) {
-                insertIntoUserFavoriteDB(boardGame.id)
-            } else {
-                removeFromUserFavoriteDB(boardGame.id)
+            viewModelScope.launch(Dispatchers.Main) {
+                if (updatedBoardGame.isfavorite) {
+                    insertIntoUserFavoriteDB(boardGame.id)
+                    favoriteBoardGameList = favoriteBoardGameList + updatedBoardGame
+                } else {
+                    removeFromUserFavoriteDB(boardGame.id)
+                    favoriteBoardGameList = favoriteBoardGameList.filter { it?.id != boardGame.id }
+                }
             }
-            boardGameData = updatedBoardGame // Assuming _boardGameData is the MutableState
+
+            boardDataViewModel.boardGameData = updatedBoardGame
         }
     }
 

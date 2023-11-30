@@ -73,6 +73,7 @@ fun BoardGameInfoActivity(
     LaunchedEffect(gameID) {
         boardDataViewModel.fetchBoardGameData(gameID!!)
         ratingsViewModel.fetchRatings(gameID!!)
+        favoriteViewModel.fetchFavoriteListFromDB()
 
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
@@ -166,7 +167,7 @@ fun BoardGameInfoActivity(
                         }
                     }
                 }
-                favoriteButton(navController, favoriteViewModel, boardGame!!)
+                favoriteButton(navController, favoriteViewModel, boardDataViewModel)
             }
         }
     }
@@ -510,7 +511,7 @@ fun ratingDisplay(text: String,
                 for (i in 1..10) {
                         Icon(
                             imageVector = Icons.Default.Star,
-                            contentDescription = "Favorite Icon",
+                            contentDescription = "Ratings Icon",
                             tint = if(num_of_stars >= i) Color.Yellow else Color.Black,
                             modifier = Modifier
                                 .size(34.dp)
@@ -527,7 +528,9 @@ fun ratingDisplay(text: String,
 @Composable
 fun favoriteButton(navController: NavHostController,
                    viewModel: FavoriteViewModel,
-                   boardGame: BoardGame){
+                   boardDataViewModel: BoardDataViewModel){
+
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -551,7 +554,8 @@ fun favoriteButton(navController: NavHostController,
                 .padding(18.dp)
         )
         Icon(
-            imageVector = if (boardGame.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+            imageVector = if (
+                boardDataViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
             contentDescription = "Favorite Icon",
             tint = Color.Red,
             modifier = Modifier
@@ -559,8 +563,8 @@ fun favoriteButton(navController: NavHostController,
                 .size(55.dp)
                 .padding(8.dp)
                 .clickable {
-                    viewModel.toggleFavorite(boardGame)
-                    Log.v("is still fav", "${boardGame.isfavorite}")
+                    viewModel.toggleFavorite(boardDataViewModel.boardGameData!!)
+                    Log.v("is still fav", "${boardDataViewModel.boardGameData!!.isfavorite}")
                 }
         )
     }
