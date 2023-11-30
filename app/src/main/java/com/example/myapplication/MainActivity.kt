@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
-        val favoriteViewModel = FavoriteViewModel(viewModel, boardDataViewModel)
+        val favoriteViewModel = FavoriteViewModel(viewModel)
 
         setContent {
 
@@ -82,7 +82,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             searchActivity(navController, boardSearchViewModel)
         }
         composable("favorite") {
-            FavoriteActivity(navController, favoriteViewModel)
+            FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
         }
         composable(
             route = "boardgameinfo/{gameID}",

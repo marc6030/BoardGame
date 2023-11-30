@@ -1,14 +1,10 @@
 package com.example.myapplication.modelviews
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.API.RetrofitClient
 import com.example.myapplication.BoardGame
-import com.example.myapplication.BoardGameItems
 import com.example.myapplication.repositories.Repository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -17,9 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private var boardDataViewModel: BoardDataViewModel) : ViewModel() {
-    var boardGameList by mutableStateOf<BoardGameItems?>(null)
-    var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
+class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
+
 
     private var db = FirebaseFirestore.getInstance()
 
@@ -52,10 +47,10 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
                     tempBg.add(boardGame)
                 }
             } catch (e: Exception) {
-                favoriteBoardGameList = emptyList()
+                sharedViewModel.favoriteBoardGameList = emptyList()
             } finally {
                 setIsLoading(false)
-                favoriteBoardGameList = tempBg
+                sharedViewModel.favoriteBoardGameList = tempBg
             }
         }
     }
@@ -67,14 +62,14 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
             viewModelScope.launch(Dispatchers.Main) {
                 if (updatedBoardGame.isfavorite) {
                     insertIntoUserFavoriteDB(boardGame.id)
-                    favoriteBoardGameList = favoriteBoardGameList + updatedBoardGame
+                    sharedViewModel.favoriteBoardGameList = sharedViewModel.favoriteBoardGameList + updatedBoardGame
                 } else {
                     removeFromUserFavoriteDB(boardGame.id)
-                    favoriteBoardGameList = favoriteBoardGameList.filter { it?.id != boardGame.id }
+                    sharedViewModel.favoriteBoardGameList = sharedViewModel.favoriteBoardGameList.filter { it?.id != boardGame.id }
                 }
             }
 
-            boardDataViewModel.boardGameData = updatedBoardGame
+            sharedViewModel.boardGameData = updatedBoardGame
         }
     }
 
@@ -95,9 +90,9 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
                 // Update the LiveData on the main thread
                 withContext(Dispatchers.Main) {
                     // Use plus to add the new favorite BoardGame to the list
-                    favoriteBoardGameList += newFav
+                    sharedViewModel.favoriteBoardGameList += newFav
 
-                    Log.v("add fav list", "${favoriteBoardGameList}")
+                    Log.v("add fav list", "${sharedViewModel.favoriteBoardGameList}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error in insertIntoUserFavoriteDB", e)
@@ -116,8 +111,8 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
                     .document(id).delete()
                     .await()
                 withContext(Dispatchers.Main) {
-                    favoriteBoardGameList = favoriteBoardGameList.filter { it!!.id != id }
-                    Log.v("remove fav list", "${favoriteBoardGameList.map { it?.id }}")
+                    sharedViewModel.favoriteBoardGameList = sharedViewModel.favoriteBoardGameList.filter { it!!.id != id }
+                    Log.v("remove fav list", "${sharedViewModel.favoriteBoardGameList.map { it?.id }}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error writing document", e)

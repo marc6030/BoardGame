@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.myapplication.BoardGame
+import com.example.myapplication.BoardGameItems
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -12,6 +14,10 @@ class SharedViewModel : ViewModel() {
     //var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var userAuthenticated by mutableStateOf(false)
     var isLoading by mutableStateOf(false)
+
+    var boardGameData by mutableStateOf<BoardGame?>(null)
+    var boardGameList by mutableStateOf<BoardGameItems?>(null)
+    var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
 
     private lateinit var firebaseuser: FirebaseUser
 

@@ -81,7 +81,7 @@ fun BoardGameInfoActivity(
     }
 
     val isLoading = sharedViewModel.isLoading
-    val boardGame = boardDataViewModel.boardGameData
+    val boardGame = sharedViewModel.boardGameData
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
     if (gameID != null) {
@@ -167,7 +167,7 @@ fun BoardGameInfoActivity(
                         }
                     }
                 }
-                favoriteButton(navController, favoriteViewModel, boardDataViewModel)
+                favoriteButton(navController, favoriteViewModel, sharedViewModel)
             }
         }
     }
@@ -528,7 +528,7 @@ fun ratingDisplay(text: String,
 @Composable
 fun favoriteButton(navController: NavHostController,
                    viewModel: FavoriteViewModel,
-                   boardDataViewModel: BoardDataViewModel){
+                   sharedViewModel: SharedViewModel){
 
 
     Box(
@@ -555,7 +555,7 @@ fun favoriteButton(navController: NavHostController,
         )
         Icon(
             imageVector = if (
-                boardDataViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+                sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
             contentDescription = "Favorite Icon",
             tint = Color.Red,
             modifier = Modifier
@@ -563,8 +563,8 @@ fun favoriteButton(navController: NavHostController,
                 .size(55.dp)
                 .padding(8.dp)
                 .clickable {
-                    viewModel.toggleFavorite(boardDataViewModel.boardGameData!!)
-                    Log.v("is still fav", "${boardDataViewModel.boardGameData!!.isfavorite}")
+                    viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
+                    Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
                 }
         )
     }

@@ -78,7 +78,7 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
             )
         }
     } else {
-        boardgameSelections(navController, viewModel)
+        boardgameSelections(navController, sharedViewModel)
     }
 
 }
@@ -86,10 +86,10 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
-    viewModel: BoardDataViewModel
+    sharedViewModel: SharedViewModel
 ) {
     val navBar = NavBar()
-    val items = viewModel.boardGameList
+    val items = sharedViewModel.boardGameList
     val logo: Painter = painterResource(id = R.drawable.banditlogo)
     if (items != null) {
         Column(
