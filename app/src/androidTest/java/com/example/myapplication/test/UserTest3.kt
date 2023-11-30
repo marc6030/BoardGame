@@ -1,6 +1,5 @@
 package com.example.myapplication.test
 
-import android.util.Log
 import com.example.myapplication.modelviews.MyViewModel
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
@@ -14,11 +13,16 @@ class UserTest3 {
     fun doGiven() {
         try {
             viewModel.fetchBoardGameList()
-            waitForResponse(viewModel.boardGameList)
+            val start_time = System.currentTimeMillis()
+            val timeout = start_time + 15000
+
+            while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
+                Thread.sleep(200)
+            }
             Assert.assertTrue(viewModel.boardGameList != null)
         } catch(e: Exception) {
-            Assert.assertTrue(false)
             e.printStackTrace()
+            Assert.assertTrue(false)
         }
     }
 
@@ -31,19 +35,16 @@ class UserTest3 {
     @Then ("the game details are obtained")
     fun doThen() {
         viewModel.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
-        waitForResponse(viewModel.boardGameData)
-        Assert.assertTrue(viewModel.boardGameData?.age != null)
-        Assert.assertTrue(viewModel.boardGameData?.mechanisms != null)
-        Assert.assertTrue(viewModel.boardGameData?.ratingBGG != null)
-        Assert.assertTrue(viewModel.boardGameData?.userRating != null)
-    }
-
-    fun <T : Any> waitForResponse(valToChange: T?) {
         val start_time = System.currentTimeMillis()
         val timeout = start_time + 15000
 
-        while (System.currentTimeMillis() < timeout && valToChange == null) {
+        while (System.currentTimeMillis() < timeout && viewModel.boardGameData == null) {
             Thread.sleep(200)
         }
+
+        Assert.assertTrue(viewModel.boardGameData?.age != null)
+        Assert.assertTrue(viewModel.boardGameData?.mechanisms != null)
+        Assert.assertTrue(viewModel.boardGameData?.ratingBGG != null)
     }
+
 }
