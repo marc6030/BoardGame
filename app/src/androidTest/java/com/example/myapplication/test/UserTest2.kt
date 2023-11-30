@@ -49,18 +49,18 @@ class UserTest2 {
             val start_time = System.currentTimeMillis()
             val timeout = start_time + 15000
 
-            while (System.currentTimeMillis() < timeout && boardGameDataViewModel.boardGameData == null) {
+            while (System.currentTimeMillis() < timeout && viewModel.boardGameData == null) {
                 Thread.sleep(200)
             }
         } catch (e: Exception) {
             Assert.assertTrue(false)
             e.printStackTrace()
         }
-        Log.v("AnimaAge", boardGameDataViewModel.boardGameData!!.age)
-        Assert.assertTrue(boardGameDataViewModel.boardGameData?.age == "4")
-        Log.v("AnimaAge", boardGameDataViewModel.boardGameData!!.mechanisms.first())
-        Assert.assertTrue(boardGameDataViewModel.boardGameData?.mechanisms!!.contains("Dice Rolling"))
-        Log.v("AnimaAge", boardGameDataViewModel.boardGameData!!.ratingBGG)
-        Assert.assertFalse(boardGameDataViewModel.boardGameData?.ratingBGG.isNullOrEmpty())
+        Log.v("AnimaAge", viewModel.boardGameData!!.age)
+        Assert.assertTrue(viewModel.boardGameData?.age == "4")
+        Log.v("AnimaAge", viewModel.boardGameData!!.mechanisms.first())
+        Assert.assertTrue(viewModel.boardGameData?.mechanisms!!.contains("Dice Rolling"))
+        Log.v("AnimaAge", viewModel.boardGameData!!.ratingBGG)
+        Assert.assertFalse(viewModel.boardGameData?.ratingBGG.isNullOrEmpty())
     }
 }

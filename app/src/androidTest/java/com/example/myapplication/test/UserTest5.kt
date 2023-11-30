@@ -36,7 +36,7 @@ class UserTest5 {
         val start_time = System.currentTimeMillis()
         val timeout = start_time + 15000
 
-        while (System.currentTimeMillis() < timeout && boardGameData.boardGameList == null) {
+        while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
             Thread.sleep(200)
         }
         Assert.assertTrue(viewModel.userAuthenticated)
@@ -44,22 +44,22 @@ class UserTest5 {
 
     @When("the user adds a rating to a game")
     fun doWhen() {
-        ratingsViewModel.insertAverageRating(boardGameData.boardGameList!!.boardGames.first().id, "5")
+        ratingsViewModel.insertAverageRating(viewModel.boardGameList!!.boardGames.first().id, "5")
         Assert.assertTrue(true)
     }
 
     @Then("the users rating for that game should change")
     fun doThen() {
-        boardGameData.fetchBoardGameData(boardGameData.boardGameList!!.boardGames.first().id)
+        boardGameData.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
         var start_time = System.currentTimeMillis()
         var timeout = start_time + 15000
 
-        while (System.currentTimeMillis() < timeout && boardGameData.boardGameData == null) {
+        while (System.currentTimeMillis() < timeout && viewModel.boardGameData == null) {
             Thread.sleep(200)
         }
 
         ratingsViewModel.userRating = "testing"
-        ratingsViewModel.fetchUserRating(boardGameData.boardGameData!!.id)
+        ratingsViewModel.fetchUserRating(viewModel.boardGameData!!.id)
         start_time = System.currentTimeMillis()
         timeout = start_time + 25000
 

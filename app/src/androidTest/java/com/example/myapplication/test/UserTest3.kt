@@ -19,10 +19,10 @@ class UserTest3 {
             val start_time = System.currentTimeMillis()
             val timeout = start_time + 25000
 
-            while (System.currentTimeMillis() < timeout && boardGameDataViewModel.boardGameList == null) {
+            while (System.currentTimeMillis() < timeout && viewModel.boardGameList == null) {
                 Thread.sleep(200)
             }
-            Assert.assertTrue(boardGameDataViewModel.boardGameList != null)
+            Assert.assertTrue(viewModel.boardGameList != null)
         } catch(e: Exception) {
             e.printStackTrace()
             Assert.assertTrue(false)
@@ -37,17 +37,17 @@ class UserTest3 {
 
     @Then ("the game details are obtained")
     fun doThen() {
-        boardGameDataViewModel.fetchBoardGameData(boardGameDataViewModel.boardGameList!!.boardGames.first().id)
+        boardGameDataViewModel.fetchBoardGameData(viewModel.boardGameList!!.boardGames.first().id)
         val start_time = System.currentTimeMillis()
         val timeout = start_time + 25000
 
-        while (System.currentTimeMillis() < timeout && boardGameDataViewModel.boardGameData == null) {
+        while (System.currentTimeMillis() < timeout && viewModel.boardGameData == null) {
             Thread.sleep(200)
         }
 
-        Assert.assertTrue(boardGameDataViewModel.boardGameData?.age != null)
-        Assert.assertTrue(boardGameDataViewModel.boardGameData?.mechanisms != null)
-        Assert.assertTrue(boardGameDataViewModel.boardGameData?.ratingBGG != null)
+        Assert.assertTrue(viewModel.boardGameData?.age != null)
+        Assert.assertTrue(viewModel.boardGameData?.mechanisms != null)
+        Assert.assertTrue(viewModel.boardGameData?.ratingBGG != null)
     }
 
 }
