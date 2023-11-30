@@ -1,4 +1,4 @@
-Feature: Add to favorites
+Feature: Favorites
 
   Scenario: User wants to add a game to favorites list
     Given The user is logged in and is on a game page

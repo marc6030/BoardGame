@@ -1,4 +1,4 @@
-Feature: Add user rating
+Feature: User rating
 
   Scenario: User wants to rate a game
     Given The user is logged in and has selected a game
