@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGame
-import com.example.myapplication.BoardGameItems
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,6 @@ import kotlinx.coroutines.withContext
 
 
 class RatingsViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
-    var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var userRating by mutableStateOf("")
     var averageRating by mutableStateOf<Int?>(null)
 
