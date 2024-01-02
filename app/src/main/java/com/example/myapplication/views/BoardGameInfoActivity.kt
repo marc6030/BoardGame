@@ -139,7 +139,7 @@ fun BoardGameInfoActivity(
                             .fillMaxSize()
                             .padding(10.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(Color.LightGray)
+                            .background(MaterialTheme.colorScheme.background)
                     ) {
                         Column() {
                             tabView(
@@ -201,7 +201,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                 .padding(10.dp)
                 .fillMaxWidth(1f)
                 .clip(RoundedCornerShape(20.dp))
-                .background(Color.LightGray),
+                .background(MaterialTheme.colorScheme.background),
 
             ) {
             Row(
@@ -289,17 +289,16 @@ fun tabView(
     var selectedTabIndex by remember {
         mutableStateOf(0)
     }
-    val inactiveColor = Color(0xFF777777)
     TabRow(
         selectedTabIndex = selectedTabIndex,
         modifier = modifier
     ) {
         texts.forEachIndexed { index, item ->
             Tab(
-                modifier = modifier.background(Color.LightGray),
+                modifier = modifier.background(MaterialTheme.colorScheme.background),
                 selected = selectedTabIndex == index,
-                selectedContentColor = Color.Black,
-                unselectedContentColor = inactiveColor,
+                selectedContentColor = MaterialTheme.colorScheme.background,
+                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                 onClick = {
                     selectedTabIndex = index
                     onTabSelected(index)

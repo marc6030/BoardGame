@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            AppTheme {
+            AppTheme() {
                 boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
                     viewModel, authManager, account)
             }

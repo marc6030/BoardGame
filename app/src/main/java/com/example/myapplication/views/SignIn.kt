@@ -1,14 +1,17 @@
 package com.example.myapplication.views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ButtonColors
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -37,7 +40,10 @@ fun LoginScreen(viewmodel: SharedViewModel, navController: NavController, onSign
             ) {
                 Text(text = "Welcome to Boardgame App")
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = onSignInClick) {
+                Button(onClick = onSignInClick, colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.background
+                )
+                ) {
                     Text(text = "Sign In with Google")
                 }
             }
