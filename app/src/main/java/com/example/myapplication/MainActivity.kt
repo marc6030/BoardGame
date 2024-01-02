@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.compose.AppTheme
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
@@ -43,8 +44,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
-                viewModel, authManager, account)
+            AppTheme {
+                boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
+                    viewModel, authManager, account)
+            }
         }
     }
 

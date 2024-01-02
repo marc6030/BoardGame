@@ -4,8 +4,9 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -20,7 +21,7 @@ class NavBar : ComponentActivity() {
     fun BottomNavigationBar(navController: NavHostController, actName: String) {
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color.LightGray,
+            backgroundColor = MaterialTheme.colorScheme.primary,
         ) {
             BottomNavigationItem(
                 selected = actName == "Home",
