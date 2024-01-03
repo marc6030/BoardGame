@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,63 +17,42 @@ import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
-import com.example.myapplication.repositories.AuthenticationManager
-import com.example.myapplication.views.LoginScreen
 import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
 
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var authManager: AuthenticationManager
     val viewModel: SharedViewModel by viewModels()
 
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = GoogleSignIn.getLastSignedInAccount(this)
-        authManager = AuthenticationManager(this)
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
         val favoriteViewModel = FavoriteViewModel(viewModel)
 
         setContent {
-
             boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
-                viewModel, authManager, account)
+                viewModel, account)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == AuthenticationManager.RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                authManager.firebaseAuthWithGoogle(account)
-            } catch (e: ApiException) {
-                // Handle the error here
-            }
-        }
-    }
 }
 
 
 
 @Composable
-fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel, boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, authManager: AuthenticationManager, account: GoogleSignInAccount?) {
+fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel, boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = "login"
+        startDestination = "home"
     ) {
-        composable("login") {
-            LoginScreen(sharedViewModel, navController) { authManager.signIn(sharedViewModel) }
-        }
         composable("home") {
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
@@ -93,8 +71,6 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             BoardGameInfoActivity(navController, gameID, boardDataViewModel, ratingsViewModel, favoriteViewModel, sharedViewModel)
         }
     }
-
-
 }
 
 

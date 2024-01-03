@@ -277,7 +277,6 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
             }
         }
     }
-
 }
 
 @Composable

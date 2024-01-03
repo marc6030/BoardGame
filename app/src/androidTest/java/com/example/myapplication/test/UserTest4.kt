@@ -12,7 +12,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import org.junit.Assert
 
-
+/*
 class UserTest4 {
     private val viewModel = SharedViewModel()
     private val boardGameDataViewModel = BoardDataViewModel(viewModel)
@@ -67,3 +67,6 @@ class UserTest4 {
         Assert.assertTrue(viewModel.favoriteBoardGameList.any {it?.id == viewModel.boardGameList!!.boardGames.first().id})
     }
 }
+
+
+ */

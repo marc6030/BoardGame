@@ -70,6 +70,8 @@ dependencies {
     // Used for connecting to the API
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
+    // Postgresql
+    implementation("org.postgresql:postgresql:42.2.19")
 
     // UI elements from google
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))

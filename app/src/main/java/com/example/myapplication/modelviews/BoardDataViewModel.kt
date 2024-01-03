@@ -20,8 +20,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         sharedViewModel.isLoading = setme
     }
 
-
-
     fun fetchBoardGameList() {
         setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
@@ -55,6 +53,4 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
             }
         }
     }
-
-
 }

@@ -5,22 +5,22 @@ import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 
 @Root(name = "boardgameitems", strict = false)
-class BoardGameItems(emptyList: List<Any>) {
+data class BoardGameItems(
 
     @field:ElementList(inline = true, name = "boardgameitem")
     var boardGames: List<BoardGameItem> = listOf()
-}
+
+)
 
 @Root(name = "boardgameitem", strict = false)
-class BoardGameItem {
+data class BoardGameItem (
 
     @field:Element(name = "id")
-    var id: String = ""
+    var id: String = "",
 
     @field:Element(name = "name")
-    var name: String = ""
+    var name: String = "",
 
     @field:Element(name = "imgurl")
     var imgUrl: String = ""
-
-}
+)

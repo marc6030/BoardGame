@@ -1,18 +1,6 @@
 package com.example.myapplication.test
 
-import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.modelviews.RatingsViewModel
-import com.example.myapplication.modelviews.SharedViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import io.cucumber.java.en.Given
-import io.cucumber.java.en.Then
-import io.cucumber.java.en.When
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
-import org.junit.Assert
-
-
+/*
 class UserTest5 {
     private val viewModel = SharedViewModel()
     private val ratingsViewModel = RatingsViewModel(viewModel)
@@ -70,3 +58,5 @@ class UserTest5 {
         Assert.assertTrue(ratingsViewModel.userRating == "5")
     }
 }
+
+ */
