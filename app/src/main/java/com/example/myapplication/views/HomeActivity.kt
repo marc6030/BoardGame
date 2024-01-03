@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -129,12 +131,14 @@ fun boardgameSelections(
                     boardGameSelection("rpggames", items.boardGames.shuffled(), navController)
                     boardGameSelection("dungeon games", items.boardGames.shuffled(), navController)
                     boardGameSelection("shooters", items.boardGames.shuffled(), navController)
-
+                    Spacer(modifier = Modifier.height(60.dp))
                 }
             }
+        }
+          Box(contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.fillMaxSize()) {
             navBar.BottomNavigationBar(navController, "Home")
         }
-
     }
 }
 
@@ -217,7 +221,8 @@ fun boardGameSelection(headline: String,
                     .testTag("items_1234")
                     .padding(5.dp)
                     .clip(RoundedCornerShape(20.dp))
-                    .clickable { navController.navigate("boardgameinfo/$gameID")
+                    .clickable {
+                        navController.navigate("boardgameinfo/$gameID")
                     }
             )
             {
@@ -226,7 +231,9 @@ fun boardGameSelection(headline: String,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize().testTag("game_picture")
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("game_picture")
                 )
                 Box(
                     modifier = Modifier
