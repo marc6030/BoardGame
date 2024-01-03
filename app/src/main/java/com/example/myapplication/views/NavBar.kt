@@ -21,7 +21,8 @@ class NavBar : ComponentActivity() {
     fun BottomNavigationBar(navController: NavHostController, actName: String) {
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MaterialTheme.colorScheme.primary,
+            backgroundColor = Color.Black.copy(alpha = 0.9f),
+
         ) {
             BottomNavigationItem(
                 selected = actName == "Home",
@@ -29,10 +30,10 @@ class NavBar : ComponentActivity() {
                     navController.navigate("home")
                 },
                 icon = {
-                    Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
+                    Icon(imageVector = Icons.Default.Home, contentDescription = "Home", tint = Color.White.copy(alpha = 0.7f))
                 },
                 label = {
-                    Text(text = "Home")
+                    Text(text = "Home", color = Color.White.copy(alpha = 0.7f))
                 }
             )
 
@@ -42,10 +43,10 @@ class NavBar : ComponentActivity() {
                     navController.navigate("search")
                 },
                 icon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.White.copy(alpha = 0.7f))
                 },
                 label = {
-                    Text(text = "Search")
+                    Text(text = "Search", color = Color.White.copy(alpha = 0.7f))
                 }
             )
 
@@ -55,10 +56,10 @@ class NavBar : ComponentActivity() {
                     navController.navigate("favorite")
                 },
                 icon = {
-                    Icon(imageVector = Icons.Default.Favorite, contentDescription = "Favorite")
+                    Icon(imageVector = Icons.Default.Favorite, contentDescription = "Favorite", tint = Color.White.copy(alpha = 0.7f))
                 },
                 label = {
-                    Text(text = "Favorite")
+                    Text(text = "Favorite", color = Color.White.copy(alpha = 0.7f))
                 }
             )
         }

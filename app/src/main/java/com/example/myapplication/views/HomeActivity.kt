@@ -91,7 +91,7 @@ fun boardgameSelections(
 ) {
     val navBar = NavBar()
     val items = sharedViewModel.boardGameList
-    val logo: Painter = painterResource(id = R.drawable.banditlogo)
+    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     if (items != null) {
         Column(
             modifier = Modifier
@@ -110,6 +110,7 @@ fun boardgameSelections(
                             .height(120.dp)
                             .width(120.dp)
                             .align(Alignment.Center)
+                            .padding(0.dp, 10.dp, 0.dp, 0.dp)
                     )
                 }
             LazyColumn( modifier = Modifier
@@ -150,7 +151,8 @@ fun SwipeableHotnessRow(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Black)
+            .background(Color.White)
+            .padding(0.dp, 0.dp, 0.dp, 20.dp)
     ) { page ->
         val item = items[page]
         val item2 = items[page+1]
@@ -173,7 +175,7 @@ fun SwipeableHotnessRow(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.CenterStart,
-                modifier = Modifier.size(275.dp, 500.dp) // Size of the image
+                modifier = Modifier.size(275.dp, 550.dp) // Size of the image
             )
         }
     }
