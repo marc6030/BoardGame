@@ -1,18 +1,18 @@
 package com.example.myapplication.repositories
 
+import android.text.Html
 import com.example.myapplication.API.ApiService
 import com.example.myapplication.BoardGame
-import org.w3c.dom.Document
-import org.xml.sax.InputSource
-import retrofit2.HttpException
-import java.io.StringReader
-import javax.xml.parsers.DocumentBuilderFactory
-import org.w3c.dom.Element
-import android.text.Html
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.BoardGameItems
 import com.example.myapplication.models.BoardGameSearch
 import com.example.myapplication.models.BoardGameSearchItems
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.xml.sax.InputSource
+import retrofit2.HttpException
+import java.io.StringReader
+import javax.xml.parsers.DocumentBuilderFactory
 
 class Repository(private val apiService: ApiService) {
 
@@ -140,6 +140,7 @@ class Repository(private val apiService: ApiService) {
         return boardGame
     }
 }
+
 
 
 fun fillList(tagName: String, document : Document): List<String> {
