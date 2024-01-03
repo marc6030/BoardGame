@@ -24,7 +24,7 @@ class NavBar : ComponentActivity() {
     fun BottomNavigationBar(navController: NavHostController, actName: String) {
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MaterialTheme.colorScheme.primary.copy(0.7F),
+            backgroundColor = MaterialTheme.colorScheme.primary.copy(0.0F),
             elevation = 0.dp
         ) {
              BottomNavigationItem(

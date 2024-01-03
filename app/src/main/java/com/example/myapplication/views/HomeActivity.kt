@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -135,7 +136,13 @@ fun boardgameSelections(
                 }
             }
         }
-          Box(contentAlignment = Alignment.BottomCenter,
+        Box(contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.fillMaxWidth().height(60.dp)
+            ){
+            Spacer(modifier = Modifier.fillMaxSize().
+            blur(10.dp))
+        }
+        Box(contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.fillMaxSize()) {
             navBar.BottomNavigationBar(navController, "Home")
         }
