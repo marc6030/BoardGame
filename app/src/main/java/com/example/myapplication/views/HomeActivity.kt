@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,7 +23,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,6 +96,7 @@ fun boardgameSelections(
     val navBar = NavBar()
     val items = sharedViewModel.boardGameList
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
+    val icon: Painter = painterResource(id = R.drawable.search)
     if (items != null) {
         Column(
             modifier = Modifier
@@ -111,6 +116,15 @@ fun boardgameSelections(
                             .width(120.dp)
                             .align(Alignment.Center)
                             .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                    )
+                    Image(
+                        painter = icon,
+                        contentDescription = null, // Set a meaningful content description if needed
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(40.dp)
+                            .align(Alignment.TopEnd)
+                            .padding(0.dp, 5.dp, 0.dp, 0.dp)
                     )
                 }
             LazyColumn( modifier = Modifier
@@ -166,15 +180,8 @@ fun SwipeableHotnessRow(
             AsyncImage(
                 model = item.imgUrl,
                 contentDescription = null,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillBounds,
                 alignment = Alignment.Center,
-                modifier = Modifier.size(275.dp, 500.dp) // Size of the image
-            )
-            AsyncImage(
-                model = item2.imgUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.CenterStart,
                 modifier = Modifier.size(275.dp, 550.dp) // Size of the image
             )
         }
@@ -202,7 +209,8 @@ fun boardGameSelection(headline: String,
                     .testTag("items_1234")
                     .padding(5.dp)
                     .clip(RoundedCornerShape(5.dp))
-                    .clickable { navController.navigate("boardgameinfo/$gameID")
+                    .clickable {
+                        navController.navigate("boardgameinfo/$gameID")
                     }
             )
             {
@@ -211,7 +219,9 @@ fun boardGameSelection(headline: String,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize().testTag("game_picture")
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("game_picture")
                 )
             }
         }
