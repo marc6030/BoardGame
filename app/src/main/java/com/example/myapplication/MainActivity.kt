@@ -90,7 +90,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         composable(
             route = "boardgameinfo/{gameID}",
             arguments = listOf(navArgument("gameID") { type = NavType.StringType })
-        ) { backStackEntry ->
+            ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val gameID = arguments.getString("gameID")
             BoardGameInfoActivity(navController, gameID, boardDataViewModel, ratingsViewModel, favoriteViewModel, sharedViewModel)
