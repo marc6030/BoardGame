@@ -1,5 +1,10 @@
 package com.example.myapplication
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +33,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -47,6 +56,7 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
+import kotlinx.coroutines.delay
 
 
 // This is primarily a view. We should probably seperate the logic from the rest
@@ -58,9 +68,12 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
     if (!isInternetAvailable(context)) {
         Text("No Internet!")
     }
+    var startScaleInAnimation by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameList()
         favoriteViewModel.fetchFavoriteListFromDB()
+        delay(300)
+        startScaleInAnimation = true
     }
 
     val isLoading = sharedViewModel.isLoading
@@ -81,7 +94,11 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
             )
         }
     } else {
-        boardgameSelections(navController, sharedViewModel)
+        AnimatedVisibility(startScaleInAnimation,
+            enter = expandVertically(),
+            exit = fadeOut()){
+            boardgameSelections(navController, sharedViewModel)
+        }
     }
 
 }
@@ -126,21 +143,24 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    SwipeableHotnessRow(items.boardGames.shuffled(), navController)
-                    boardGameSelection("test", items.boardGames.shuffled(), navController)
-                    boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
-                    boardGameSelection("rpggames", items.boardGames.shuffled(), navController)
-                    boardGameSelection("dungeon games", items.boardGames.shuffled(), navController)
-                    boardGameSelection("shooters", items.boardGames.shuffled(), navController)
+                    SwipeableHotnessRow(items.boardGames, navController)
+                    boardGameSelection("test", items.boardGames, navController)
+                    boardGameSelection("Superhot", items.boardGames, navController)
+                    boardGameSelection("rpggames", items.boardGames, navController)
+                    boardGameSelection("dungeon games", items.boardGames, navController)
+                    boardGameSelection("shooters", items.boardGames, navController)
                     Spacer(modifier = Modifier.height(60.dp))
                 }
             }
         }
         Box(contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier.fillMaxWidth().height(60.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
             ){
-            Spacer(modifier = Modifier.fillMaxSize().
-            blur(10.dp))
+            Spacer(modifier = Modifier
+                .fillMaxSize()
+                .blur(10.dp))
         }
         Box(contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.fillMaxSize()) {
@@ -211,8 +231,13 @@ fun SwipeableHotnessRow(
 fun boardGameSelection(headline: String,
                        items: List<BoardGameItem>,
                        navController: NavHostController
-){
-    Text(text = headline, fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
+) {
+    Text(
+        text = headline,
+        fontSize = 35.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 10.dp, top = 20.dp)
+    )
     LazyRow(
         modifier = Modifier
             .background(Color.White)
@@ -261,5 +286,3 @@ fun boardGameSelection(headline: String,
         }
     }
 }
-
-

@@ -86,12 +86,18 @@ fun BoardGameInfoActivity(
     sharedViewModel: SharedViewModel
     ) {
     val context = LocalContext.current
-
+    var startScaleInAnimation by remember { mutableStateOf(false) }
+    var startSecondAnimation by remember { mutableStateOf(false) }
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
         boardDataViewModel.fetchBoardGameData(gameID!!)
         ratingsViewModel.fetchRatings(gameID!!)
         favoriteViewModel.fetchFavoriteListFromDB()
+
+        delay(400)
+        startScaleInAnimation = true
+        delay(850)
+        startSecondAnimation = true
 
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
@@ -126,13 +132,9 @@ fun BoardGameInfoActivity(
             }
         } else {
             var selectedTabIndex by remember { mutableStateOf(0) }
-            var startScaleInAnimation by remember { mutableStateOf(false) }
-            var startSecondAnimation by remember { mutableStateOf(false) }
+
             // Observe the data
             if (boardGame != null) {
-                LaunchedEffect(startScaleInAnimation) {
-                    startScaleInAnimation = true
-                }
                 AnimatedVisibility(
                     startScaleInAnimation,
                     enter = scaleIn(),
@@ -149,11 +151,6 @@ fun BoardGameInfoActivity(
                             .scale(if (startScaleInAnimation) 1.5f else 0.3f)
                             .animateContentSize()
                     )
-                }
-                LaunchedEffect(startSecondAnimation) {
-                    // Delay if needed
-                    delay(800)
-                    startSecondAnimation = true
                 }
                 AnimatedVisibility(
                     startSecondAnimation,
