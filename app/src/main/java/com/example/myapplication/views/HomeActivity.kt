@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -111,12 +112,6 @@ fun boardgameSelections(
                             .align(Alignment.Center)
                     )
                 }
-                Box(
-                        modifier = Modifier
-                            .height(2.dp)
-                            .fillMaxWidth()
-                            .background(Color.Black)
-                        )
             LazyColumn( modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
@@ -155,14 +150,15 @@ fun SwipeableHotnessRow(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .background(Color.Black)
     ) { page ->
         val item = items[page]
+        val item2 = items[page+1]
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-                .clip(RoundedCornerShape(20.dp))
+                .fillMaxWidth() // Fill the max width of the pager
+                .wrapContentWidth(Alignment.CenterHorizontally) // Center the box horizontally
+                .clip(RoundedCornerShape(5.dp))
                 .clickable { navController.navigate("boardgameinfo/${item.id}") }
         ) {
             AsyncImage(
@@ -170,41 +166,28 @@ fun SwipeableHotnessRow(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.size(275.dp, 500.dp) // Size of the image
             )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .background(
-                        Color(0x66000000), // Semi-transparent black
-                        shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
-                    )
-            ) {
-                Text(
-                    text = item.name,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(8.dp)
-                )
-            }
+            AsyncImage(
+                model = item2.imgUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.CenterStart,
+                modifier = Modifier.size(275.dp, 500.dp) // Size of the image
+            )
         }
     }
 }
+
 
 @Composable
 fun boardGameSelection(headline: String,
                        items: List<BoardGameItem>,
                        navController: NavHostController
 ){
-    Text(text = headline, fontSize = 35.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 10.dp, top = 20.dp))
+    Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = Color.Black)
     LazyRow(
         modifier = Modifier
-            .background(Color.White)
     )
 
     {
@@ -213,10 +196,10 @@ fun boardGameSelection(headline: String,
             val gameID: String = item.id
             Box(
                 modifier = Modifier
-                    .size(175.dp)
+                    .size(100.dp, 150.dp)
                     .testTag("items_1234")
                     .padding(5.dp)
-                    .clip(RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(5.dp))
                     .clickable { navController.navigate("boardgameinfo/$gameID")
                     }
             )
@@ -228,21 +211,6 @@ fun boardGameSelection(headline: String,
                     alignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize().testTag("game_picture")
                 )
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth(1f)
-                        .fillMaxHeight(0.33f)
-                        .background(
-                            Color.LightGray,
-                            shape = MaterialTheme.shapes.large
-                        )
-                ) {
-                    Text(
-                        text = item.name,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
             }
         }
     }
