@@ -5,10 +5,13 @@ import com.example.myapplication.BoardGameItem
 import com.example.myapplication.BoardGameItems
 import com.example.myapplication.models.BoardGameSearch
 import com.example.myapplication.models.BoardGameSearchItems
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
 import java.sql.Connection
 import java.sql.DriverManager
 
-class postgresql() {
+class postgresql {
 
     fun connectToDatabase(): Connection? {
         val url = "jdbc:postgresql://135.181.106.80:5432/school"
@@ -26,35 +29,20 @@ class postgresql() {
     }
 
 
-    fun getBoardGame(id: String): BoardGame {
-        connectToDatabase()?.use { connection ->
-            val statement = connection.prepareStatement("SELECT * FROM boardgame WHERE id_actual = ?")
-            statement.setString(1, id)
-            val resultSet = statement.executeQuery()
 
-            if (resultSet.next()) {
-                return BoardGame(
-                    id = resultSet.getString("id_actual"),
-                    name = resultSet.getString("name"),
-                )
-            } else {
-                throw NoSuchElementException("Board game with ID $id not found")
-            }
-        } ?: throw SQLException("Database connection failed")
-    }
 
     fun getBoardGameList(): BoardGameItems {
         val boardGames = mutableListOf<BoardGameItem>()
 
         connectToDatabase()?.use { connection ->
             val statement = connection.createStatement()
-            val resultSet = statement.executeQuery("SELECT * FROM boardgame")
+            val resultSet = statement.executeQuery("SELECT * FROM boardgame LIMIT 10")
 
             while (resultSet.next()) {
                 boardGames.add(BoardGameItem(
                     id = resultSet.getString("id_actual"),
                     name = resultSet.getString("name"),
-                    imgUrl = resultSet.getString("thumbnail")
+                    imgUrl = resultSet.getString("image")
 
                 ))
             }
@@ -82,20 +70,19 @@ class postgresql() {
         return BoardGameSearchItems(boardGameSearchItems)
     }
 
-    fun getBoardGameFromDatabase(id: String): BoardGame {
+    fun getBoardGame(id: String): BoardGame {
         connectToDatabase()?.use { connection ->
             val statement = connection.prepareStatement("SELECT * FROM boardgame WHERE id_actual = ?")
             statement.setString(1, id)
             val resultSet = statement.executeQuery()
-/*
-            if (resultSet.next()) {
-                println(resultSet.getString("mechanisms"))
 
-            }
 
- */
 
             if (resultSet.next()) {
+                val textContent = convertHtmlToStructuredText(resultSet.getString("description"))
+
+
+
                 return BoardGame(
                     id = resultSet.getString("id_actual"),
                     name = resultSet.getString("name"),
@@ -104,7 +91,7 @@ class postgresql() {
                     maxPlayers = resultSet.getString("max_players") ?: "???",
                     playingTime = resultSet.getString("play_time") ?: "???",
                     age = resultSet.getString("age") ?: "???",
-                    description = resultSet.getString("description"),
+                    description = textContent,
                     imageURL = resultSet.getString("image") ?: "???",
                     averageWeight = resultSet.getString("average") ?: "???",
                     ratingBGG = resultSet.getString("users_rated") ?: "0",
@@ -116,8 +103,6 @@ class postgresql() {
                     artists = convertSqlArrayToList(resultSet.getArray("artists")),
                     overallRank = resultSet.getString("overall_rank") ?: "???",
                     categoryRank = resultSet.getString("category_rank") ?: "???",
-                    category = resultSet.getString("category") ?: "???"
-                    // Add other fields as per your BoardGame data class
                 )
             } else {
                 throw NoSuchElementException("Board game with ID $id not found")
@@ -125,6 +110,31 @@ class postgresql() {
 
         } ?: throw SQLException("Database connection failed")
 
+    }
+
+    private fun convertHtmlToStructuredText(html: String): String {
+        val document = Jsoup.parse(html)
+        return buildStructuredText(document.body())
+    }
+
+    private fun buildStructuredText(element: Element): String {
+        val sb = StringBuilder()
+        for (node in element.childNodes()) {
+            when (node) {
+                is TextNode -> {
+                    sb.append(node.text().trim { it <= ' ' })
+                }
+                is Element -> {
+                    when (node.tagName()) {
+                        "p" -> sb.append("\n\n").append(buildStructuredText(node))
+                        "br" -> sb.append("\n")
+                        // Add more tags here as needed
+                        else -> sb.append(buildStructuredText(node))
+                    }
+                }
+            }
+        }
+        return sb.toString().trim()
     }
 
     private fun convertSqlArrayToList(sqlArray: java.sql.Array?): List<String> {
@@ -142,11 +152,11 @@ class postgresql() {
     }
 
 
-    fun getListFromDatabase(attribute: String, boardGameId: String): List<String> {
+    fun getListFromDatabase(attribute: String, id: String): List<String> {
         val list = mutableListOf<String>()
         connectToDatabase()?.use { connection ->
-            val statement = connection.prepareStatement("SELECT * FROM $attribute WHERE board_game_id = ?")
-            statement.setString(1, boardGameId)
+            val statement = connection.prepareStatement("SELECT * FROM $attribute WHERE id_actual = ?")
+            statement.setString(1, id)
             val resultSet = statement.executeQuery()
 
             while (resultSet.next()) {
@@ -165,7 +175,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
-    val bgt = postgresql().getBoardGameFromDatabase("54")
+    val bgt = postgresql().getBoardGame("280453")
     //println(bg)
     //println(bgg)
     // println(bgs)

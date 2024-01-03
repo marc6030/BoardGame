@@ -348,9 +348,6 @@ fun generalInfo(boardGame: BoardGame) {
             simpleInfo("Time", boardGame.playingTime, null)
             simpleInfo("Age", boardGame.age+"+", null)
             simpleInfo("BGG Rating", boardGame.ratingBGG, null)
-            if(boardGame.category != "") {
-                simpleInfo(boardGame.category, info1 = boardGame.categoryRank, info2 = null)
-            }
             complexInfo(title = "Mechanisms", infoList = boardGame.mechanisms)
             complexInfo(title = "Categories", infoList = boardGame.categories)
             complexInfo(title = "Publishers", infoList = boardGame.publishers)
