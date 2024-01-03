@@ -85,8 +85,8 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                 items(favoriteBoardGame) { boardgame ->
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(160.dp)
+                            .height(120.dp)
+                            .width(160.dp)
                             .padding(10.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .clickable {
@@ -102,40 +102,39 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .align(Alignment.TopCenter)
-                                    .fillMaxWidth(1f)
-                                    .fillMaxHeight(0.5f)
+                                    .fillMaxWidth()
+                                    .fillMaxHeight()
                             )
                         }
-                        Box(
-                            modifier = Modifier
-                                .background(Color.LightGray)
-                                .align(Alignment.BottomCenter)
-                                .fillMaxWidth(1f)
-                                .fillMaxHeight(0.5f)
-                                .padding(12.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                        )
-                        {
-                            if (boardgame != null) {
-                                Text(
-                                    text = boardgame.shortTitel(),
-                                    modifier = Modifier.align(Alignment.Center),
-                                    fontSize = 32.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Icon(
-                                imageVector = Icons.Outlined.Favorite,
-                                contentDescription = "Favorite Icon",
-                                tint = Color.Red,
-                                modifier = Modifier
-                                    .align(Alignment.CenterEnd)
-                                    .size(32.dp)
-                                    .clickable { viewModel.toggleFavorite(boardgame) }
-                            )
-                        }
+                        //Box(
+                        //    modifier = Modifier
+                        //        .background(Color.Red)
+                        //        .align(Alignment.BottomCenter)
+                        //        .fillMaxWidth(1f)
+                        //        .fillMaxHeight(0.5f)
+                        //        .padding(12.dp)
+                        //        .clip(RoundedCornerShape(20.dp))
+                        //)
+                        //{
+                        //    if (boardgame != null) {
+                        //        Text(
+                        //            text = boardgame.shortTitel(),
+                        //            modifier = Modifier.align(Alignment.Center),
+                        //            fontSize = 32.sp,
+                        //            fontWeight = FontWeight.Bold
+                        //        )
+                        //    }
+                        //    Icon(
+                        //        imageVector = Icons.Outlined.Favorite,
+                        //        contentDescription = "Favorite Icon",
+                        //        tint = Color.Red,
+                        //        modifier = Modifier
+                        //            .align(Alignment.CenterEnd)
+                        //            .size(32.dp)
+                        //            .clickable { viewModel.toggleFavorite(boardgame) }
+                        //    )
+                        //}
                     }
-
                 }
             }
         }
