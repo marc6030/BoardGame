@@ -1,7 +1,8 @@
 package com.example.myapplication
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,14 +23,27 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
@@ -44,13 +58,13 @@ import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.SharedViewModel
+import com.example.myapplication.imageManipulation.ImagedManipulation
 import com.example.myapplication.views.NavBar
 
 
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel, favoriteViewModel: FavoriteViewModel, sharedViewModel: SharedViewModel) {
-
     val context = LocalContext.current
     // Check internet Connection - this does not belong here.
     if (!isInternetAvailable(context)) {
@@ -79,7 +93,7 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
             )
         }
     } else {
-        boardgameSelections(navController, sharedViewModel)
+        boardgameSelections(navController, sharedViewModel, viewModel)
     }
 
 }
@@ -87,46 +101,61 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    boardDataViewModel: BoardDataViewModel
 ) {
     val navBar = NavBar()
     val items = sharedViewModel.boardGameList
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
+    val logo: Painter = painterResource(id = R.drawable.bgb_logo_copy_1)
     if (items != null) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.9f))
             ){
                 Box(
                     modifier = Modifier
                         .height(100.dp)
                         .fillMaxWidth()
-                        .background(Color.White)
+                        .background(Color.Black.copy(alpha = 0.9f))
                 ) {
                     Image(
                         painter = logo,
-                        contentDescription = null, // Set a meaningful content description if needed
+                        contentDescription = null,
                         modifier = Modifier
                             .height(120.dp)
                             .width(120.dp)
                             .align(Alignment.Center)
                             .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                            .background(Color.Black.copy(alpha = 0.9f))
                     )
                 }
             LazyColumn( modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(Color.White))
+                .background(boardDataViewModel.backgroundFade)
+            )
             {
+
                 item {
-                    SwipeableHotnessRow(items.boardGames.shuffled(), navController)
-                    boardGameSelection("test", items.boardGames.shuffled(), navController)
-                    boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
-                    boardGameSelection("rpggames", items.boardGames.shuffled(), navController)
-                    boardGameSelection("dungeon games", items.boardGames.shuffled(), navController)
-                    boardGameSelection("shooters", items.boardGames.shuffled(), navController)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black)
+                    )
+                    SwipeableHotnessRow(items.boardGames, navController, boardDataViewModel)
+                    boardGameSelection("test", items.boardGames, navController)
+                    boardGameSelection("Superhot", items.boardGames, navController)
+                    boardGameSelection("rpggames", items.boardGames, navController)
+                    boardGameSelection(
+                        "dungeon games",
+                        items.boardGames,
+                        navController
+                    )
+                    boardGameSelection("shooters", items.boardGames, navController)
 
                 }
+
             }
             navBar.BottomNavigationBar(navController, "Home")
         }
@@ -138,7 +167,8 @@ fun boardgameSelections(
 @Composable
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
-    navController: NavHostController
+    navController: NavHostController,
+    boardDataViewModel: BoardDataViewModel
 ) {
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -151,11 +181,12 @@ fun SwipeableHotnessRow(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(boardDataViewModel.backgroundFade)
             .padding(0.dp, 0.dp, 0.dp, 20.dp)
     ) { page ->
         val item = items[page]
-        val item2 = items[page+1]
+        val manipulation = ImagedManipulation()
+        boardDataViewModel.backgroundFade = manipulation.getAverageColor(item.bitmap!!)
         Box(
             modifier = Modifier
                 .fillMaxWidth() // Fill the max width of the pager
@@ -169,13 +200,6 @@ fun SwipeableHotnessRow(
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
                 modifier = Modifier.size(275.dp, 500.dp) // Size of the image
-            )
-            AsyncImage(
-                model = item2.imgUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.CenterStart,
-                modifier = Modifier.size(275.dp, 550.dp) // Size of the image
             )
         }
     }
@@ -196,6 +220,12 @@ fun boardGameSelection(headline: String,
         items(items) { item ->
             val gameName: String = item.name
             val gameID: String = item.id
+            val manipulation = ImagedManipulation()
+
+            //var color = item.bitmap?.let { manipulation.getAverageColor(it) }
+            //if (color == null){
+            val color = Color.LightGray
+            //}
             Box(
                 modifier = Modifier
                     .size(100.dp, 150.dp)
@@ -213,6 +243,34 @@ fun boardGameSelection(headline: String,
                     alignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize().testTag("game_picture")
                 )
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(1f)
+                        .fillMaxHeight(0.33f)
+                        .background(
+                            color.copy(0.7f),
+                        )
+                        .clip(RoundedCornerShape(topStart = 0.dp))
+                        .clip(RoundedCornerShape(topEnd = 0.dp))
+                        .drawWithContent {
+                            val colors = listOf(Color.Black, color, Color.Transparent)
+                            drawContent()
+                            drawRect(
+                                brush = Brush.verticalGradient(colors),
+                                blendMode = BlendMode.DstIn
+                            )
+                        }
+
+                ) {
+                    val inverseColor = Color((255 - color.red*255).toInt(), (255 - color.green*255).toInt(),(255 - color.blue*255).toInt())
+                    Text(
+                        text = item.name,
+                        modifier = Modifier.align(Alignment.Center),
+                        color = inverseColor,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

@@ -1,18 +1,23 @@
 package com.example.myapplication.repositories
 
 import android.text.Html
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.example.myapplication.API.ApiService
 import com.example.myapplication.BoardGame
-import com.example.myapplication.BoardGameItem
 import com.example.myapplication.BoardGameItems
-import com.example.myapplication.models.BoardGameSearch
-import com.example.myapplication.models.BoardGameSearchItems
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import retrofit2.HttpException
 import java.io.StringReader
 import javax.xml.parsers.DocumentBuilderFactory
+import com.example.myapplication.BoardGameItem
+import com.example.myapplication.imageManipulation.ImagedManipulation
+import com.example.myapplication.models.BoardGameSearch
+import com.example.myapplication.models.BoardGameSearchItems
+import java.net.HttpURLConnection
+import java.net.URL
 
 class Repository(private val apiService: ApiService) {
 
@@ -75,6 +80,19 @@ class Repository(private val apiService: ApiService) {
                 id = document.getElementsByTagName("item").item(i).attributes.getNamedItem("id").textContent
                 name = document.getElementsByTagName("name").item(i).attributes.getNamedItem("value").textContent
                 imgUrl  = document.getElementsByTagName("thumbnail").item(i).attributes.getNamedItem("value").textContent
+                // saves the imgurl as a bitmap
+                try {
+                    val url = URL(imgUrl)
+                    val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+                    connection.doInput = true
+                    connection.connect()
+                    val inputStream = connection.inputStream
+                    bitmap = BitmapFactory.decodeStream(inputStream)
+                    inputStream.close()
+                    connection.disconnect()
+                } catch(e: Exception){
+                    e.printStackTrace()
+                }
             }
             boardGameItems.boardGames = boardGameItems.boardGames + newBoardGame
         }
