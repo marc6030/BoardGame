@@ -1,4 +1,4 @@
-// BoardGameInfoActivity.kt
+// ComplexBoardGameInfoActivity.kt
 package com.example.myapplication
 
 
@@ -69,7 +69,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun BoardGameInfoActivity(
+fun ComplexBoardGameInfoActivity(
     navController: NavHostController,
     gameID: String?,
     boardDataViewModel: BoardDataViewModel,
@@ -181,6 +181,7 @@ fun BoardGameInfoActivity(
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(MaterialTheme.colorScheme.background)
+                                .align(Alignment.CenterHorizontally)
                         ) {
                             Column() {
                                 tabView(

@@ -1,6 +1,7 @@
 package com.example.myapplication.views
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
@@ -24,7 +25,7 @@ class NavBar : ComponentActivity() {
     fun BottomNavigationBar(navController: NavHostController, actName: String) {
         BottomNavigation(
             modifier = Modifier.fillMaxWidth(),
-            backgroundColor = MaterialTheme.colorScheme.primary.copy(0.7F),
+            backgroundColor = Color.Black,
             elevation = 0.dp
         ) {
              BottomNavigationItem(
@@ -33,10 +34,13 @@ class NavBar : ComponentActivity() {
                     navController.navigate("home")
                 },
                 icon = {
-                    Icon(imageVector = Icons.Default.Home, contentDescription = "Home")
+                    Icon(imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = Color.Gray)
                 },
                 label = {
-                    Text(text = "Home")
+                    Text(text = "Home",
+                        color = Color.Gray)
                 }
             )
 
@@ -46,10 +50,13 @@ class NavBar : ComponentActivity() {
                     navController.navigate("search")
                 },
                 icon = {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                    Icon(imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        tint = Color.Gray)
                 },
                 label = {
-                    Text(text = "Search")
+                    Text(text = "Search",
+                        color = Color.Gray)
                 }
             )
 
@@ -59,10 +66,13 @@ class NavBar : ComponentActivity() {
                     navController.navigate("favorite")
                 },
                 icon = {
-                    Icon(imageVector = Icons.Default.Favorite, contentDescription = "Favorite")
+                    Icon(imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favorite",
+                        tint = Color.Gray)
                 },
                 label = {
-                    Text(text = "Favorite")
+                    Text(text = "Favorite",
+                        color = Color.Gray)
                 }
             )
         }
