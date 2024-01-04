@@ -1,10 +1,19 @@
 package com.example.myapplication
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -68,12 +77,11 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
     if (!isInternetAvailable(context)) {
         Text("No Internet!")
     }
-    var startScaleInAnimation by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameList()
         favoriteViewModel.fetchFavoriteListFromDB()
         delay(300)
-        startScaleInAnimation = true
+        sharedViewModel.animationHome = true
     }
 
     val isLoading = sharedViewModel.isLoading
@@ -94,9 +102,10 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
             )
         }
     } else {
-        AnimatedVisibility(startScaleInAnimation,
-            enter = expandVertically(),
-            exit = fadeOut()){
+        AnimatedVisibility(sharedViewModel.animationHome,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ){
             boardgameSelections(navController, sharedViewModel)
         }
     }

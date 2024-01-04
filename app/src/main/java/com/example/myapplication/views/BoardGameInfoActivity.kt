@@ -3,17 +3,9 @@ package com.example.myapplication
 
 
 import android.util.Log
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
@@ -46,12 +38,10 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +49,8 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -86,23 +78,27 @@ fun BoardGameInfoActivity(
     sharedViewModel: SharedViewModel
     ) {
     val context = LocalContext.current
-    var startScaleInAnimation by remember { mutableStateOf(false) }
-    var startSecondAnimation by remember { mutableStateOf(false) }
+
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
         boardDataViewModel.fetchBoardGameData(gameID!!)
         ratingsViewModel.fetchRatings(gameID!!)
         favoriteViewModel.fetchFavoriteListFromDB()
 
-        delay(400)
-        startScaleInAnimation = true
-        delay(850)
-        startSecondAnimation = true
+        delay(800)
+        sharedViewModel.firstAnimationBoardInfo = true
+        delay(1000)
+        sharedViewModel.secondAnimationBoardInfo = true
 
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
 
     }
+
+    val colorMatrix = ColorMatrix().apply {
+        setToScale(0.2f, 0.2f, 0.2f, 1f)
+    }
+
 
     val isLoading = sharedViewModel.isLoading
     val boardGame = sharedViewModel.boardGameData
@@ -136,7 +132,7 @@ fun BoardGameInfoActivity(
             // Observe the data
             if (boardGame != null) {
                 AnimatedVisibility(
-                    startScaleInAnimation,
+                    sharedViewModel.firstAnimationBoardInfo,
                     enter = scaleIn(),
                     exit = scaleOut()
                 ) {
@@ -148,14 +144,15 @@ fun BoardGameInfoActivity(
                         modifier = Modifier
                             .fillMaxSize()
                             .blur(30.dp)
-                            .scale(if (startScaleInAnimation) 1.5f else 0.3f)
-                            .animateContentSize()
+                            .scale(if (sharedViewModel.firstAnimationBoardInfo) 1.5f else 0.3f)
+                            .animateContentSize(),
+                        colorFilter = ColorFilter.colorMatrix(colorMatrix)
                     )
                 }
                 AnimatedVisibility(
-                    startSecondAnimation,
+                    sharedViewModel.secondAnimationBoardInfo,
                     enter = fadeIn(),
-                    exit = fadeOut()
+                    exit = scaleOut()
                 ) {
                     Column(
                         modifier = Modifier
@@ -571,17 +568,19 @@ fun ratingDisplay(text: String,
 
 
 @Composable
-fun favoriteButton(navController: NavHostController,
-                   viewModel: FavoriteViewModel,
-                   sharedViewModel: SharedViewModel) {
-
-
+fun favoriteButton(
+    navController: NavHostController,
+    viewModel: FavoriteViewModel,
+    sharedViewModel: SharedViewModel
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
     ) {
         Button(
             onClick = {
+                sharedViewModel.secondAnimationBoardInfo = false
+                sharedViewModel.firstAnimationBoardInfo = false
                 navController.popBackStack()
             },
             modifier = Modifier

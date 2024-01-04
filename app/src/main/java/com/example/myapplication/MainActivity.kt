@@ -43,7 +43,6 @@ class MainActivity : ComponentActivity() {
         val favoriteViewModel = FavoriteViewModel(viewModel)
 
         setContent {
-
             AppTheme() {
                 boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
                     viewModel, authManager, account)
@@ -82,7 +81,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
         composable("search") {
-            searchActivity(navController, boardSearchViewModel)
+            searchActivity(navController, boardSearchViewModel, sharedViewModel)
         }
         composable("favorite") {
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)

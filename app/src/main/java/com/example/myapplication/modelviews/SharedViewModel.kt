@@ -19,6 +19,11 @@ class SharedViewModel : ViewModel() {
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
 
+    var firstAnimationBoardInfo by mutableStateOf(false)
+    var secondAnimationBoardInfo by mutableStateOf(false)
+    var animationHome by  mutableStateOf(false)
+
+
     private lateinit var firebaseuser: FirebaseUser
 
     // Exposing the values for the views
