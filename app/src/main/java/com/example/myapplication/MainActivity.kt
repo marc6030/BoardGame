@@ -24,24 +24,41 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var authManager: AuthenticationManager
     val viewModel: SharedViewModel by viewModels()
 
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val account = GoogleSignIn.getLastSignedInAccount(this)
+        authManager = AuthenticationManager(this)
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
         val favoriteViewModel = FavoriteViewModel(viewModel)
 
         setContent {
-            boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
-                viewModel, account)
+
+            AppTheme() {
+                boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
+                    viewModel, authManager, account)
+            }
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
+        if (requestCode == AuthenticationManager.RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                authManager.firebaseAuthWithGoogle(account)
+            } catch (e: ApiException) {
+                // Handle the error here
+            }
+        }
+    }
 }
 
 
@@ -53,6 +70,9 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         navController = navController,
         startDestination = "home"
     ) {
+        composable("login") {
+            LoginScreen(sharedViewModel, navController) { authManager.signIn(sharedViewModel) }
+        }
         composable("home") {
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
@@ -65,7 +85,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         composable(
             route = "boardgameinfo/{gameID}",
             arguments = listOf(navArgument("gameID") { type = NavType.StringType })
-        ) { backStackEntry ->
+            ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val gameID = arguments.getString("gameID")
             BoardGameInfoActivity(navController, gameID, boardDataViewModel, ratingsViewModel, favoriteViewModel, sharedViewModel)

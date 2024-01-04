@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,7 +59,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             modifier = Modifier
                 .height(100.dp)
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Image(
                 painter = logo,
@@ -73,13 +74,13 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             modifier = Modifier
                 .height(2.dp)
                 .fillMaxWidth()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
         )
         Text(text = "Your liked games!", modifier = Modifier.padding(12.dp), fontSize = 26.sp, fontWeight = FontWeight.Bold)
         LazyColumn (modifier = Modifier
             .fillMaxWidth()
             .weight(1f)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
         ) {
             if (favoriteBoardGame != null) {
                 items(favoriteBoardGame) { boardgame ->
@@ -108,7 +109,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                         }
                         Box(
                             modifier = Modifier
-                                .background(Color.LightGray)
+                                .background(MaterialTheme.colorScheme.primary)
                                 .align(Alignment.BottomCenter)
                                 .fillMaxWidth(1f)
                                 .fillMaxHeight(0.5f)
