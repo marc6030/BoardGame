@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -155,7 +154,7 @@ fun boardgameSelections(
             )
             {
                 item {
-                    SwipeableHotnessRow(items.boardGames, navController)
+                    SwipeableHotnessRow(items.boardGames, navController, boardDataViewModel)
                     boardGameSelection("test", items.boardGames, navController)
                     boardGameSelection("Superhot", items.boardGames, navController)
                     boardGameSelection("rpggames", items.boardGames, navController)
@@ -219,7 +218,7 @@ fun SwipeableHotnessRow(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
-                modifier = Modifier.size(275.dp, 500.dp) // Size of the image
+                modifier = Modifier.fillMaxSize() // Size of the image
             )
             Box(
                 modifier = Modifier
@@ -310,7 +309,6 @@ fun boardGameSelection(headline: String,
                     Text(
                         text = item.name,
                         modifier = Modifier.align(Alignment.Center),
-                        color = inverseColor,
                         fontWeight = FontWeight.Bold
                     )
                 }
