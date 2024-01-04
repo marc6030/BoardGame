@@ -59,9 +59,6 @@ data class BoardGame(
     @field:Element(name = "CategoryRank", required = false)
     var categoryRank: String = "",
 
-    @field:Element(name = "Category", required = false)
-    var category: String = "",
-
     @field:Element(name = "Mechanisms", required = false)
     var mechanisms: List<String> = emptyList(),
 
