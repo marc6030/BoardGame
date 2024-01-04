@@ -29,12 +29,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -68,6 +71,7 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
+import kotlinx.coroutines.delay
 
 
 // This is primarily a view. We should probably seperate the logic from the rest
@@ -114,45 +118,21 @@ fun boardgameSelections(
 ) {
     val navBar = NavBar()
     val items = sharedViewModel.boardGameList
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    val icon: Painter = painterResource(id = R.drawable.search)
+    val mychoice = false
+
     if (items != null) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
             ){
-                Box(
-                    modifier = Modifier
-                        .height(150.dp)
-                        .fillMaxWidth()
-                        .background(Color.White)
-                ) {
-                    Image(
-                        painter = logo,
-                        contentDescription = null, // Set a meaningful content description if needed
-                        modifier = Modifier
-                            .height(150.dp)
-                            .width(150.dp)
-                            .align(Alignment.Center)
-                            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                    )
-                    Image(
-                        painter = icon,
-                        contentDescription = null, // Set a meaningful content description if needed
-                        modifier = Modifier
-                            .height(40.dp)
-                            .width(40.dp)
-                            .align(Alignment.TopEnd)
-                            .padding(0.dp, 10.dp, 0.dp, 10.dp)
-                    )
-                }
             LazyColumn( modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .background(Color.White))
             {
                 item {
-                    //Test()
+                    TopMenu()
+                    Test(mychoice)
                     SwipeableHotnessRow(items.boardGames.shuffled(), navController)
                     boardGameSelection("test", items.boardGames.shuffled(), navController)
                     boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
@@ -167,10 +147,42 @@ fun boardgameSelections(
 
     }
 }
-/*
+
 @Composable
-fun Test() {
-    var visible by remember { mutableStateOf(true) }
+fun TopMenu(){
+    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
+    val icon: Painter = painterResource(id = R.drawable.search)
+
+    Box(
+        modifier = Modifier
+            .height(150.dp)
+            .fillMaxWidth()
+            .background(Color.White)
+    ) {
+        Image(
+            painter = logo,
+            contentDescription = null, // Set a meaningful content description if needed
+            modifier = Modifier
+                .height(150.dp)
+                .width(150.dp)
+                .align(Alignment.Center)
+                .padding(0.dp, 10.dp, 0.dp, 0.dp)
+        )
+        Image(
+            painter = icon,
+            contentDescription = null, // Set a meaningful content description if needed
+            modifier = Modifier
+                .height(40.dp)
+                .width(40.dp)
+                .align(Alignment.TopEnd)
+                .padding(0.dp, 10.dp, 0.dp, 10.dp)
+        )
+    }
+}
+
+@Composable
+fun Test(run: Boolean) {
+    var visible by remember { mutableStateOf(run) }
     val density = LocalDensity.current
     AnimatedVisibility(
         visible = visible,
@@ -192,13 +204,10 @@ fun Test() {
             modifier = Modifier
                 .height(150.dp)
                 .width(150.dp)
-                .align(Alignment.Center)
                 .padding(0.dp, 10.dp, 0.dp, 0.dp)
         )
     }
 }
-
- */
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -221,7 +230,7 @@ fun SwipeableHotnessRow(
             .padding(0.dp, 0.dp, 0.dp, 20.dp)
     ) { page ->
         val item = items[page]
-        val item2 = items[page+1]
+        val item2 = items[page + 1]
         Box(
             modifier = Modifier
                 .fillMaxWidth() // Fill the max width of the pager
@@ -235,6 +244,25 @@ fun SwipeableHotnessRow(
                 contentScale = ContentScale.FillBounds,
                 alignment = Alignment.Center,
                 modifier = Modifier.size(275.dp, 500.dp) // Size of the image
+            )
+        }
+    }
+
+    Row(
+        Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(pagerState.pageCount) { iteration ->
+            val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+            Box(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .clip(CircleShape)
+                    .background(color)
+                    .size(16.dp)
             )
         }
     }
