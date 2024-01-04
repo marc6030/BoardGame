@@ -17,8 +17,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Absolute.Center
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -55,6 +58,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -65,6 +69,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
@@ -72,6 +77,8 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
 import kotlinx.coroutines.delay
+import kotlin.math.absoluteValue
+
 
 
 // This is primarily a view. We should probably seperate the logic from the rest
@@ -224,26 +231,37 @@ fun SwipeableHotnessRow(
 
     HorizontalPager(
         state = pagerState,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(0.dp, 0.dp, 0.dp, 20.dp)
+        modifier = Modifier.height(400.dp),
+        contentPadding = PaddingValues(horizontal = 32.dp),
+        pageSpacing = 8.dp,
     ) { page ->
         val item = items[page]
-        val item2 = items[page + 1]
         Box(
             modifier = Modifier
-                .fillMaxWidth() // Fill the max width of the pager
-                .wrapContentWidth(Alignment.CenterHorizontally) // Center the box horizontally
+                .fillMaxSize()// Set a custom width for each item
                 .clip(RoundedCornerShape(30.dp))
                 .clickable { navController.navigate("boardgameinfo/${item.id}") }
-        ) {
+                .graphicsLayer {
+                    val pageOffset =
+                        ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
+
+                    val transformation =
+                        lerp(
+                            start = 0.7f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+                    alpha = transformation
+                    scaleY = transformation
+                }
+        )  {
             AsyncImage(
                 model = item.imgUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
-                alignment = Alignment.Center,
-                modifier = Modifier.size(275.dp, 500.dp) // Size of the image
+                //alignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxHeight()
             )
         }
     }
@@ -252,7 +270,7 @@ fun SwipeableHotnessRow(
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 10.dp, top = 10.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         repeat(pagerState.pageCount) { iteration ->
@@ -262,7 +280,7 @@ fun SwipeableHotnessRow(
                     .padding(2.dp)
                     .clip(CircleShape)
                     .background(color)
-                    .size(16.dp)
+                    .size(12.dp)
             )
         }
     }
