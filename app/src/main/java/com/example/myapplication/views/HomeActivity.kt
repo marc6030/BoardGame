@@ -152,7 +152,7 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    Test()
+                    //Test()
                     SwipeableHotnessRow(items.boardGames.shuffled(), navController)
                     boardGameSelection("test", items.boardGames.shuffled(), navController)
                     boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
@@ -167,6 +167,7 @@ fun boardgameSelections(
 
     }
 }
+/*
 @Composable
 fun Test() {
     var visible by remember { mutableStateOf(true) }
@@ -196,6 +197,8 @@ fun Test() {
         )
     }
 }
+
+ */
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
