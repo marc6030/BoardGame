@@ -1,10 +1,17 @@
 package com.example.myapplication
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import android.util.Log
@@ -21,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -58,9 +66,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -135,7 +145,7 @@ fun boardgameSelections(
             ){
                 Box(
                     modifier = Modifier
-                        .height(100.dp)
+                        .height(150.dp)
                         .fillMaxWidth()
                         .background(Color.Black.copy(alpha = 0.9f))
                 ) {
@@ -143,8 +153,8 @@ fun boardgameSelections(
                         painter = logo,
                         contentDescription = null,
                         modifier = Modifier
-                            .height(120.dp)
-                            .width(120.dp)
+                            .height(150.dp)
+                            .width(150.dp)
                             .align(Alignment.Center)
                             .padding(0.dp, 10.dp, 0.dp, 0.dp)
                             .background(Color.Black.copy(alpha = 0.9f))
@@ -156,14 +166,13 @@ fun boardgameSelections(
                             .height(40.dp)
                             .width(40.dp)
                             .align(Alignment.TopEnd)
-                            .padding(0.dp, 5.dp, 0.dp, 0.dp)
+                            .padding(0.dp, 10.dp, 0.dp, 10.dp)
                     )
                 }
             LazyColumn( modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(boardDataViewModel.backgroundFade)
-            )
+                .background(Color.White))
             {
                 item {
                     SwipeableHotnessRow(items.boardGames, navController, boardDataViewModel)
@@ -212,17 +221,16 @@ fun SwipeableHotnessRow(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
-            .background(boardDataViewModel.backgroundFade)
+            .background(Color.White)
             .padding(0.dp, 0.dp, 0.dp, 20.dp)
     ) { page ->
         val item = items[page]
-        val manipulation = ImagedManipulation()
-        boardDataViewModel.backgroundFade = manipulation.getAverageColor(item.bitmap!!)
+        val item2 = items[page+1]
         Box(
             modifier = Modifier
                 .fillMaxWidth() // Fill the max width of the pager
                 .wrapContentWidth(Alignment.CenterHorizontally) // Center the box horizontally
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(30.dp))
                 .clickable { navController.navigate("boardgameinfo/${item.id}") }
         ) {
             AsyncImage(
@@ -230,7 +238,7 @@ fun SwipeableHotnessRow(
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 alignment = Alignment.Center,
-                modifier = Modifier.size(275.dp, 550.dp) // Size of the image
+                modifier = Modifier.size(275.dp, 500.dp) // Size of the image
             )
             Box(
                 modifier = Modifier
@@ -261,13 +269,8 @@ fun SwipeableHotnessRow(
 fun boardGameSelection(headline: String,
                        items: List<BoardGameItem>,
                        navController: NavHostController
-) {
-    Text(
-        text = headline,
-        fontSize = 35.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(start = 10.dp, top = 20.dp)
-    )
+){
+    Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = Color.Black)
     LazyRow(
         modifier = Modifier
             .background(Color.White)

@@ -71,7 +71,10 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
     // Postgresql
-    implementation("org.postgresql:postgresql:42.2.19")
+    implementation("org.postgresql:postgresql:42.2.5")
+
+
+    implementation("org.jsoup:jsoup:1.14.3")
 
     // UI elements from google
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))

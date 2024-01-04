@@ -3,9 +3,8 @@ package com.example.myapplication.modelviews
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.API.RetrofitClient
 import com.example.myapplication.BoardGame
-import com.example.myapplication.repositories.Repository
+import com.example.myapplication.repositories.postgresql
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +16,6 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
 
 
     private var db = FirebaseFirestore.getInstance()
-
-    private val apiService by lazy { RetrofitClient.instance } // interface for connections... Is loaded on appstart and thus doesn't strictly needs to be lazy.
-    private val repository = Repository(apiService) // factory builder and singleton
 
 
     private fun getUserID() : String {
@@ -42,7 +38,7 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
                     .await()
 
                 for (document in favSnapshot) {
-                    val boardGame: BoardGame = repository.getBoardGame(document.id)
+                    val boardGame: BoardGame = postgresql().getBoardGame(document.id)
                     boardGame.isfavorite = true
                     tempBg.add(boardGame)
                 }
@@ -85,7 +81,7 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
 
 
                 // Fetch the BoardGame details after adding to Firestore
-                val newFav = repository.getBoardGame(id)
+                val newFav = postgresql().getBoardGame(id)
 
                 // Update the LiveData on the main thread
                 withContext(Dispatchers.Main) {
