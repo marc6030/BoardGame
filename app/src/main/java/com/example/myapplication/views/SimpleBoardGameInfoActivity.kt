@@ -28,10 +28,14 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -301,47 +305,39 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                                     imageVector = Icons.Filled.Check,
                                                     contentDescription = "contentDescription",
                                                     modifier = Modifier
-                                                        .size(40.dp)
+                                                        .size(45.dp)
                                                         .background(Color.DarkGray, CircleShape)
                                                         .align(Alignment.BottomStart),
                                                     tint = Color.DarkGray
                                                 )
                                                 Icon(
-                                                    imageVector = Icons.Filled.Check,
+                                                    imageVector = Icons.Filled.MoreVert,
                                                     contentDescription = "contentDescription",
                                                     modifier = Modifier
-                                                        .size(40.dp)
+                                                        .size(45.dp)
                                                         .background(Color.DarkGray, CircleShape)
-                                                        .align(Alignment.BottomEnd),
-                                                    tint = Color.DarkGray
+                                                        .align(Alignment.BottomEnd)
+                                                        .clickable { },
+                                                    tint = Color.White,
                                                 )
                                             }
                                             Row(
                                                 modifier = Modifier
                                                     .padding(30.dp)
-                                                    .fillMaxWidth(0.8f)
-                                                    .fillMaxHeight(0.85f)
+                                                    .fillMaxWidth(0.806f)
+                                                    .fillMaxHeight(0.845f)
                                                     .align(Alignment.TopCenter)
                                             ) {
                                                 Text(
-                                                    text = "3.5",
+                                                    text = boardGame.ratingBGG,
                                                     style = MaterialTheme.typography.bodyLarge,
                                                     modifier = Modifier
                                                         .fillMaxWidth(0.5f)
                                                         .align(Alignment.Bottom),
                                                     textAlign = TextAlign.Start,
                                                     fontWeight = FontWeight.Bold,
-                                                    color = Color.White
-                                                )
-                                                Text(
-                                                    text = "3.5",
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    modifier = Modifier
-                                                        .fillMaxWidth(1f)
-                                                        .align(Alignment.Bottom),
-                                                    textAlign = TextAlign.End,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = Color.White
+                                                    color = Color.White,
+                                                    fontSize = 16.sp
                                                 )
                                             }
                                             Box(
@@ -365,6 +361,22 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                                         },
                                                     tint = Color.White,
                                                 )
+                                            }
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(30.dp)
+                                                    .fillMaxWidth(0.693f)
+                                                    .fillMaxHeight(0.823f)
+                                                    .align(Alignment.TopCenter)){
+                                                Icon(imageVector = Icons.Filled.Star,
+                                                    contentDescription = "contentdescription",
+                                                    modifier = Modifier
+                                                        .size(25.dp)
+                                                        .align(Alignment.BottomStart)
+                                                        .background(Color.Gray, CircleShape)
+                                                        .clickable {  },
+                                                    tint = Color.White
+                                                    )
                                             }
                                         }
                                     }
@@ -428,9 +440,11 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                                         .size(60.dp)
                                                         .background(Color.DarkGray, CircleShape)
                                                         .align(Alignment.BottomCenter)
-                                                        .clickable {coroutineScope.launch {
-                                                            pagerState.animateScrollToPage(0)
-                                                        } },
+                                                        .clickable {
+                                                            coroutineScope.launch {
+                                                                pagerState.animateScrollToPage(0)
+                                                            }
+                                                        },
                                                     tint = Color.White,
                                                 )
                                             }
