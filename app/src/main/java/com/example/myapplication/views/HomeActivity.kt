@@ -141,7 +141,6 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 fun boardgameSelections(
     navController: NavHostController,
     sharedViewModel: SharedViewModel,
-    boardDataViewModel: BoardDataViewModel
 ) {
     val navBar = NavBar()
     val items = sharedViewModel.boardGameList
