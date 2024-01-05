@@ -16,6 +16,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.Center
 import androidx.compose.foundation.layout.Box
@@ -77,6 +78,7 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 
@@ -139,7 +141,6 @@ fun boardgameSelections(
             {
                 item {
                     TopMenu()
-                    Test(mychoice)
                     SwipeableHotnessRow(items.boardGames.shuffled(), navController)
                     boardGameSelection("test", items.boardGames.shuffled(), navController)
                     boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
@@ -187,46 +188,34 @@ fun TopMenu(){
     }
 }
 
-@Composable
-fun Test(run: Boolean) {
-    var visible by remember { mutableStateOf(run) }
-    val density = LocalDensity.current
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInVertically {
-            // Slide in from 40 dp from the top.
-            with(density) { -40.dp.roundToPx() }
-        } + expandVertically(
-            // Expand from the top.
-            expandFrom = Alignment.Top
-        ) + fadeIn(
-            // Fade in with the initial alpha of 0.3f.
-            initialAlpha = 0.3f
-        ),
-        exit = slideOutVertically() + shrinkVertically() + fadeOut()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.newbanditlogo),
-            contentDescription = null,
-            modifier = Modifier
-                .height(150.dp)
-                .width(150.dp)
-                .padding(0.dp, 10.dp, 0.dp, 0.dp)
-        )
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
-    navController: NavHostController
+    navController: NavHostController,
+    autoScrollDuration: Long = 3000L
 ) {
     val pagerState = rememberPagerState(
-        initialPage = 0,
+        initialPage = items.size/2,
         initialPageOffsetFraction = 0f
     ) {
         items.size
+    }
+
+    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
+    if (isDragged.not()) {
+        with(pagerState) {
+            var currentPageKey by remember { mutableStateOf(0) }
+            LaunchedEffect(key1 = currentPageKey) {
+                launch {
+                    delay(timeMillis = autoScrollDuration)
+                    val nextPage = (currentPage + 1).mod(pageCount)
+                    animateScrollToPage(page = nextPage)
+                    currentPageKey = nextPage
+                }
+            }
+        }
     }
 
     HorizontalPager(
