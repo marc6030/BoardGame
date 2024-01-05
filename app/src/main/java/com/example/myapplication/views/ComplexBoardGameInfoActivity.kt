@@ -4,10 +4,12 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,9 +88,9 @@ fun ComplexBoardGameInfoActivity(
         favoriteViewModel.fetchFavoriteListFromDB()
 
         delay(800)
-        sharedViewModel.firstAnimationBoardInfo = true
+        sharedViewModel.firstAnimationComplexBoardInfo = true
         delay(1000)
-        sharedViewModel.secondAnimationBoardInfo = true
+        sharedViewModel.secondAnimationComplexBoardInfo = true
 
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
@@ -132,9 +134,9 @@ fun ComplexBoardGameInfoActivity(
             // Observe the data
             if (boardGame != null) {
                 AnimatedVisibility(
-                    sharedViewModel.firstAnimationBoardInfo,
-                    enter = scaleIn(),
-                    exit = scaleOut()
+                    sharedViewModel.firstAnimationComplexBoardInfo,
+                    enter = EnterTransition.Companion.None,
+                    exit = ExitTransition.None
                 ) {
                     AsyncImage(
                         model = boardGame.imageURL,
@@ -144,15 +146,15 @@ fun ComplexBoardGameInfoActivity(
                         modifier = Modifier
                             .fillMaxSize()
                             .blur(30.dp)
-                            .scale(if (sharedViewModel.firstAnimationBoardInfo) 1.5f else 0.3f)
+                            .scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
                             .animateContentSize(),
                         colorFilter = ColorFilter.colorMatrix(colorMatrix)
                     )
                 }
                 AnimatedVisibility(
-                    sharedViewModel.secondAnimationBoardInfo,
-                    enter = fadeIn(),
-                    exit = scaleOut()
+                    sharedViewModel.secondAnimationComplexBoardInfo,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
                 ) {
                     Column(
                         modifier = Modifier
@@ -209,7 +211,7 @@ fun ComplexBoardGameInfoActivity(
                             }
                         }
                     }
-                    favoriteButton(navController, favoriteViewModel, sharedViewModel)
+                    favoriteButton(navController, favoriteViewModel, sharedViewModel, boardGame.id)
                 }
             }
         }
@@ -572,7 +574,8 @@ fun ratingDisplay(text: String,
 fun favoriteButton(
     navController: NavHostController,
     viewModel: FavoriteViewModel,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    boardgameID : String
 ) {
     Box(
         modifier = Modifier
@@ -580,9 +583,9 @@ fun favoriteButton(
     ) {
         Button(
             onClick = {
-                sharedViewModel.secondAnimationBoardInfo = false
-                sharedViewModel.firstAnimationBoardInfo = false
-                navController.popBackStack()
+                sharedViewModel.secondAnimationComplexBoardInfo = false
+                sharedViewModel.firstAnimationComplexBoardInfo = false
+                navController.navigate(sharedViewModel.goBackToElseThanInfo)
             },
             modifier = Modifier
                 .width(60.dp)

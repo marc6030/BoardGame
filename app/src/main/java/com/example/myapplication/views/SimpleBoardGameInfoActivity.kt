@@ -77,9 +77,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         favoriteViewModel.fetchFavoriteListFromDB()
 
         delay(800)
-        sharedViewModel.firstAnimationBoardInfo = true
+        sharedViewModel.firstAnimationSimpleBoardInfo = true
         delay(1000)
-        sharedViewModel.secondAnimationBoardInfo = true
+        sharedViewModel.secondAnimationSimpleBoardInfo = true
 
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
@@ -119,7 +119,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         } else {
             if (boardGame != null) {
                 AnimatedVisibility(
-                    sharedViewModel.firstAnimationBoardInfo,
+                    sharedViewModel.firstAnimationSimpleBoardInfo,
                     enter = scaleIn(),
                     exit = scaleOut()
                 ) {
@@ -131,13 +131,13 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                         modifier = Modifier
                             .fillMaxSize()
                             .blur(30.dp)
-                            .scale(if (sharedViewModel.firstAnimationBoardInfo) 1.5f else 0.3f)
+                            .scale(if (sharedViewModel.firstAnimationSimpleBoardInfo) 1.5f else 0.3f)
                             .animateContentSize(),
                         colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
                     )
                 }
                 AnimatedVisibility(
-                    sharedViewModel.secondAnimationBoardInfo,
+                    sharedViewModel.secondAnimationSimpleBoardInfo,
                     enter = fadeIn(),
                     exit = scaleOut()
                 ) {
@@ -336,9 +336,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                     }
                     Button(
                         onClick = {
-                            sharedViewModel.secondAnimationBoardInfo = false
-                            sharedViewModel.firstAnimationBoardInfo = false
-                            navController.popBackStack()
+                            sharedViewModel.secondAnimationSimpleBoardInfo = false
+                            sharedViewModel.firstAnimationSimpleBoardInfo = false
+                            navController.navigate(sharedViewModel.goBackToElseThanInfo)
                         },
                         modifier = Modifier
                             .width(60.dp)
