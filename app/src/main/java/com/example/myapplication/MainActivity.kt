@@ -68,7 +68,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
         }
         composable("personal"){
-            PersonalActivity(navController)
+            PersonalActivity(navController, sharedViewModel)
         }
 
         composable(

@@ -1,7 +1,10 @@
 package com.example.myapplication.views
 
+import android.graphics.drawable.Drawable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -25,20 +30,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.myapplication.R
+import com.example.myapplication.modelviews.SharedViewModel
 import com.google.type.Fraction
 
 // played games, liked games, something fun
     @Composable
-fun PersonalActivity(navController: NavHostController) {
+fun PersonalActivity(navController: NavHostController, sharedViewModel: SharedViewModel) {
     val navBar = NavBar()
     val context = LocalContext.current
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
@@ -77,23 +86,28 @@ fun PersonalActivity(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .size(100.dp, 100.dp)
-                .background(Color.DarkGray, shape = CircleShape)
+                .background(color = Color.Black, shape = CircleShape)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text(
+            Image(
+                painter = painterResource(id = R.drawable.flotterfyr),
                 modifier = Modifier
-                    .align(Alignment.Center),
-                text = "?",
-                fontSize = 50.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.LightGray
+                    .fillMaxSize()
+                    .border(
+                        BorderStroke(2.dp, Color.Black),
+                        CircleShape
+                    )
+                    .clip(CircleShape),
+                contentScale = ContentScale.FillHeight,
+                contentDescription = ""
+
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
         KeyStats()
         Spacer(modifier = Modifier.height(10.dp))
         Menu(navController)
-        Recents()
+        Recents(navController, sharedViewModel)
     }
     Box(
         contentAlignment = Alignment.BottomCenter,
@@ -116,26 +130,40 @@ fun KeyStats(){
                 .weight(0.3f)
                 .height(70.dp)
         ) {
-            keyStat()
+            KeyStat("Played Games", "?")
         }
+        Box(
+            modifier = Modifier
+                .height(50.dp)
+                .width(1.dp)
+                .clip(RoundedCornerShape(1.dp))
+                .background(Color.Black)
+        )
         Box(
             modifier = Modifier
                 .weight(0.3f)
                 .height(70.dp)
         ) {
-            keyStat()
+            KeyStat("Rated Games", "?")
         }
+        Box(
+            modifier = Modifier
+                .height(50.dp)
+                .width(1.dp)
+                .clip(RoundedCornerShape(1.dp))
+                .background(Color.Black)
+        )
         Box(
             modifier = Modifier
                 .weight(0.3f)
                 .height(70.dp)
         ) {
-            keyStat()
+            KeyStat("Liked Games", "?")
         }
     }
 }
 @Composable
-fun keyStat(){
+fun KeyStat(title: String, data: String){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -145,12 +173,14 @@ fun keyStat(){
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.5f)
+                .padding(top = 10.dp)
         ) {
             Text(
                 modifier = Modifier
                     .fillMaxSize(),
-                text = "-----",
+                text = data,
                 textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
                 fontSize = 20.sp
             )
         }
@@ -162,12 +192,12 @@ fun keyStat(){
             Text(
                 modifier = Modifier
                     .fillMaxSize(),
-                text = "-------",
+                text = title,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                fontSize = 13.sp
             )
         }
+
     }
 }
 
@@ -216,7 +246,7 @@ fun Menu(navController: NavHostController){
                         .background(Color.DarkGray)
                 ){
                     Text(
-                        text = "pp",
+                        text = "Challenges",
                         modifier = Modifier
                             .align(Alignment.Center),
                         fontSize = 20.sp,
@@ -241,7 +271,7 @@ fun Menu(navController: NavHostController){
                         .background(Color.DarkGray)
                 ){
                     Text(
-                        text = "pp",
+                        text = "Tracked",
                         modifier = Modifier
                             .align(Alignment.Center),
                         fontSize = 20.sp,
@@ -258,7 +288,7 @@ fun Menu(navController: NavHostController){
                         .background(Color.DarkGray)
                 ){
                     Text(
-                        text = "pp",
+                        text = "Delete the OS",
                         modifier = Modifier
                             .align(Alignment.Center),
                         fontSize = 20.sp,
@@ -272,11 +302,15 @@ fun Menu(navController: NavHostController){
 }
 
 @Composable
-fun Recents(){
+fun Recents(
+    navController: NavHostController,
+    sharedViewModel: SharedViewModel
+){
+    val items = sharedViewModel.boardGameList!!.boardGames
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(210.dp)
+            .height(250.dp)
     ){
         Box(
             modifier = Modifier
@@ -294,6 +328,38 @@ fun Recents(){
                 fontWeight = FontWeight.Bold,
                 color = Color.LightGray
             )
+            LazyRow(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(bottom = 20.dp)
+            )
+            {
+                items(items) { item ->
+                    val gameName: String = item.name
+                    val gameID: String = item.id
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp, 150.dp)
+                            .testTag("items_1234")
+                            .padding(5.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                            .clickable {
+                                navController.navigate("boardgameinfo/$gameID")
+                            }
+                    )
+                    {
+                        AsyncImage(
+                            model = item.imgUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .testTag("game_picture")
+                        )
+                    }
+                }
+            }
         }
     }
 }
