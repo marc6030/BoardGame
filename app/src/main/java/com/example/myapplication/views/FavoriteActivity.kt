@@ -6,10 +6,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,7 +62,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             modifier = Modifier
                 .height(100.dp)
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Image(
                 painter = logo,
@@ -73,72 +77,76 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             modifier = Modifier
                 .height(2.dp)
                 .fillMaxWidth()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.background)
         )
-        Text(text = "Your liked games!", modifier = Modifier.padding(12.dp), fontSize = 26.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = "Favorites",
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .fillMaxWidth()
+                .padding(12.dp),
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+            )
         LazyColumn (modifier = Modifier
             .fillMaxWidth()
             .weight(1f)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
         ) {
-            if (favoriteBoardGame != null) {
-                items(favoriteBoardGame) { boardgame ->
-                    Box(
-                        modifier = Modifier
-                            .height(120.dp)
-                            .width(160.dp)
-                            .padding(10.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .clickable {
-                                if (boardgame != null) {
-                                    navController.navigate("boardgameinfo/${boardgame.id}")
-                                }
-                            }
+            items(favoriteBoardGame) { boardgame ->
+                if (boardgame != null) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
                     ) {
-                        if (boardgame != null) {
+                        Box(
+                            modifier = Modifier
+                                .height(100.dp)
+                                .width(100.dp)
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .clickable {
+                                    navController.navigate("boardgameinfo/${boardgame.id}")
+                                },
+                            contentAlignment = Alignment.TopCenter
+                        ) {
                             AsyncImage(
                                 model = boardgame.imageURL,
                                 contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .fillMaxWidth()
-                                    .fillMaxHeight()
+                                contentScale = ContentScale.FillBounds,
                             )
                         }
-                        //Box(
-                        //    modifier = Modifier
-                        //        .background(Color.Red)
-                        //        .align(Alignment.BottomCenter)
-                        //        .fillMaxWidth(1f)
-                        //        .fillMaxHeight(0.5f)
-                        //        .padding(12.dp)
-                        //        .clip(RoundedCornerShape(20.dp))
-                        //)
-                        //{
-                        //    if (boardgame != null) {
-                        //        Text(
-                        //            text = boardgame.shortTitel(),
-                        //            modifier = Modifier.align(Alignment.Center),
-                        //            fontSize = 32.sp,
-                        //            fontWeight = FontWeight.Bold
-                        //        )
-                        //    }
-                        //    Icon(
-                        //        imageVector = Icons.Outlined.Favorite,
-                        //        contentDescription = "Favorite Icon",
-                        //        tint = Color.Red,
-                        //        modifier = Modifier
-                        //            .align(Alignment.CenterEnd)
-                        //            .size(32.dp)
-                        //            .clickable { viewModel.toggleFavorite(boardgame) }
-                        //    )
-                        //}
+                        Column(
+                            Modifier.weight(1f)
+                        ) {
+                            Text(boardgame.shortTitel(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.clickable {
+                                    navController.navigate("boardgameinfo/${boardgame.id}")
+                                }
+                            )
+                        }
+                        Spacer(modifier = Modifier
+                            .weight(1f)
+                            .background(MaterialTheme.colorScheme.background)
+                            .clickable {
+                                navController.navigate("boardgameinfo/${boardgame.id}")
+                            }
+                        )
+                        Icon(
+                            imageVector = Icons.Outlined.Favorite,
+                            contentDescription = "Favorite Icon",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clickable { viewModel.toggleFavorite(boardgame) }
+                        )
+                        Spacer(Modifier.width(10.dp))
                     }
                 }
             }
         }
-
         NavBar().BottomNavigationBar(navController, "Favorite")
     }
 }
