@@ -67,7 +67,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         composable("favorite") {
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
         }
-        composable("personal"){
+        composable("personal") {
             PersonalActivity(navController)
         }
 
@@ -85,33 +85,6 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 favoriteViewModel,
                 sharedViewModel
             )
-        }
-        composable(
-            route = "complexBoardgameinfo/{gameID}",
-            arguments = listOf(navArgument("gameID") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val arguments = requireNotNull(backStackEntry.arguments)
-            val gameID = arguments.getString("gameID")
-            ComplexBoardGameInfoActivity(
-                navController,
-                gameID,
-                boardDataViewModel,
-                ratingsViewModel,
-                favoriteViewModel,
-                sharedViewModel
-            )
-        }
-    }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    LaunchedEffect(currentRoute) {
-        if (sharedViewModel.previousTab != "complexBoardgameinfo/{gameID}"
-            && currentRoute == "boardgameinfo/{gameID}"){
-            sharedViewModel.goBackToElseThanInfo = sharedViewModel.previousTab
-        }
-        if (currentRoute != null && currentRoute != sharedViewModel.previousTab) {
-            sharedViewModel.previousTab = currentRoute
         }
     }
 }

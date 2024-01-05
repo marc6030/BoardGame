@@ -54,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -64,6 +65,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -112,6 +114,10 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     val isLoading = sharedViewModel.isLoading
     val boardGame = sharedViewModel.boardGameData
+
+    val textStyleBody1 = MaterialTheme.typography.headlineMedium
+    var textStyle by remember { mutableStateOf(textStyleBody1) }
+    var readyToDraw by remember { mutableStateOf(false) }
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
     if (gameID != null) {
@@ -183,15 +189,25 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             ) {
                                                 Text(
                                                     text = boardGame!!.name,
-                                                    style = TextStyle(
-                                                        fontSize = 50.sp
-                                                    ),
+                                                    style = textStyle,
                                                     fontWeight = FontWeight.Bold,
                                                     modifier = Modifier
                                                         .fillMaxWidth()
-                                                        .padding(vertical = 20.dp),
+                                                        .fillMaxHeight(0.2f)
+                                                        .padding(vertical = 20.dp)
+                                                        .drawWithContent {
+                                                        if (readyToDraw) drawContent()
+                                                    },
                                                     textAlign = TextAlign.Center,
-                                                    color = Color.White
+                                                    color = Color.White,
+                                                    overflow = TextOverflow.Clip,
+                                                    onTextLayout = { textLayoutResult ->
+                                                        if (textLayoutResult.didOverflowHeight) {
+                                                            textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.9)
+                                                        } else {
+                                                            readyToDraw = true
+                                                        }
+                                                    }
                                                 )
                                                 Box(
                                                     modifier = Modifier
@@ -324,7 +340,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             Row(
                                                 modifier = Modifier
                                                     .padding(30.dp)
-                                                    .fillMaxWidth(0.806f)
+                                                    .fillMaxWidth(0.793f)
                                                     .fillMaxHeight(0.845f)
                                                     .align(Alignment.TopCenter)
                                             ) {
@@ -458,7 +474,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                         onClick = {
                             sharedViewModel.secondAnimationSimpleBoardInfo = false
                             sharedViewModel.firstAnimationSimpleBoardInfo = false
-                            navController.navigate(sharedViewModel.goBackToElseThanInfo)
+                            navController.popBackStack()
                         },
                         modifier = Modifier
                             .width(60.dp)
