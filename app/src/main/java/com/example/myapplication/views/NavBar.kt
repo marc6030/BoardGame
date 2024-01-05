@@ -1,6 +1,7 @@
 package com.example.myapplication.views
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
@@ -34,7 +35,9 @@ class NavBar : ComponentActivity() {
                     navController.navigate("home")
                 },
                 icon = {
-                    Icon(imageVector = Icons.Default.Home, contentDescription = "Home", tint = Color.White.copy(alpha = 0.7f))
+                    Icon(imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        tint = Color.Gray)
                 },
             )
 

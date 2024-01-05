@@ -1,6 +1,11 @@
 package com.example.myapplication
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -8,6 +13,11 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
@@ -92,12 +102,11 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
     if (!isInternetAvailable(context)) {
         Text("No Internet!")
     }
-    var startScaleInAnimation by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameList()
         favoriteViewModel.fetchFavoriteListFromDB()
         delay(300)
-        startScaleInAnimation = true
+        sharedViewModel.animationHome = true
     }
 
     val isLoading = sharedViewModel.isLoading
@@ -118,10 +127,11 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
             )
         }
     } else {
-        AnimatedVisibility(startScaleInAnimation,
-            enter = expandVertically(),
-            exit = fadeOut()){
-            boardgameSelections(navController, sharedViewModel, viewModel)
+        AnimatedVisibility(sharedViewModel.animationHome,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ){
+            boardgameSelections(navController, sharedViewModel)
         }
     }
 
@@ -224,7 +234,6 @@ fun SwipeableHotnessRow(
             .padding(0.dp, 0.dp, 0.dp, 20.dp)
     ) { page ->
         val item = items[page]
-        val item2 = items[page+1]
         Box(
             modifier = Modifier
                 .fillMaxWidth() // Fill the max width of the pager
@@ -257,9 +266,7 @@ fun boardGameSelection(headline: String,
 
     {
         items(items) { item ->
-            val gameName: String = item.name
             val gameID: String = item.id
-            val color = Color.LightGray
             //}
             Box(
                 modifier = Modifier

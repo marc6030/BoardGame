@@ -7,10 +7,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.compose.AppTheme
@@ -40,7 +46,6 @@ class MainActivity : ComponentActivity() {
         val favoriteViewModel = FavoriteViewModel(viewModel)
 
         setContent {
-
             AppTheme() {
                 boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
                     viewModel, account)
@@ -64,7 +69,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
         composable("search") {
-            searchActivity(navController, boardSearchViewModel)
+            searchActivity(navController, boardSearchViewModel, sharedViewModel)
         }
         composable("favorite") {
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
@@ -76,10 +81,44 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         composable(
             route = "boardgameinfo/{gameID}",
             arguments = listOf(navArgument("gameID") { type = NavType.StringType })
-            ) { backStackEntry ->
+        ) { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val gameID = arguments.getString("gameID")
-            BoardGameInfoActivity(navController, gameID, boardDataViewModel, ratingsViewModel, favoriteViewModel, sharedViewModel)
+            SimpleBoardGameInfoActivity(
+                navController,
+                gameID,
+                boardDataViewModel,
+                ratingsViewModel,
+                favoriteViewModel,
+                sharedViewModel
+            )
+        }
+        composable(
+            route = "complexBoardgameinfo/{gameID}",
+            arguments = listOf(navArgument("gameID") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val arguments = requireNotNull(backStackEntry.arguments)
+            val gameID = arguments.getString("gameID")
+            ComplexBoardGameInfoActivity(
+                navController,
+                gameID,
+                boardDataViewModel,
+                ratingsViewModel,
+                favoriteViewModel,
+                sharedViewModel
+            )
+        }
+    }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(currentRoute) {
+        if (sharedViewModel.previousTab != "complexBoardgameinfo/{gameID}"
+            && currentRoute == "boardgameinfo/{gameID}"){
+            sharedViewModel.goBackToElseThanInfo = sharedViewModel.previousTab
+        }
+        if (currentRoute != null && currentRoute != sharedViewModel.previousTab) {
+            sharedViewModel.previousTab = currentRoute
         }
     }
 }

@@ -22,11 +22,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.modelviews.BoardSearchViewModel
+import com.example.myapplication.modelviews.SharedViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun searchActivity(navController: NavHostController, myViewModel: BoardSearchViewModel) {
+fun searchActivity(navController: NavHostController, myViewModel: BoardSearchViewModel, sharedViewModel: SharedViewModel) {
     var input by remember { mutableStateOf("") }
     var lastInput by remember { mutableStateOf(input) }
     val coroutineScope = rememberCoroutineScope()

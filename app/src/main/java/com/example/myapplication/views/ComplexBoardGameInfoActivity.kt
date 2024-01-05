@@ -1,21 +1,15 @@
-// BoardGameInfoActivity.kt
+// ComplexBoardGameInfoActivity.kt
 package com.example.myapplication
 
 
 import android.util.Log
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,12 +40,10 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +51,8 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -77,7 +71,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun BoardGameInfoActivity(
+fun ComplexBoardGameInfoActivity(
     navController: NavHostController,
     gameID: String?,
     boardDataViewModel: BoardDataViewModel,
@@ -86,23 +80,27 @@ fun BoardGameInfoActivity(
     sharedViewModel: SharedViewModel
     ) {
     val context = LocalContext.current
-    var startScaleInAnimation by remember { mutableStateOf(false) }
-    var startSecondAnimation by remember { mutableStateOf(false) }
+
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
         boardDataViewModel.fetchBoardGameData(gameID!!)
         ratingsViewModel.fetchRatings(gameID!!)
         favoriteViewModel.fetchFavoriteListFromDB()
 
-        delay(400)
-        startScaleInAnimation = true
-        delay(850)
-        startSecondAnimation = true
+        delay(800)
+        sharedViewModel.firstAnimationComplexBoardInfo = true
+        delay(1000)
+        sharedViewModel.secondAnimationComplexBoardInfo = true
 
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
 
     }
+
+    val colorMatrix = ColorMatrix().apply {
+        setToScale(0.2f, 0.2f, 0.2f, 1f)
+    }
+
 
     val isLoading = sharedViewModel.isLoading
     val boardGame = sharedViewModel.boardGameData
@@ -136,9 +134,9 @@ fun BoardGameInfoActivity(
             // Observe the data
             if (boardGame != null) {
                 AnimatedVisibility(
-                    startScaleInAnimation,
-                    enter = scaleIn(),
-                    exit = scaleOut()
+                    sharedViewModel.firstAnimationComplexBoardInfo,
+                    enter = EnterTransition.Companion.None,
+                    exit = ExitTransition.None
                 ) {
                     AsyncImage(
                         model = boardGame.imageURL,
@@ -148,14 +146,15 @@ fun BoardGameInfoActivity(
                         modifier = Modifier
                             .fillMaxSize()
                             .blur(30.dp)
-                            .scale(if (startScaleInAnimation) 1.5f else 0.3f)
-                            .animateContentSize()
+                            .scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
+                            .animateContentSize(),
+                        colorFilter = ColorFilter.colorMatrix(colorMatrix)
                     )
                 }
                 AnimatedVisibility(
-                    startSecondAnimation,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    sharedViewModel.secondAnimationComplexBoardInfo,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
                 ) {
                     Column(
                         modifier = Modifier
@@ -184,6 +183,7 @@ fun BoardGameInfoActivity(
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(MaterialTheme.colorScheme.background)
+                                .align(Alignment.CenterHorizontally)
                         ) {
                             Column() {
                                 tabView(
@@ -211,7 +211,7 @@ fun BoardGameInfoActivity(
                             }
                         }
                     }
-                    favoriteButton(navController, favoriteViewModel, sharedViewModel)
+                    favoriteButton(navController, favoriteViewModel, sharedViewModel, boardGame.id)
                 }
             }
         }
@@ -567,18 +567,21 @@ fun ratingDisplay(text: String,
 
 
 @Composable
-fun favoriteButton(navController: NavHostController,
-                   viewModel: FavoriteViewModel,
-                   sharedViewModel: SharedViewModel) {
-
-
+fun favoriteButton(
+    navController: NavHostController,
+    viewModel: FavoriteViewModel,
+    sharedViewModel: SharedViewModel,
+    boardgameID : String
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
     ) {
         Button(
             onClick = {
-                navController.popBackStack()
+                sharedViewModel.secondAnimationComplexBoardInfo = false
+                sharedViewModel.firstAnimationComplexBoardInfo = false
+                navController.navigate(sharedViewModel.goBackToElseThanInfo)
             },
             modifier = Modifier
                 .width(60.dp)
