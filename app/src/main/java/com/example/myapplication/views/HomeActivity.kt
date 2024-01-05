@@ -157,8 +157,6 @@ fun boardgameSelections(
 ) {
     val navBar = NavBar()
     val items = sharedViewModel.boardGameList
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    val icon: Painter = painterResource(id = R.drawable.search)
     if (items != null) {
         Column(
             modifier = Modifier
@@ -170,7 +168,7 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    TopMenu()
+                    //TopMenu()
                     SwipeableHotnessRow(items.boardGames.shuffled(), navController)
                     boardGameSelection("test", items.boardGames.shuffled(), navController)
                     boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
