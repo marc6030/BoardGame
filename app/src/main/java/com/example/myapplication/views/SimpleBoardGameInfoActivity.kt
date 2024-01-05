@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -81,8 +82,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                 sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = {2})
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
     // Use LaunchedEffect peoples! Is much importante!
     LaunchedEffect(gameID) {
@@ -159,7 +161,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                         modifier = Modifier.fillMaxSize(),
                         state = pagerState,
                         pageContent = { page ->
-                            when(page) {
+                            when (page) {
                                 0 -> {
                                     Box(modifier = Modifier.fillMaxSize()) {
                                         Column(
@@ -356,77 +358,88 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                                         .size(60.dp)
                                                         .background(Color.DarkGray, CircleShape)
                                                         .align(Alignment.BottomCenter)
-                                                        .clickable {coroutineScope.launch {
-                                                            pagerState.animateScrollToPage(1)
-                                                        }},
+                                                        .clickable {
+                                                            coroutineScope.launch {
+                                                                pagerState.animateScrollToPage(1)
+                                                            }
+                                                        },
                                                     tint = Color.White,
                                                 )
                                             }
                                         }
                                     }
                                 }
-                                1 ->{
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(16.dp)
-                                    ) {
-                                        var selectedTabIndex by remember { mutableStateOf(0) }
-                                        Text(
-                                            text = boardGame!!.name,
-                                            style = TextStyle(
-                                                fontSize = 50.sp
-                                            ),
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 20.dp),
-                                            textAlign = TextAlign.Center
-                                        )
 
-                                        pictureAndKeyInfo(boardGame!!)
-
-                                        Spacer(modifier = Modifier.height(16.dp))
-
-                                        Box(
+                                1 -> {
+                                    Box(modifier = Modifier.fillMaxSize()) {
+                                        Column(
                                             modifier = Modifier
                                                 .fillMaxSize()
-                                                .padding(10.dp)
-                                                .clip(RoundedCornerShape(10.dp))
-                                                .background(MaterialTheme.colorScheme.background)
-                                                .align(Alignment.CenterHorizontally)
+                                                .padding(16.dp),
+                                            verticalArrangement = Arrangement.Center
                                         ) {
-                                            Column() {
-                                                tabView(
-                                                    texts = listOf(
-                                                        "Description",
-                                                        "General Info",
-                                                        "BoardBandit Rating"
-                                                    )
-                                                ) {
-                                                    selectedTabIndex = it;
-                                                }
-                                                when (selectedTabIndex) {
-                                                    0 -> description(
-                                                        boardGame!!
-                                                    )
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .fillMaxHeight(0.6f)
+                                                    .padding(10.dp)
+                                                    .clip(RoundedCornerShape(10.dp))
+                                                    .background(MaterialTheme.colorScheme.background)
+                                                    .align(Alignment.CenterHorizontally),
+                                            ) {
+                                                Column() {
+                                                    tabView(
+                                                        texts = listOf(
+                                                            "Description",
+                                                            "General Info",
+                                                            "BoardBandit Rating"
+                                                        ),
 
-                                                    1 -> generalInfo(
-                                                        boardGame!!
-                                                    )
+                                                        ) {
+                                                        selectedTabIndex = it;
+                                                    }
+                                                    when (selectedTabIndex) {
+                                                        0 -> description(
+                                                            boardGame!!
+                                                        )
 
-                                                    2 -> ratingTab(
-                                                        boardGame!!, ratingsViewModel
-                                                    )
+                                                        1 -> generalInfo(
+                                                            boardGame!!
+                                                        )
+
+                                                        2 -> ratingTab(
+                                                            boardGame!!, ratingsViewModel
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
+                                        Row {
+                                            Box(
+                                                modifier = Modifier
+                                                    .padding(30.dp)
+                                                    .fillMaxWidth(1f)
+                                                    .fillMaxHeight(0.225f)
+                                                    .align(Alignment.CenterVertically)) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.KeyboardArrowUp,
+                                                    contentDescription = "contentDescription",
+                                                    modifier = Modifier
+                                                        .size(60.dp)
+                                                        .background(Color.DarkGray, CircleShape)
+                                                        .align(Alignment.BottomCenter)
+                                                        .clickable {coroutineScope.launch {
+                                                            pagerState.animateScrollToPage(0)
+                                                        } },
+                                                    tint = Color.White,
+                                                )
+                                            }
+                                        }
                                     }
-
                                 }
                             }
-                        })
-                }
+                        }
+                    )
                     Button(
                         onClick = {
                             sharedViewModel.secondAnimationSimpleBoardInfo = false
@@ -450,9 +463,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             }
         }
     }
-
-
-
+}
 
         @Composable
         fun favoriteButton2(
