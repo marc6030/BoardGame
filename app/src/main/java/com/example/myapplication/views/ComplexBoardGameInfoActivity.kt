@@ -113,11 +113,6 @@ fun ComplexBoardGameInfoActivity(
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
     if (gameID != null) {
-        // Check internet Connection
-        // Emil comment - maybe a bit much checking it everytime we load an item? - also we don't handle retries anyways?
-        if (!isInternetAvailable(context)) {
-            Text("No Internet!")
-        }
         if (isLoading) {
             // Indikator
             Row(

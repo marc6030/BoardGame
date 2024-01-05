@@ -109,12 +109,6 @@ import kotlin.math.absoluteValue
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel, favoriteViewModel: FavoriteViewModel, sharedViewModel: SharedViewModel) {
-
-    val context = LocalContext.current
-    // Check internet Connection - this does not belong here.
-    if (!isInternetAvailable(context)) {
-        Text("No Internet!")
-    }
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameList()
         favoriteViewModel.fetchFavoriteListFromDB()

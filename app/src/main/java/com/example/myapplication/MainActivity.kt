@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,11 +24,16 @@ import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
+import com.example.myapplication.views.NavBar
+import com.example.myapplication.views.NoInternetScreen
 import com.example.myapplication.views.PersonalActivity
 import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -54,12 +61,26 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel, boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?) {
     val navController = rememberNavController()
+    val context = LocalContext.current
+
+    LaunchedEffect(true){
+        while (true) {
+            if (!isInternetAvailable(context)) {
+                navController.navigate("nointernet")
+            }
+            delay(5000)
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = "home"
     ) {
         composable("home") {
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
+        }
+        composable("nointernet") {
+            NoInternetScreen(navController)
         }
         composable("search") {
             searchActivity(navController, boardSearchViewModel, sharedViewModel)
