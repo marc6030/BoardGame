@@ -19,6 +19,7 @@ import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
+import com.example.myapplication.views.PersonalActivity
 import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -68,6 +69,10 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         composable("favorite") {
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
         }
+        composable("personal"){
+            PersonalActivity(navController)
+        }
+
         composable(
             route = "boardgameinfo/{gameID}",
             arguments = listOf(navArgument("gameID") { type = NavType.StringType })

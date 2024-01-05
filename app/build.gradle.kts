@@ -116,6 +116,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("androidx.test.uiautomator:uiautomator:2.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.compose.ui:ui-tooling-preview-android:1.5.4")
 
 
     // Cucumber in androidtest

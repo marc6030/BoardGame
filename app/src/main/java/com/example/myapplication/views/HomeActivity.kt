@@ -135,47 +135,47 @@ fun boardgameSelections(
 ) {
     val navBar = NavBar()
     val items = sharedViewModel.boardGameList
-    val logo: Painter = painterResource(id = R.drawable.bgb_logo_copy_1)
+    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     val icon: Painter = painterResource(id = R.drawable.search)
     if (items != null) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.9f))
+                .background(Color.Transparent)
             ){
-                Box(
+            Box(
+                modifier = Modifier
+                    .height(150.dp)
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
+            ) {
+                Image(
+                    painter = logo,
+                    contentDescription = null,
                     modifier = Modifier
                         .height(150.dp)
-                        .fillMaxWidth()
-                        .background(Color.Black.copy(alpha = 0.9f))
-                ) {
-                    Image(
-                        painter = logo,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .height(150.dp)
-                            .width(150.dp)
-                            .align(Alignment.Center)
-                            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                            .background(Color.Black.copy(alpha = 0.9f))
-                    )
-                    Image(
-                        painter = icon,
-                        contentDescription = null, // Set a meaningful content description if needed
-                        modifier = Modifier
-                            .height(40.dp)
-                            .width(40.dp)
-                            .align(Alignment.TopEnd)
-                            .padding(0.dp, 10.dp, 0.dp, 10.dp)
-                    )
+                        .width(150.dp)
+                        .align(Alignment.Center)
+                        .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                )
+                Image(
+                    painter = icon,
+                    contentDescription = null, // Set a meaningful content description if needed
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(40.dp)
+                        .align(Alignment.TopEnd)
+                        .padding(0.dp, 10.dp, 0.dp, 10.dp)
+                )
+
                 }
             LazyColumn( modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(Color.White))
+                .background(Color.Transparent))
             {
                 item {
-                    SwipeableHotnessRow(items.boardGames, navController, boardDataViewModel)
+                    SwipeableHotnessRow(items.boardGames, navController)
                     boardGameSelection("test", items.boardGames, navController)
                     boardGameSelection("Superhot", items.boardGames, navController)
                     boardGameSelection("rpggames", items.boardGames, navController)
@@ -207,8 +207,7 @@ fun boardgameSelections(
 @Composable
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
-    navController: NavHostController,
-    boardDataViewModel: BoardDataViewModel
+    navController: NavHostController
 ) {
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -240,26 +239,6 @@ fun SwipeableHotnessRow(
                 alignment = Alignment.Center,
                 modifier = Modifier.size(275.dp, 500.dp) // Size of the image
             )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .background(
-                        Color(0x66000000), // Semi-transparent black
-                        shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
-                    )
-            ) {
-                Text(
-                    text = item.name,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(8.dp)
-                )
-            }
         }
     }
 }
@@ -300,32 +279,6 @@ fun boardGameSelection(headline: String,
                     alignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize().testTag("game_picture")
                 )
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth(1f)
-                        .fillMaxHeight(0.33f)
-                        .background(
-                            color.copy(0.7f),
-                        )
-                        .clip(RoundedCornerShape(topStart = 0.dp))
-                        .clip(RoundedCornerShape(topEnd = 0.dp))
-                        .drawWithContent {
-                            val colors = listOf(Color.Black, color, Color.Transparent)
-                            drawContent()
-                            drawRect(
-                                brush = Brush.verticalGradient(colors),
-                                blendMode = BlendMode.DstIn
-                            )
-                        }
-
-                ) {
-                    Text(
-                        text = item.name,
-                        modifier = Modifier.align(Alignment.Center),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
         }
     }
