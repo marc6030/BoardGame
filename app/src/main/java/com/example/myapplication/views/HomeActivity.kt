@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -154,44 +155,49 @@ fun SwipeableHotnessRow(
     HorizontalPager(
         state = pagerState,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
+            .height(300.dp),
+        contentPadding = PaddingValues(horizontal = 32.dp),
+        pageSpacing = 8.dp
     ) { page ->
         val item = items[page]
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
+                .fillMaxSize()// Set a custom width for each item
+                .padding(5.dp) // Add horizontal padding for spacing
                 .clip(RoundedCornerShape(20.dp))
                 .clickable { navController.navigate("boardgameinfo/${item.id}") }
         ) {
-            AsyncImage(
-                model = item.imgUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .background(
-                        Color(0x66000000), // Semi-transparent black
-                        shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
-                    )
-            ) {
-                Text(
-                    text = item.name,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(8.dp)
+
+                AsyncImage(
+                    model = item.imgUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
                 )
-            }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .background(
+                            Color(0x66000000), // Semi-transparent black
+                            shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
+                        )
+                ) {
+                    Text(
+                        text = item.name,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(8.dp)
+                    )
+                }
+
+
+
+
         }
     }
 }

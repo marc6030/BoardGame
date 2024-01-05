@@ -20,11 +20,11 @@ class BoardSearchViewModel(private var sharedViewModel: SharedViewModel) : ViewM
         sharedViewModel.isLoading = setme
     }
 
-    fun fetchGameBoardSearch(userSearch: String) {
+    fun fetchGameBoardSearch(userSearch: String, limit: Int, offset: Int) {
         setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val boardGameSearchItems: BoardGameSearchItems = postgresql().getBoardGameSearch(userSearch)
+                val boardGameSearchItems: BoardGameSearchItems = postgresql().getBoardGameSearch(userSearch, limit, offset)
                 Log.v("bgsearch", "searchlogs: $boardGameSearchItems")
                 boardGameSearch = boardGameSearchItems
                 withContext(Dispatchers.Main) {

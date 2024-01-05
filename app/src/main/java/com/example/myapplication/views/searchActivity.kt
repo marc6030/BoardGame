@@ -12,6 +12,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.TextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.modelviews.BoardSearchViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -30,6 +32,14 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
     var input by remember { mutableStateOf("") }
     var lastInput by remember { mutableStateOf(input) }
     val coroutineScope = rememberCoroutineScope()
+    val offsetInterval = 20
+    val limit = 20
+    var offset = 0
+    var job: Job? = null
+
+    LaunchedEffect(myViewModel) {
+        println(limit)
+    }
 
     // Accessing the search results directly from the MutableState
     val searchResults = myViewModel.boardGameSearch?.boardGameSearchItems ?: emptyList()
@@ -48,10 +58,16 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
                 onValueChange = {
                     input = it
                     lastInput = it
-                    coroutineScope.launch {
-                        delay(100) // 300 ms delay
+
+                    job?.cancel()
+
+
+
+
+                    job = coroutineScope.launch {
                         if (lastInput == input) {
-                            myViewModel.fetchGameBoardSearch(input)
+                            delay(80)
+                            myViewModel.fetchGameBoardSearch(input, limit, offset)
                         }
                     }
                 },

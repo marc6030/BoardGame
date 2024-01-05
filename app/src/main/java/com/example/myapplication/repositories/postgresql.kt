@@ -51,17 +51,20 @@ class postgresql {
         return BoardGameItems(boardGames)
     }
 
-    fun getBoardGameSearch(userSearch: String): BoardGameSearchItems {
+    fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): BoardGameSearchItems {
         val boardGameSearchItems = mutableListOf<BoardGameSearch>()
 
+
         connectToDatabase()?.use { connection ->
-            val statement = connection.prepareStatement("SELECT * FROM boardgame WHERE name LIKE ?")
+            val statement = connection.prepareStatement("SELECT id_actual, name FROM boardgame WHERE name LIKE ? LIMIT ? OFFSET ?")
             statement.setString(1, "%$userSearch%")
+            statement.setInt(2, limit)
+            statement.setInt(3, offset)
             val resultSet = statement.executeQuery()
 
             while (resultSet.next()) {
                 boardGameSearchItems.add(BoardGameSearch(
-                    id = resultSet.getString("id"),
+                    id = resultSet.getString("id_actual"),
                     name = resultSet.getString("name"),
                 ))
             }

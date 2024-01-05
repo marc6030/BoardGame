@@ -174,6 +174,7 @@ fun BoardGameInfoActivity(
 }
 
 
+
 @Composable
 fun pictureAndKeyInfo(boardGame: BoardGame){
     Row(
@@ -208,6 +209,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                 modifier = Modifier
                     .fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly
+
             ) {
                 Column(
                     modifier = Modifier
@@ -217,6 +219,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                     horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
+
 
                     Image(
                         painter = painterResource(id = R.drawable.people_alt),
@@ -274,6 +277,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                         fontWeight = FontWeight.Bold
                     )
                 }
+
             }
         }
     }
