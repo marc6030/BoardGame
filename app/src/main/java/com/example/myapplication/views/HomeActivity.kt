@@ -170,7 +170,7 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    TopMenu()
+                    TopMenu(navController)
                     SwipeableHotnessRow(items.boardGames.shuffled(), navController)
                     boardGameSelection("test", items.boardGames.shuffled(), navController)
                     boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
@@ -187,7 +187,7 @@ fun boardgameSelections(
 }
 
 @Composable
-fun TopMenu(){
+fun TopMenu(navController: NavHostController){
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     val icon: Painter = painterResource(id = R.drawable.search)
 
@@ -214,6 +214,7 @@ fun TopMenu(){
                 .width(40.dp)
                 .align(Alignment.TopEnd)
                 .padding(0.dp, 10.dp, 0.dp, 10.dp)
+                .clickable { navController.navigate("Search") }
         )
     }
 }

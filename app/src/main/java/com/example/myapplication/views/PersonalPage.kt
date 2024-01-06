@@ -221,7 +221,7 @@ fun Menu(navController: NavHostController){
             ){
                 Box(
                     modifier = Modifier
-                        .padding(bottom = 3.dp)
+                        .padding(bottom = 5.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
@@ -239,7 +239,7 @@ fun Menu(navController: NavHostController){
                 }
                 Box(
                     modifier = Modifier
-                        .padding(top = 3.dp)
+                        .padding(top = 5.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
@@ -264,7 +264,7 @@ fun Menu(navController: NavHostController){
 
                 Box(
                     modifier = Modifier
-                        .padding(bottom = 3.dp)
+                        .padding(bottom = 5.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
@@ -279,9 +279,10 @@ fun Menu(navController: NavHostController){
                         color = Color.LightGray
                     )
                 }
+
                 Box(
                     modifier = Modifier
-                        .padding(top = 3.dp)
+                        .padding(top = 5.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
