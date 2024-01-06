@@ -1,8 +1,9 @@
 package com.example.myapplication
 
+import android.graphics.Bitmap
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
-
+import java.io.File
 
 
 @Root(name = "boardgame", strict = false)
@@ -49,6 +50,9 @@ data class BoardGame(
 
     @field:Element(name = "image", required = false)
     var imageURL: String = "",
+
+    @field:Element(name = "bitmap", required = false)
+    var bitmap: Bitmap? = null,
 
     @field:Element(name = "averageweight", required = false)
     var averageWeight: String = "",

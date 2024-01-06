@@ -1,8 +1,15 @@
-// BoardGameInfoActivity.kt
+// ComplexBoardGameInfoActivity.kt
 package com.example.myapplication
 
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,38 +42,49 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.size.Size
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
+import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 
 @Composable
-fun BoardGameInfoActivity(
+fun ComplexBoardGameInfoActivity(
     navController: NavHostController,
     gameID: String?,
     boardDataViewModel: BoardDataViewModel,
     ratingsViewModel: RatingsViewModel,
     favoriteViewModel: FavoriteViewModel,
     sharedViewModel: SharedViewModel
-) {
+    ) {
     val context = LocalContext.current
 
     // Use LaunchedEffect peoples! Is much importante!
@@ -75,10 +93,20 @@ fun BoardGameInfoActivity(
         ratingsViewModel.fetchRatings(gameID!!)
         favoriteViewModel.fetchFavoriteListFromDB()
 
+        delay(800)
+        sharedViewModel.firstAnimationComplexBoardInfo = true
+        delay(1000)
+        sharedViewModel.secondAnimationComplexBoardInfo = true
+
         // viewModel.isBoardGameFavourite(gameID)
         Log.v("Fetch Game ID in boardgamedata", "$gameID")
 
     }
+
+    val colorMatrix = ColorMatrix().apply {
+        setToScale(0.2f, 0.2f, 0.2f, 1f)
+    }
+
 
     val isLoading = sharedViewModel.isLoading
     val boardGame = sharedViewModel.boardGameData
@@ -107,67 +135,90 @@ fun BoardGameInfoActivity(
                 )
             }
         } else {
-            var selectedTabIndex by remember {
-                mutableStateOf(0)
-            }
+            var selectedTabIndex by remember { mutableStateOf(0) }
+
             // Observe the data
             if (boardGame != null) {
-                // Data is available, update the UI
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
+                AnimatedVisibility(
+                    sharedViewModel.firstAnimationComplexBoardInfo,
+                    enter = EnterTransition.Companion.None,
+                    exit = ExitTransition.None
                 ) {
-                    Text(
-                        text = boardGame!!.name,
-                        style = TextStyle(
-                            fontSize = 50.sp
-                        ),
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 20.dp),
-                        textAlign = TextAlign.Center
-                    )
-
-                    pictureAndKeyInfo(boardGame!!)
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Box(
+                    AsyncImage(
+                        model = boardGame.imageURL,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(10.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(Color.LightGray)
+                            .blur(30.dp)
+                            .scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
+                            .animateContentSize(),
+                        colorFilter = ColorFilter.colorMatrix(colorMatrix)
+                    )
+                }
+                AnimatedVisibility(
+                    sharedViewModel.secondAnimationComplexBoardInfo,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
                     ) {
-                        Column() {
-                            tabView(
-                                texts = listOf(
-                                    "Description",
-                                    "General Info",
-                                    "BoardBandit Rating"
-                                )
-                            ) {
-                                selectedTabIndex = it;
-                            }
-                            when (selectedTabIndex) {
-                                0 -> description(
-                                    boardGame!!
-                                )
+                        Text(
+                            text = boardGame!!.name,
+                            style = TextStyle(
+                                fontSize = 50.sp
+                            ),
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 20.dp),
+                            textAlign = TextAlign.Center
+                        )
 
-                                1 -> generalInfo(
-                                    boardGame!!
-                                )
+                        pictureAndKeyInfo(boardGame!!)
 
-                                2 -> ratingTab(
-                                    boardGame!!, ratingsViewModel
-                                )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(MaterialTheme.colorScheme.background)
+                                .align(Alignment.CenterHorizontally)
+                        ) {
+                            Column() {
+                                tabView(
+                                    texts = listOf(
+                                        "Description",
+                                        "General Info",
+                                        "BoardBandit Rating"
+                                    )
+                                ) {
+                                    selectedTabIndex = it;
+                                }
+                                when (selectedTabIndex) {
+                                    0 -> description(
+                                        boardGame!!
+                                    )
+
+                                    1 -> generalInfo(
+                                        boardGame!!
+                                    )
+
+                                    2 -> ratingTab(
+                                        boardGame!!, ratingsViewModel
+                                    )
+                                }
                             }
                         }
                     }
                 }
-                favoriteButton(navController, favoriteViewModel, sharedViewModel)
+                favoriteButton(navController, favoriteViewModel, sharedViewModel, boardgameID = boardGame.id)
             }
         }
     }
@@ -202,7 +253,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                 .padding(10.dp)
                 .fillMaxWidth(1f)
                 .clip(RoundedCornerShape(20.dp))
-                .background(Color.LightGray),
+                .background(MaterialTheme.colorScheme.background),
 
             ) {
             Row(
@@ -281,6 +332,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
             }
         }
     }
+
 }
 
 @Composable
@@ -299,10 +351,10 @@ fun tabView(
     ) {
         texts.forEachIndexed { index, item ->
             Tab(
-                modifier = modifier.background(Color.LightGray),
+                modifier = modifier.background(MaterialTheme.colorScheme.background),
                 selected = selectedTabIndex == index,
-                selectedContentColor = Color.Black,
-                unselectedContentColor = inactiveColor,
+                selectedContentColor = MaterialTheme.colorScheme.background,
+                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                 onClick = {
                     selectedTabIndex = index
                     onTabSelected(index)
@@ -352,6 +404,10 @@ fun generalInfo(boardGame: BoardGame) {
             simpleInfo("Time", boardGame.playingTime, null)
             simpleInfo("Age", boardGame.age+"+", null)
             simpleInfo("BGG Rating", boardGame.ratingBGG, null)
+            /*if(boardGame.category != "") {
+                simpleInfo(boardGame.category, info1 = boardGame.categoryRank, info2 = null)
+            }
+             */
             complexInfo(title = "Mechanisms", infoList = boardGame.mechanisms)
             complexInfo(title = "Categories", infoList = boardGame.categories)
             complexInfo(title = "Publishers", infoList = boardGame.publishers)
@@ -526,48 +582,181 @@ fun ratingDisplay(text: String,
 
 
 @Composable
-fun favoriteButton(navController: NavHostController,
-                   viewModel: FavoriteViewModel,
-                   sharedViewModel: SharedViewModel){
+fun favoriteButton(
+    navController: NavHostController,
+    viewModel: FavoriteViewModel,
+    sharedViewModel: SharedViewModel,
+    boardgameID : String
+) {
 
+        var triggerConfetti by remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Button(
-            onClick = {
-                navController.popBackStack()
-            },
+        Box(
             modifier = Modifier
-                .width(60.dp)
-                .height(60.dp)
-                .padding(8.dp),
+                .fillMaxWidth()
+        ) {
+            Button(
+                onClick = {
+                    sharedViewModel.secondAnimationComplexBoardInfo = false
+                    sharedViewModel.firstAnimationComplexBoardInfo = false
+                    navController.navigate(sharedViewModel.goBackToElseThanInfo)
+                },
+                modifier = Modifier
+                    .width(60.dp)
+                    .height(60.dp)
+                    .padding(8.dp),
 
-            ) {
+                ) {
 
+            }
+            Image(
+                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(18.dp)
+            )
+            Icon(
+                imageVector = if (
+                    sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = "Favorite Icon",
+                tint = Color.Red,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .size(55.dp)
+                    .padding(8.dp)
+                    .clickable {
+                        triggerConfetti = !triggerConfetti
+                        viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
+                        Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
+                    }
+            )
+            if (triggerConfetti) {
+                ParticleSystem(
+                    18.dp,
+                    15.dp,
+                    200,
+                    modifier = Modifier.align(Alignment.CenterEnd).size(55.dp).padding(8.dp)
+                ) // Confetti
+            }
         }
-        Image(
-            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(18.dp)
-        )
-        Icon(
-            imageVector = if (
-                sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
-            contentDescription = "Favorite Icon",
-            tint = Color.Red,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .size(55.dp)
-                .padding(8.dp)
-                .clickable {
-                    viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
-                    Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
-                }
-        )
     }
-}
+
+
+    data class Particle(
+        val position: Offset,
+        val velocity: Offset,
+        val acceleration: Offset,
+        val color: Color,
+        val size: Float,
+        val isCircle: Boolean
+    )
+
+    @Composable
+    fun ParticleSystem(posXInDp: Dp, posYInDp: Dp, size: Int, modifier: Modifier) {
+
+        val posX = with(LocalDensity.current) { posXInDp.toPx() }
+        val posY = with(LocalDensity.current) { posYInDp.toPx() }
+
+        // List of particles
+        val particles: MutableList<Particle> = mutableListOf()
+        // For-loop that creates each individual particle and adds it to particles
+        for (i in 1..size) {
+            // Colors that particle can have
+            val colors = listOf(
+                Color(255, 0, 0, 255),
+                Color(0, 255, 0, 255),
+                Color(0, 0, 255, 255),
+                Color(255, 152, 0, 255),
+                Color(255, 235, 59, 255)
+            )
+
+            // Adding the particle to particles
+            particles.add(
+                Particle(
+                    Offset(posX.toFloat(), posY.toFloat()),
+                    Offset(1F, 1F),
+                    Offset(0F, 0F),
+                    colors[Random.nextInt(colors.size)],
+                    10f,
+                    Random.nextBoolean()
+                )
+            )
+        }
+
+        // Add all particles to a mutable state of particles
+        val mutableParticles = remember { mutableStateListOf<Particle>() }
+        mutableParticles.addAll(particles)
+
+        var counter = 0 // Counts how many iterations each particle has been updated
+
+        // Updates each particle pos, vel, acc, size and alpha
+        LaunchedEffect(Unit) {
+            while (true) {
+                val particlesCopy = ArrayList(mutableParticles.map { it.copy() })
+                particlesCopy.forEachIndexed { index, particle ->
+                    mutableParticles[index] =
+                        particle.copy(
+                            position = particle.position + particle.velocity,
+                            velocity = particle.velocity + particle.acceleration + Offset(
+                                0.0f,
+                                0.3f
+                            ),
+                            acceleration = Offset(
+                                (Math.random() * 2 - 1).toFloat(),
+                                (Math.random() * 2 - 1).toFloat()
+                            ),
+                            color = particle.color.copy(
+                                red = particle.color.red,
+                                green = particle.color.green,
+                                blue = particle.color.blue,
+                                alpha = (particle.color.alpha + (Math.random() * 5 - 4).toFloat()).coerceIn(
+                                    0F,
+                                    1F
+                                )
+                            ),
+                            size = (particle.size + (Math.random() * 2 - 1).toFloat()).coerceIn(
+                                8.0f,
+                                12.0f
+                            )
+                        )
+
+                }
+
+                delay(16L) // Delay before next iteration
+                counter += 1
+
+                if (counter > 200) {
+                    mutableParticles.clear()
+                    break
+                }
+            }
+        }
+
+        // Draws the canvas with the particles on
+        Canvas(
+            modifier = modifier
+        ) {
+            mutableParticles.forEach { particle ->
+                if (particle.isCircle) {
+                    drawCircle(
+                        color = particle.color,
+                        alpha = 0.6F,
+                        center = particle.position,
+                        radius = particle.size
+                    )
+                } else {
+                    drawRect(
+                        color = particle.color,
+                        alpha = 0.6F,
+                        topLeft = particle.position,
+                        size = androidx.compose.ui.geometry.Size(
+                            particle.size,
+                            particle.size
+                        )
+                    )
+                }
+            }
+        }
+    }
 
 
