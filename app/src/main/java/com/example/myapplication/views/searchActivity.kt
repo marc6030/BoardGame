@@ -1,7 +1,6 @@
 package com.example.myapplication.views
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,6 +37,17 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
         }
     }
 
+    LaunchedEffect(myViewModel.input){
+        delay(300)
+        myViewModel.fetchGameBoardSearch()
+        scrollState.scrollToItem(0)
+    }
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value) {
+            myViewModel.fetchAdditionalSearchResults()
+        }
+    }
+
     Scaffold(
         bottomBar = { NavBar().BottomNavigationBar(navController, "Search") }
     ) {
@@ -47,16 +57,7 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
                 .padding(it) // Padding to account for the BottomNavigationBar
         ) {
             // Search Bar
-            LaunchedEffect(myViewModel.input){
-                delay(300)
-                Log.v("job is doing things", "job is doing things")
-                myViewModel.fetchGameBoardSearch()
-            }
-            LaunchedEffect(shouldLoadMore.value) {
-                if (shouldLoadMore.value) {
-                    myViewModel.fetchAdditionalSearchResults()
-                }
-            }
+
 
 
             TextField(

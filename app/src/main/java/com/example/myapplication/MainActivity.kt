@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,7 +25,6 @@ import com.example.myapplication.views.PersonalActivity
 import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
 
 
 class MainActivity : ComponentActivity() {
@@ -62,7 +60,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
         composable("search") {
-            searchActivity(navController, boardSearchViewModel, sharedViewModel)
+            searchActivity(navController, boardSearchViewModel)
         }
         composable("favorite") {
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
