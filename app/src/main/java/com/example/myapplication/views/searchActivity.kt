@@ -31,7 +31,7 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
     var input by remember { mutableStateOf("") }
     var lastInput by remember { mutableStateOf(input) }
     val coroutineScope = rememberCoroutineScope()
-
+    val navBar = NavBar()
     // Accessing the search results directly from the MutableState
     val searchResults = myViewModel.boardGameSearch?.boardGameSearchItems ?: emptyList()
 
@@ -80,5 +80,6 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
                 }
             }
         }
+
     }
 }
