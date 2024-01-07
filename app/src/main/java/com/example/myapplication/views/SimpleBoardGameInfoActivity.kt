@@ -2,11 +2,7 @@ package com.example.myapplication
 
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,22 +27,18 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -59,89 +51,43 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
-import kotlinx.coroutines.delay
+
 @Composable
 fun SimpleBoardGameInfoActivity(navController: NavHostController,
-                                gameID: String?,
                                 boardDataViewModel: BoardDataViewModel,
                                 ratingsViewModel: RatingsViewModel,
                                 favoriteViewModel: FavoriteViewModel,
                                 sharedViewModel: SharedViewModel
 ) {
-    val context = LocalContext.current
+    //val context = LocalContext.current
 
     // Use LaunchedEffect peoples! Is much importante!
-    LaunchedEffect(gameID) {
-        boardDataViewModel.fetchBoardGameData(gameID!!)
-        ratingsViewModel.fetchRatings(gameID!!)
+        // boardDataViewModel.fetchBoardGameData(sharedViewModel.currentGameID)
+        ratingsViewModel.fetchRatings(sharedViewModel.currentGameID)
         favoriteViewModel.fetchFavoriteListFromDB()
 
-        delay(800)
-        sharedViewModel.firstAnimationSimpleBoardInfo = true
-        delay(1000)
-        sharedViewModel.secondAnimationSimpleBoardInfo = true
-
-        // viewModel.isBoardGameFavourite(gameID)
-        Log.v("Fetch Game ID in boardgamedata", "$gameID")
-
-    }
 
     val colorMatrixDark = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
 
-    var isLoading = sharedViewModel.isLoading // It IS a var.
     var boardGame = sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val.
-
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
-
-    if (gameID != null) {
-        // Check internet Connection
-        // Emil comment - maybe a bit much checking it everytime we load an item? - also we don't handle retries anyways?
-        if (!isInternetAvailable(context)) {
-            Text("No Internet!")
-        }
-        if (isLoading) {
-            // Indikator
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            )
-            {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(200.dp),
-                    strokeWidth = 50.dp
-                )
-            }
-        } else {
             if (boardGame != null) {
-                AnimatedVisibility(
-                    sharedViewModel.firstAnimationSimpleBoardInfo,
-                    enter = scaleIn(),
-                    exit = scaleOut()
-                ) {
-                    AsyncImage(
-                        model = boardGame.imageURL,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        alignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .blur(30.dp)
-                            .scale(if (sharedViewModel.firstAnimationSimpleBoardInfo) 1.5f else 0.3f)
-                            .animateContentSize(),
-                        colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
-                    )
-                }
-                AnimatedVisibility(
-                    sharedViewModel.secondAnimationSimpleBoardInfo,
-                    enter = fadeIn(),
-                    exit = scaleOut()
-                ) {
+                AsyncImage(
+                    model = boardGame.imageURL,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blur(30.dp)
+                        //.scale(if (sharedViewModel.firstAnimationSimpleBoardInfo) 1.5f else 0.3f)
+                        .animateContentSize(),
+                    colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
+                )
+
+
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -337,8 +283,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                     }
                     Button(
                         onClick = {
-                            sharedViewModel.secondAnimationSimpleBoardInfo = false
-                            sharedViewModel.firstAnimationSimpleBoardInfo = false
                             navController.navigate(sharedViewModel.goBackToElseThanInfo)
                         },
                         modifier = Modifier
@@ -354,37 +298,35 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                         modifier = Modifier
                             .padding(18.dp)
                     )
-                }
+
             }
-        }
-    }
 }
 
 
 
-        @Composable
-        fun favoriteButton2(
-            navController: NavHostController,
-            viewModel: FavoriteViewModel,
-            sharedViewModel: SharedViewModel
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = if (
-                        sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite Icon",
-                    tint = Color.Red,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .size(55.dp)
-                        .padding(8.dp)
-                        .clickable {
-                            viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
-                            Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
-                        }
-                )
-            }
-        }
+@Composable
+fun favoriteButton2(
+    navController: NavHostController,
+    viewModel: FavoriteViewModel,
+    sharedViewModel: SharedViewModel
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Icon(
+            imageVector = if (
+                sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+            contentDescription = "Favorite Icon",
+            tint = Color.Red,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .size(55.dp)
+                .padding(8.dp)
+                .clickable {
+                    viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
+                    Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
+                }
+        )
+    }
+}

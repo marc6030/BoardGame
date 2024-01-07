@@ -1,8 +1,5 @@
 package com.example.myapplication
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -77,7 +74,7 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
         viewModel.fetchBoardGameCategories()
         favoriteViewModel.fetchFavoriteListFromDB()
         delay(300)
-        sharedViewModel.animationHome = true
+        //sharedViewModel.animationHome = true
     }
 
     val isLoading = sharedViewModel.isLoading
@@ -98,12 +95,9 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
             )
         }
     } else {
-        AnimatedVisibility(sharedViewModel.animationHome,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ){
-            boardgameSelections(navController, viewModel)
-        }
+
+        boardgameSelections(navController, viewModel)
+
     }
 
 }
@@ -291,7 +285,10 @@ fun boardGameSelection(headline: String,
             viewModel.fetchAdditionalBoardGameCategories(row)
         }
     }
-
+    fun UpdateAndNavigate (gameID: String) {
+        viewModel.fetchBoardGameData(gameID)
+        navController.navigate("boardgameinfo/$gameID")
+    }
 
     Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = Color.Black)
     LazyRow(
@@ -299,7 +296,6 @@ fun boardGameSelection(headline: String,
         state = scrollState
 
     )
-
     {
 
         items(currentRow) { item ->
@@ -312,7 +308,7 @@ fun boardGameSelection(headline: String,
                     .padding(5.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .clickable {
-                        navController.navigate("boardgameinfo/$gameID")
+                        UpdateAndNavigate(gameID)
                     }
             )
             {

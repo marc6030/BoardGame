@@ -53,7 +53,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         offsetRow3 = 0
         offsetRow4 = 0
         offsetRow5 = 0
-        setIsLoading(true)
+        // setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 boardGamesRow0 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow0)
@@ -100,7 +100,9 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     }
 
     fun fetchBoardGameData(id: String) {
-        setIsLoading(true)
+        // setIsLoading(true)
+        sharedViewModel.currentGameID = id
+        Log.v("kkk", "kkk")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val boardGame: BoardGame = postgresql().getBoardGame(id)

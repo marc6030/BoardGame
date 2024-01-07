@@ -27,7 +27,7 @@ class BoardSearchViewModel(private var sharedViewModel: SharedViewModel) : ViewM
         if (input === "") {
             return
         }
-        setIsLoading(true)
+        // setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 offset = 0
@@ -43,7 +43,7 @@ class BoardSearchViewModel(private var sharedViewModel: SharedViewModel) : ViewM
     }
 
     fun fetchAdditionalSearchResults() {
-        setIsLoading(true)
+        // setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 offset += limit
