@@ -65,7 +65,8 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         navController = navController,
         startDestination = "home"
     ) {
-        composable("home",
+        composable(
+            route = "home",
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
@@ -89,11 +90,12 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                     animationSpec = tween(7000)
                 )
-            }) {
+            })
+        {
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
         composable(
-            "search",
+            route = "search",
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
@@ -208,7 +210,6 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             }
         ) {
-
             SimpleBoardGameInfoActivity(
                 navController,
                 boardDataViewModel,
@@ -219,7 +220,31 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         }
         composable(
             route = "complexBoardgameinfo/{gameID}",
-        ) { backStackEntry ->
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                    animationSpec = tween(7000)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
+                    animationSpec = tween(7000)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
+                    animationSpec = tween(7000)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
+                    animationSpec = tween(7000)
+                )
+            }
+        ) {
             ComplexBoardGameInfoActivity(
                 navController,
                 boardDataViewModel,
