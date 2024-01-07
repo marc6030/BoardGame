@@ -1,15 +1,15 @@
 package com.example.myapplication.repositories
+
 import android.database.SQLException
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
-import com.example.myapplication.BoardGameItems
 import com.example.myapplication.models.BoardGameSearch
-import com.example.myapplication.models.BoardGameSearchItems
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.PreparedStatement
 
 class postgresql {
 
@@ -31,27 +31,43 @@ class postgresql {
 
 
 
-    fun getBoardGameList(): BoardGameItems {
+    fun getBoardGameList(limit: Int, offset: Int, category: String?=null): List<BoardGameItem> {
         val boardGames = mutableListOf<BoardGameItem>()
+        var statement: PreparedStatement
 
         connectToDatabase()?.use { connection ->
-            val statement = connection.createStatement()
-            val resultSet = statement.executeQuery("SELECT * FROM boardgame LIMIT 10")
+            if (category == null) {
+                statement = connection.prepareStatement("SELECT * FROM boardgame WHERE description is not null LIMIT ? OFFSET ?")
+                statement.setInt(1, limit)
+                statement.setInt(2, offset)
+
+            } else {
+                statement = connection.prepareStatement("SELECT * FROM boardgame WHERE LOWER(?) = ANY(SELECT LOWER(UNNEST(categories))) AND description is not null LIMIT ? OFFSET ?")
+                statement.setString(1, category)
+                statement.setInt(2, limit)
+                statement.setInt(3, offset)
+            }
+
+
+            val resultSet = statement.executeQuery()
 
             while (resultSet.next()) {
                 boardGames.add(BoardGameItem(
                     id = resultSet.getString("id_actual"),
                     name = resultSet.getString("name"),
-                    imgUrl = resultSet.getString("image")
+                    imgUrl = resultSet.getString("image"),
+                    //picture = resultSet.getBytes("image_data")
 
                 ))
             }
         } ?: throw SQLException("Database connection failed")
 
-        return BoardGameItems(boardGames)
+        return boardGames
     }
 
-    fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): BoardGameSearchItems {
+
+
+    fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
         val boardGameSearchItems = mutableListOf<BoardGameSearch>()
 
 
@@ -70,7 +86,7 @@ class postgresql {
             }
         } ?: throw SQLException("Database connection failed")
 
-        return BoardGameSearchItems(boardGameSearchItems)
+        return boardGameSearchItems
     }
 
     fun getBoardGame(id: String): BoardGame {
@@ -84,8 +100,6 @@ class postgresql {
             if (resultSet.next()) {
                 val textContent = convertHtmlToStructuredText(resultSet.getString("description"))
 
-
-
                 return BoardGame(
                     id = resultSet.getString("id_actual"),
                     name = resultSet.getString("name"),
@@ -96,7 +110,7 @@ class postgresql {
                     age = resultSet.getString("age") ?: "???",
                     description = textContent,
                     imageURL = resultSet.getString("image") ?: "???",
-                        averageWeight = resultSet.getString("min_players") ?: "???",
+                    averageWeight = resultSet.getString("weight") ?: "???",
                     ratingBGG = resultSet.getString("average") ?: "0",
                     mechanisms = convertSqlArrayToList(resultSet.getArray("mechanisms")),
                     publishers = convertSqlArrayToList(resultSet.getArray("publishers")),
@@ -106,6 +120,7 @@ class postgresql {
                     artists = convertSqlArrayToList(resultSet.getArray("artists")),
                     overallRank = resultSet.getString("overall_rank") ?: "???",
                     categoryRank = resultSet.getString("category_rank") ?: "???",
+                    // picture = resultSet.getBytes("image_data")
                 )
             } else {
                 throw NoSuchElementException("Board game with ID $id not found")

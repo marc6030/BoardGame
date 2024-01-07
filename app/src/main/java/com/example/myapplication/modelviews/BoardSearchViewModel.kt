@@ -8,7 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.models.BoardGameSearch
-import com.example.myapplication.models.BoardGameSearchItems
 import com.example.myapplication.repositories.postgresql
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,9 +31,7 @@ class BoardSearchViewModel(private var sharedViewModel: SharedViewModel) : ViewM
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 offset = 0
-                val boardGameSearchItems: BoardGameSearchItems = postgresql().getBoardGameSearch(input, limit, offset)
-                Log.v("bgsearch", "searchlogs: $boardGameSearchItems")
-                boardGameSearch = boardGameSearchItems.boardGameSearchItems
+                boardGameSearch = postgresql().getBoardGameSearch(input, limit, offset)
 
             } catch (e: Exception) {
                 Log.v("bgsearch_fault", "searchlogs: $e")
@@ -50,12 +47,11 @@ class BoardSearchViewModel(private var sharedViewModel: SharedViewModel) : ViewM
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 offset += limit
-                val newBoardGameSearchItems: BoardGameSearchItems = postgresql().getBoardGameSearch(input, limit, offset)
-                boardGameSearch += newBoardGameSearchItems.boardGameSearchItems
+                val newBoardGameSearchItems: List<BoardGameSearch> = postgresql().getBoardGameSearch(input, limit, offset)
+                boardGameSearch += newBoardGameSearchItems
 
                 Log.v("bgsearch_new", "searchlogs: $newBoardGameSearchItems")
                 Log.v("bgsearch_new_all", "$boardGameSearch")
-
 
             } catch (e: Exception) {
                 Log.v("bgsearch_new_fault", "searchlogs: $boardGameSearch")
