@@ -114,7 +114,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                     sharedViewModel.boardGameData = boardGame
                 }
             } catch (e: Exception) {
-                sharedViewModel.boardGameData = null
+                Log.v("can't fetch boardgamedata: ", "$e")
             } finally {
                 setIsLoading(false)
             }

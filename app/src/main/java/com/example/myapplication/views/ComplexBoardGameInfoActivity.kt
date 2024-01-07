@@ -568,7 +568,7 @@ fun favoriteButton(
                 onClick = {
                     //sharedViewModel.secondAnimationComplexBoardInfo = false
                     //sharedViewModel.firstAnimationComplexBoardInfo = false
-                    navController.navigate(sharedViewModel.goBackToElseThanInfo)
+                    // navController.navigate(sharedViewModel.goBackToElseThanInfo)
                 },
                 modifier = Modifier
                     .width(60.dp)

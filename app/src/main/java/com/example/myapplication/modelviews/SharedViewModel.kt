@@ -13,7 +13,7 @@ class SharedViewModel : ViewModel() {
     var userAuthenticated by mutableStateOf(false)
     var isLoading by mutableStateOf(false)
 
-    var boardGameData by mutableStateOf<BoardGame?>(null)
+    var boardGameData by mutableStateOf(BoardGame())
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
 
@@ -28,7 +28,7 @@ class SharedViewModel : ViewModel() {
  */
 
     var previousTab by mutableStateOf("")
-    var goBackToElseThanInfo by mutableStateOf("")
+//     var goBackToElseThanInfo by mutableStateOf("")
 
 
     fun getUserID(): String {
