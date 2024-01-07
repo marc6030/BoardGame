@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -91,106 +90,82 @@ fun ComplexBoardGameInfoActivity(
     val boardGame = sharedViewModel.boardGameData
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
-    if (gameID != null) {
-        // Check internet Connection
-        // Emil comment - maybe a bit much checking it everytime we load an item? - also we don't handle retries anyways?
 
-        if (isLoading) {
-            // Indikator
-            Row(
-                Modifier
+
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+
+    AsyncImage(
+        model = boardGame.imageURL,
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        alignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .blur(30.dp)
+            //.scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
+            .animateContentSize(),
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
+    )
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = boardGame!!.name,
+                style = TextStyle(
+                    fontSize = 50.sp
+                ),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(vertical = 20.dp),
+                textAlign = TextAlign.Center
             )
-            {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(200.dp),
-                    strokeWidth = 50.dp
-                )
-            }
-        } else {
-            var selectedTabIndex by remember { mutableStateOf(0) }
 
-            // Observe the data
-            if (boardGame != null) {
+            pictureAndKeyInfo(boardGame!!)
 
-                AsyncImage(
-                    model = boardGame.imageURL,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blur(30.dp)
-                        //.scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
-                        .animateContentSize(),
-                    colorFilter = ColorFilter.colorMatrix(colorMatrix)
-                )
+            Spacer(modifier = Modifier.height(16.dp))
 
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.background)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Column() {
+                    tabView(
+                        texts = listOf(
+                            "Description",
+                            "General Info",
+                            "BoardBandit Rating"
+                        )
                     ) {
-                        Text(
-                            text = boardGame!!.name,
-                            style = TextStyle(
-                                fontSize = 50.sp
-                            ),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 20.dp),
-                            textAlign = TextAlign.Center
+                        selectedTabIndex = it;
+                    }
+                    when (selectedTabIndex) {
+                        0 -> description(
+                            boardGame!!
                         )
 
-                        pictureAndKeyInfo(boardGame!!)
+                        1 -> generalInfo(
+                            boardGame!!
+                        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(MaterialTheme.colorScheme.background)
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-                            Column() {
-                                tabView(
-                                    texts = listOf(
-                                        "Description",
-                                        "General Info",
-                                        "BoardBandit Rating"
-                                    )
-                                ) {
-                                    selectedTabIndex = it;
-                                }
-                                when (selectedTabIndex) {
-                                    0 -> description(
-                                        boardGame!!
-                                    )
-
-                                    1 -> generalInfo(
-                                        boardGame!!
-                                    )
-
-                                    2 -> ratingTab(
-                                        boardGame!!, ratingsViewModel
-                                    )
-                                }
-                            }
-                        }
-
+                        2 -> ratingTab(
+                            boardGame!!, ratingsViewModel
+                        )
+                    }
                 }
-                favoriteButton(navController, favoriteViewModel, sharedViewModel, boardgameID = boardGame.id)
             }
+
         }
-    }
+        favoriteButton(navController, favoriteViewModel, sharedViewModel, boardgameID = boardGame.id)
 }
 
 
