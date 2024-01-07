@@ -80,9 +80,6 @@ data class BoardGame(
     @field:Element(name = "Artists", required = false)
     var artists: List<String> = emptyList(),
 
-    @field:Element(name = "Picture", required = false)
-    var picture: ByteArray? = null,
-
     ) {
     fun shortTitel(): String{
         val index = name.indexOf(":")
@@ -98,21 +95,4 @@ data class BoardGame(
         return "BoardGame(name=$name, yearPublished=$yearPublished, minPlayers=$minPlayers, maxPlayers=$maxPlayers, playingTime=$playingTime, description=$description, age=$age, imageURL=$imageURL, averageWeight=$averageWeight, overallRank=$overallRank)"
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as BoardGame
-
-        if (picture != null) {
-            if (other.picture == null) return false
-            if (!picture.contentEquals(other.picture)) return false
-        } else if (other.picture != null) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return picture?.contentHashCode() ?: 0
-    }
 }

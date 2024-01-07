@@ -90,8 +90,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
 
-    val isLoading = sharedViewModel.isLoading
-    val boardGame = sharedViewModel.boardGameData
+    var isLoading = sharedViewModel.isLoading // It IS a var.
+    var boardGame = sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val.
+
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
     if (gameID != null) {
