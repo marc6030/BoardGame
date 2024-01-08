@@ -165,7 +165,6 @@ fun ComplexBoardGameInfoActivity(
             }
 
         }
-        favoriteButton(navController, favoriteViewModel, sharedViewModel, boardgameID = boardGame.id)
 }
 
 
@@ -527,10 +526,8 @@ fun ratingDisplay(text: String,
 
 @Composable
 fun favoriteButton(
-    navController: NavHostController,
     viewModel: FavoriteViewModel,
     sharedViewModel: SharedViewModel,
-    boardgameID : String
 ) {
 
         var triggerConfetti by remember { mutableStateOf(false) }
@@ -538,50 +535,31 @@ fun favoriteButton(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
         ) {
-            Button(
-                onClick = {
-                    //sharedViewModel.secondAnimationComplexBoardInfo = false
-                    //sharedViewModel.firstAnimationComplexBoardInfo = false
-                    // navController.navigate(sharedViewModel.goBackToElseThanInfo)
-                },
+            Text(
+                text = if(sharedViewModel.boardGameData!!.isfavorite) "Remove from My Games" else "Add to My Games",
+                style = MaterialTheme.typography.bodyLarge,
+                fontSize = 30.sp,
                 modifier = Modifier
-                    .width(60.dp)
-                    .height(60.dp)
-                    .padding(8.dp),
-
-                ) {
-
-            }
-            Image(
-                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(18.dp)
-            )
-            Icon(
-                imageVector = if (
-                    sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = "Favorite Icon",
-                tint = Color.Red,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(55.dp)
-                    .padding(8.dp)
+                    .align(Alignment.TopStart)
                     .clickable {
                         triggerConfetti = !triggerConfetti
                         viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
                         Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
-                    }
-            )
+                    })
             if (triggerConfetti) {
                 ParticleSystem(
                     18.dp,
                     15.dp,
                     200,
-                    modifier = Modifier.align(Alignment.CenterEnd).size(55.dp).padding(8.dp)
-                ) // Confetti
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(55.dp)
+                        .padding(8.dp)
+                )
             }
+            
         }
     }
 

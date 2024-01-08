@@ -1,12 +1,17 @@
 package com.example.myapplication
 
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,23 +33,18 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,19 +61,19 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -99,14 +99,20 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     val colorMatrixDark = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
-
-    val textStyleBody1 = MaterialTheme.typography.headlineLarge
-    var textStyle by remember { mutableStateOf(textStyleBody1) }
+    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp)
+    var textStyle by remember {mutableStateOf(textStyleBody1)}
     var readyToDraw by remember { mutableStateOf(false) }
     var boardGame =
         sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
+    val openRatingPopUp = remember { mutableStateOf(false) }
+    val openAddPopUp = remember { mutableStateOf(false) }
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
+    DisposableEffect(boardGame!!.name) {
+        textStyle = textStyleBody1
+        readyToDraw = false
+        onDispose { }
+    }
 
     AsyncImage(
         model = boardGame.imageURL,
@@ -122,7 +128,11 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     )
 
     VerticalPager(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(enabled = openRatingPopUp.value || openAddPopUp.value) {
+                openRatingPopUp.value = false
+                openAddPopUp.value = false},
         state = pagerState,
         pageContent = { page ->
             when (page) {
@@ -141,6 +151,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .clip(RoundedCornerShape(20.dp))
                                     .background(Color.Black)
                             ) {
+                                Spacer(modifier = Modifier.height(10.dp))
                                 Text(
                                     text = boardGame!!.name,
                                     style = textStyle,
@@ -148,7 +159,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .fillMaxHeight(0.2f)
-                                        .padding(0.dp)
+                                        .padding(20.dp)
                                         .drawWithContent {
                                             if (readyToDraw) drawContent()
                                         },
@@ -288,7 +299,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .size(45.dp)
                                         .background(Color.DarkGray, CircleShape)
                                         .align(Alignment.BottomEnd)
-                                        .clickable { },
+                                        .clickable {openAddPopUp.value = !openAddPopUp.value },
                                     tint = Color.White,
                                 )
                             }
@@ -347,10 +358,32 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .size(25.dp)
                                         .align(Alignment.BottomStart)
                                         .background(Color.Gray, CircleShape)
-                                        .clickable { },
+                                        .clickable {
+                                            openRatingPopUp.value = !openRatingPopUp.value
+                                        },
                                     tint = Color.White
                                 )
                             }
+                        }
+                        AnimatedVisibility(
+                            visible = openRatingPopUp.value,
+                            enter = slideInVertically(),
+                            exit = slideOutVertically()
+                        ) {
+                            PopupRatingDialog(
+                                boardGame = boardGame,
+                                viewModel = ratingsViewModel
+                            )
+                        }
+                        AnimatedVisibility(
+                            visible = openAddPopUp.value,
+                            enter = slideInVertically(),
+                            exit = slideOutVertically()
+                        ) {
+                            PopupAddDialog(
+                                favoriteViewModel = favoriteViewModel,
+                                sharedViewModel = sharedViewModel
+                            )
                         }
                     }
                 }
@@ -376,10 +409,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     tabView(
                                         texts = listOf(
                                             "Description",
-                                            "General Info",
-                                            "BoardBandit Rating"
-                                        ),
-
+                                            "General Info"
+                                        )
                                         ) {
                                         selectedTabIndex = it;
                                     }
@@ -390,10 +421,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
                                         1 -> generalInfo(
                                             boardGame!!
-                                        )
-
-                                        2 -> ratingTab(
-                                            boardGame!!, ratingsViewModel
                                         )
                                     }
                                 }
@@ -431,6 +458,10 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     Button(
         onClick = {
             navController.popBackStack()
+            coroutineScope.launch {
+                delay(1000)
+                textStyle.copy(fontSize = 50.sp)
+            }
         },
         modifier = Modifier
             .width(60.dp)
@@ -446,6 +477,84 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             .padding(18.dp)
     )
 }
+@Composable
+fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box {
+                val popupWidth = 350.dp
+                val popupHeight = 220.dp
+                    Popup(
+                        alignment = Alignment.Center,
+                        properties = PopupProperties()
+                    ) {
+                        Box(
+                            Modifier
+                                .size(popupWidth, popupHeight)
+                                .padding(top = 5.dp)
+                                .background(Color.DarkGray, RoundedCornerShape(10.dp))
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                ratingTab(boardGame = boardGame, viewModel = viewModel)
+                            }
+                        }
 
+                }
+            }
 
+    }
+}
 
+@Composable
+fun PopupAddDialog(favoriteViewModel : FavoriteViewModel, sharedViewModel: SharedViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Box {
+            val popupWidth = 350.dp
+            val popupHeight = 220.dp
+            Popup(
+                alignment = Alignment.Center,
+                properties = PopupProperties()
+            ) {
+                Box(
+                    Modifier
+                        .size(popupWidth, popupHeight)
+                        .padding(top = 5.dp)
+                        .background(Color.DarkGray, RoundedCornerShape(10.dp))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        favoriteButton(
+                            viewModel = favoriteViewModel,
+                            sharedViewModel = sharedViewModel
+                        )
+
+                    }
+                }
+
+            }
+        }
+
+    }
+}

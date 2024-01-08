@@ -1,9 +1,12 @@
 package com.example.myapplication.modelviews
 
 import android.util.Log
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
@@ -18,18 +21,6 @@ class SharedViewModel : ViewModel() {
     var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
 
     var currentGameID = ""
-/*
-    var firstAnimationSimpleBoardInfo by mutableStateOf(false)
-    var secondAnimationSimpleBoardInfo by mutableStateOf(false)
-    var firstAnimationComplexBoardInfo by mutableStateOf(false)
-    var secondAnimationComplexBoardInfo by mutableStateOf(false)
-    var animationHome by  mutableStateOf(false)
-
- */
-
-    var previousTab by mutableStateOf("")
-//     var goBackToElseThanInfo by mutableStateOf("")
-
 
     fun getUserID(): String {
         val userID: String = "static_user"
