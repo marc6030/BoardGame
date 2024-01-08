@@ -3,12 +3,7 @@ package com.example.myapplication
 
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +28,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -50,13 +44,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -67,7 +59,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.size.Size
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
@@ -79,29 +70,16 @@ import kotlin.random.Random
 @Composable
 fun ComplexBoardGameInfoActivity(
     navController: NavHostController,
-    gameID: String?,
     boardDataViewModel: BoardDataViewModel,
     ratingsViewModel: RatingsViewModel,
     favoriteViewModel: FavoriteViewModel,
     sharedViewModel: SharedViewModel
     ) {
-    val context = LocalContext.current
 
-    // Use LaunchedEffect peoples! Is much importante!
-    LaunchedEffect(gameID) {
-        boardDataViewModel.fetchBoardGameData(gameID!!)
-        ratingsViewModel.fetchRatings(gameID!!)
-        favoriteViewModel.fetchFavoriteListFromDB()
+    val gameID = sharedViewModel.boardGameData!!.id
+    ratingsViewModel.fetchRatings(sharedViewModel.currentGameID)
+    favoriteViewModel.fetchFavoriteListFromDB()
 
-        delay(800)
-        sharedViewModel.firstAnimationComplexBoardInfo = true
-        delay(1000)
-        sharedViewModel.secondAnimationComplexBoardInfo = true
-
-        // viewModel.isBoardGameFavourite(gameID)
-        Log.v("Fetch Game ID in boardgamedata", "$gameID")
-
-    }
 
     val colorMatrix = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
@@ -112,112 +90,84 @@ fun ComplexBoardGameInfoActivity(
     val boardGame = sharedViewModel.boardGameData
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
-    if (gameID != null) {
-        if (isLoading) {
-            // Indikator
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            )
-            {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(200.dp),
-                    strokeWidth = 50.dp
-                )
-            }
-        } else {
-            var selectedTabIndex by remember { mutableStateOf(0) }
 
-            // Observe the data
-            if (boardGame != null) {
-                AnimatedVisibility(
-                    sharedViewModel.firstAnimationComplexBoardInfo,
-                    enter = EnterTransition.Companion.None,
-                    exit = ExitTransition.None
-                ) {
-                    AsyncImage(
-                        model = boardGame.imageURL,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        alignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .blur(30.dp)
-                            .scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
-                            .animateContentSize(),
-                        colorFilter = ColorFilter.colorMatrix(colorMatrix)
-                    )
-                }
-                AnimatedVisibility(
-                    sharedViewModel.secondAnimationComplexBoardInfo,
-                    enter = slideInVertically(),
-                    exit = slideOutVertically()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
+
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+
+    AsyncImage(
+        model = boardGame.imageURL,
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        alignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .blur(30.dp)
+            //.scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
+            .animateContentSize(),
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
+    )
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = boardGame!!.name,
+                style = TextStyle(
+                    fontSize = 50.sp
+                ),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+                textAlign = TextAlign.Center
+            )
+
+            pictureAndKeyInfo(boardGame!!)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.background)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Column() {
+                    tabView(
+                        texts = listOf(
+                            "Description",
+                            "General Info",
+                            "BoardBandit Rating"
+                        )
                     ) {
-                        Text(
-                            text = boardGame!!.name,
-                            style = TextStyle(
-                                fontSize = 50.sp
-                            ),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 20.dp),
-                            textAlign = TextAlign.Center
+                        selectedTabIndex = it;
+                    }
+                    when (selectedTabIndex) {
+                        0 -> description(
+                            boardGame!!
                         )
 
-                        pictureAndKeyInfo(boardGame!!)
+                        1 -> generalInfo(
+                            boardGame!!
+                        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(MaterialTheme.colorScheme.background)
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-                            Column() {
-                                tabView(
-                                    texts = listOf(
-                                        "Description",
-                                        "General Info",
-                                        "BoardBandit Rating"
-                                    )
-                                ) {
-                                    selectedTabIndex = it;
-                                }
-                                when (selectedTabIndex) {
-                                    0 -> description(
-                                        boardGame!!
-                                    )
-
-                                    1 -> generalInfo(
-                                        boardGame!!
-                                    )
-
-                                    2 -> ratingTab(
-                                        boardGame!!, ratingsViewModel
-                                    )
-                                }
-                            }
-                        }
+                        2 -> ratingTab(
+                            boardGame!!, ratingsViewModel
+                        )
                     }
                 }
-                favoriteButton(navController, favoriteViewModel, sharedViewModel, boardgameID = boardGame.id)
             }
+
         }
-    }
+        favoriteButton(navController, favoriteViewModel, sharedViewModel, boardgameID = boardGame.id)
 }
+
 
 
 @Composable
@@ -254,6 +204,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                 modifier = Modifier
                     .fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly
+
             ) {
                 Column(
                     modifier = Modifier
@@ -263,6 +214,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                     horizontalAlignment = Alignment.CenterHorizontally
 
                 ) {
+
 
                     Image(
                         painter = painterResource(id = R.drawable.people_alt),
@@ -320,6 +272,7 @@ fun pictureAndKeyInfo(boardGame: BoardGame){
                         fontWeight = FontWeight.Bold
                     )
                 }
+
             }
         }
     }
@@ -588,9 +541,9 @@ fun favoriteButton(
         ) {
             Button(
                 onClick = {
-                    sharedViewModel.secondAnimationComplexBoardInfo = false
-                    sharedViewModel.firstAnimationComplexBoardInfo = false
-                    navController.navigate(sharedViewModel.goBackToElseThanInfo)
+                    //sharedViewModel.secondAnimationComplexBoardInfo = false
+                    //sharedViewModel.firstAnimationComplexBoardInfo = false
+                    // navController.navigate(sharedViewModel.goBackToElseThanInfo)
                 },
                 modifier = Modifier
                     .width(60.dp)

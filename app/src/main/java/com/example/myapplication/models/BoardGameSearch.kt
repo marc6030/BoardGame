@@ -7,7 +7,7 @@ import org.simpleframework.xml.Root
 @Root(name = "boardgameitems", strict = false)
 data class BoardGameSearchItems(
     @field:ElementList(inline = true, name = "boardgameitem")
-    var boardGameSearchItems: List<BoardGameSearch> = listOf()
+    var boardGameSearchItems: MutableList<BoardGameSearch> = mutableListOf()
 )
 
 @Root(name = "boardgame", strict = false)

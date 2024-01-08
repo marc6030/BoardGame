@@ -15,7 +15,7 @@ class UserTest3 {
     @Given("the user is on the front page")
     fun doGiven() {
         try {
-            boardGameDataViewModel.fetchBoardGameList()
+            boardGameDataViewModel.fetchBoardGameCategories()
             val start_time = System.currentTimeMillis()
             val timeout = start_time + 25000
 

@@ -76,17 +76,22 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.14.3")
 
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
+
     // UI elements from google
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.compose.material:material:1.0.5")
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3:1.1.2")
 
     // not sure
-    implementation("androidx.navigation:navigation-compose:2.4.0")
+    implementation ("androidx.navigation:navigation-compose:2.7.6")
 
     // Used for the observer pattern
     implementation("androidx.compose.runtime:runtime-livedata:1.5.2")
+
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.32.0")
 
     // Used to import async images (dunno why we use this? - someone?)
     implementation("io.coil-kt:coil-compose:2.4.0")
