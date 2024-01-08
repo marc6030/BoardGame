@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel,
                  boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?, navController: NavHostController) {
-
+    val transitionDuration = 800
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -76,25 +76,25 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             exitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popEnterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             })
         {
@@ -105,25 +105,25 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             exitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popEnterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             }) {
 
@@ -136,25 +136,25 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             exitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popEnterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             }) {
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
@@ -164,28 +164,28 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             exitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popEnterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             }
-        ){
+        ) {
             PersonalActivity(navController)
         }
 
@@ -194,25 +194,25 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             exitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popEnterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             },
             popExitTransition = {
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(7000)
+                    animationSpec = tween(transitionDuration)
                 )
             }
         ) {
@@ -224,41 +224,5 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 sharedViewModel
             )
         }
-        composable(
-            route = "complexBoardgameinfo/{gameID}",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                    animationSpec = tween(7000)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
-                    animationSpec = tween(7000)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                    animationSpec = tween(7000)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
-                    animationSpec = tween(7000)
-                )
-            }
-        ) {
-            ComplexBoardGameInfoActivity(
-                navController,
-                boardDataViewModel,
-                ratingsViewModel,
-                favoriteViewModel,
-                sharedViewModel
-            )
-        }
-    }
     }
 }
