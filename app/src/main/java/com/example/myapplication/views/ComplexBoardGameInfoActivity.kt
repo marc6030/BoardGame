@@ -22,11 +22,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -57,6 +60,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
@@ -530,20 +534,21 @@ fun favoriteButton(
     sharedViewModel: SharedViewModel,
 ) {
 
-        var triggerConfetti by remember { mutableStateOf(false) }
+    var triggerConfetti by remember { mutableStateOf(false) }
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
+                .fillMaxWidth(0.852f)
+                .fillMaxHeight(0.75f)
         ) {
-            Text(
-                text = if(sharedViewModel.boardGameData!!.isfavorite) "Remove from My Games" else "Add to My Games",
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 30.sp,
+            Icon(imageVector = if(sharedViewModel.boardGameData!!.isfavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = "favoriteButton",
+                tint = Color.White,
                 modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .clickable {
+                    .size(40.dp)
+                    .background(Color.Transparent, CircleShape)
+                    .align(Alignment.BottomEnd)
+                    .clickable{
                         triggerConfetti = !triggerConfetti
                         viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
                         Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
@@ -554,12 +559,11 @@ fun favoriteButton(
                     15.dp,
                     200,
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
+                        .align(Alignment.BottomEnd)
                         .size(55.dp)
                         .padding(8.dp)
                 )
             }
-            
         }
     }
 

@@ -22,6 +22,9 @@ class SharedViewModel : ViewModel() {
 
     var currentGameID = ""
 
+    var openRatingPopUp by  mutableStateOf(false)
+    var openAddPopUp by mutableStateOf(false)
+
     fun getUserID(): String {
         val userID: String = "static_user"
         Log.v("UserID is: ", userID)

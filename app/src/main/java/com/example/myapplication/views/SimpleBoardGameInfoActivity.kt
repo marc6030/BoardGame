@@ -33,16 +33,20 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -104,9 +108,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var readyToDraw by remember { mutableStateOf(false) }
     var boardGame =
         sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
-    val openRatingPopUp = remember { mutableStateOf(false) }
-    val openAddPopUp = remember { mutableStateOf(false) }
-
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
     DisposableEffect(boardGame!!.name) {
         textStyle = textStyleBody1
@@ -130,9 +131,10 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     VerticalPager(
         modifier = Modifier
             .fillMaxSize()
-            .clickable(enabled = openRatingPopUp.value || openAddPopUp.value) {
-                openRatingPopUp.value = false
-                openAddPopUp.value = false},
+            .clickable(enabled = sharedViewModel.openRatingPopUp || sharedViewModel.openAddPopUp) {
+                sharedViewModel.openRatingPopUp = false
+                sharedViewModel.openAddPopUp = false
+            },
         state = pagerState,
         pageContent = { page ->
             when (page) {
@@ -289,19 +291,44 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     modifier = Modifier
                                         .size(45.dp)
                                         .background(Color.DarkGray, CircleShape)
-                                        .align(Alignment.BottomStart),
+                                        .align(Alignment.BottomStart)
+                                        .clickable {
+                                            sharedViewModel.openRatingPopUp =
+                                                !sharedViewModel.openRatingPopUp
+                                        },
                                     tint = Color.DarkGray
                                 )
                                 Icon(
-                                    imageVector = Icons.Filled.MoreVert,
+                                    imageVector = Icons.Filled.Add,
                                     contentDescription = "contentDescription",
                                     modifier = Modifier
                                         .size(45.dp)
                                         .background(Color.DarkGray, CircleShape)
                                         .align(Alignment.BottomEnd)
-                                        .clickable {openAddPopUp.value = !openAddPopUp.value },
+                                        .clickable {
+                                            sharedViewModel.openAddPopUp =
+                                                !sharedViewModel.openAddPopUp
+                                        },
                                     tint = Color.White,
                                 )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .padding(30.dp)
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.845f)
+                                    .align(Alignment.TopStart)) {
+                                    Text(
+                                        text = boardGame.ratingBGG,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.292f)
+                                            .align(Alignment.Bottom),
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        fontSize = 16.sp
+                                    )
                             }
                             Row(
                                 modifier = Modifier
@@ -310,17 +337,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .fillMaxHeight(0.845f)
                                     .align(Alignment.TopCenter)
                             ) {
-                                Text(
-                                    text = boardGame.ratingBGG,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.5f)
-                                        .align(Alignment.Bottom),
-                                    textAlign = TextAlign.Start,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    fontSize = 16.sp
-                                )
                             }
                             Box(
                                 modifier = Modifier
@@ -359,14 +375,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .align(Alignment.BottomStart)
                                         .background(Color.Gray, CircleShape)
                                         .clickable {
-                                            openRatingPopUp.value = !openRatingPopUp.value
+                                            sharedViewModel.openRatingPopUp =
+                                                !sharedViewModel.openRatingPopUp
                                         },
                                     tint = Color.White
                                 )
                             }
                         }
                         AnimatedVisibility(
-                            visible = openRatingPopUp.value,
+                            visible = sharedViewModel.openRatingPopUp,
                             enter = slideInVertically(),
                             exit = slideOutVertically()
                         ) {
@@ -376,18 +393,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                             )
                         }
                         AnimatedVisibility(
-                            visible = openAddPopUp.value,
+                            visible = sharedViewModel.openAddPopUp,
                             enter = slideInVertically(),
                             exit = slideOutVertically()
                         ) {
-                            PopupAddDialog(
-                                favoriteViewModel = favoriteViewModel,
-                                sharedViewModel = sharedViewModel
-                            )
+                            PopupAddDialog()
                         }
+                        favoriteButton(viewModel = favoriteViewModel, sharedViewModel = sharedViewModel)
                     }
                 }
-
                 1 -> {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(
@@ -459,7 +473,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         onClick = {
             navController.popBackStack()
             coroutineScope.launch {
-                delay(1000)
                 textStyle.copy(fontSize = 50.sp)
             }
         },
@@ -471,7 +484,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     ) {
     }
     Image(
-        painter = painterResource(id = R.drawable.ic_action_name),
+        painter = painterResource(id = R.drawable.ic_action_back),
         contentDescription = null,
         modifier = Modifier
             .padding(18.dp)
@@ -517,25 +530,23 @@ fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
 }
 
 @Composable
-fun PopupAddDialog(favoriteViewModel : FavoriteViewModel, sharedViewModel: SharedViewModel) {
+fun PopupAddDialog() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxHeight(0.5f)
             .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box {
-            val popupWidth = 350.dp
-            val popupHeight = 220.dp
             Popup(
                 alignment = Alignment.Center,
                 properties = PopupProperties()
             ) {
                 Box(
                     Modifier
-                        .size(popupWidth, popupHeight)
+                        .size(450.dp, 300.dp)
                         .padding(top = 5.dp)
                         .background(Color.DarkGray, RoundedCornerShape(10.dp))
                 ) {
@@ -545,16 +556,9 @@ fun PopupAddDialog(favoriteViewModel : FavoriteViewModel, sharedViewModel: Share
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        favoriteButton(
-                            viewModel = favoriteViewModel,
-                            sharedViewModel = sharedViewModel
-                        )
-
                     }
                 }
-
             }
         }
-
     }
 }
