@@ -104,11 +104,11 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
-    viewModel: BoardDataViewModel,
-    sharedViewModel: SharedViewModel
+    viewModel: BoardDataViewModel
 ) {
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     var presses by remember { mutableIntStateOf(0) }
