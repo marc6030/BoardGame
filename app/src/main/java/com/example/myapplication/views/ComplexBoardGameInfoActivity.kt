@@ -540,12 +540,9 @@ fun favoriteButton(
             Text(
                 text = if(sharedViewModel.boardGameData!!.isfavorite) "Remove from My Games" else "Add to My Games",
                 style = MaterialTheme.typography.bodyLarge,
-                fontSize = 25.sp,
-                color = Color.White,
+                fontSize = 30.sp,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .fillMaxWidth()
-                    .padding(5.dp)
                     .clickable {
                         triggerConfetti = !triggerConfetti
                         viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
@@ -557,18 +554,12 @@ fun favoriteButton(
                     15.dp,
                     200,
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
+                        .align(Alignment.CenterEnd)
                         .size(55.dp)
                         .padding(8.dp)
                 )
             }
-            Image(painterResource(id = if(sharedViewModel.boardGameData!!.isfavorite) R.drawable.baseline_videogame_asset_off_24 else R.drawable.baseline_videogame_asset_24),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(50.dp)
-                    .padding(horizontal = 5.dp)
-                )
+            
         }
     }
 
