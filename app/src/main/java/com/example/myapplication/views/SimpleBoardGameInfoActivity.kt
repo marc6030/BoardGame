@@ -370,15 +370,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     }
                                     when (selectedTabIndex) {
                                         0 -> description(
-                                            boardGame!!
+                                            boardGame
                                         )
 
                                         1 -> generalInfo(
-                                            boardGame!!
+                                            boardGame
                                         )
 
                                         2 -> ratingTab(
-                                            boardGame!!, ratingsViewModel
+                                            boardGame, ratingsViewModel
                                         )
                                     }
                                 }
