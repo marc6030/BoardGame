@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -117,7 +119,7 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
         }
     } else {
 
-        boardgameSelections(navController, viewModel)
+        boardgameSelections(navController, viewModel, sharedViewModel)
 
     }
 
@@ -127,13 +129,17 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
-    viewModel: BoardDataViewModel
+    viewModel: BoardDataViewModel,
+    sharedViewModel: SharedViewModel
 ) {
-    val items = sharedViewModel.boardGameList
-
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     var presses by remember { mutableIntStateOf(0) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchBoardGameCategories()
+        //favoriteViewModel.fetchFavoriteListFromDB()
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -188,30 +194,26 @@ fun boardgameSelections(
             }
         }
     ) { innerPadding ->
-    if (items != null) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-            ){
+        ){
             LazyColumn( modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .background(Color.White))
             {
                 item {
-                    SwipeableHotnessRow(items.boardGames.shuffled(), navController)
-                    boardGameSelection("test", items.boardGames.shuffled(), navController)
-                    boardGameSelection("Superhot", items.boardGames.shuffled(), navController)
-                    boardGameSelection("rpggames", items.boardGames.shuffled(), navController)
-                    boardGameSelection("dungeon games", items.boardGames.shuffled(), navController)
-                    boardGameSelection("shooters", items.boardGames.shuffled(), navController)
-
+                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                    boardGameSelection("test", viewModel, 1, navController)
+                    boardGameSelection("Superhot", viewModel, 2, navController)
+                    boardGameSelection("rpggames", viewModel, 3, navController)
+                    boardGameSelection("dungeon games", viewModel, 4, navController)
+                    boardGameSelection("shooters", viewModel, 5, navController)
                 }
             }
         }
-
-    }
     }
 }
 
