@@ -89,6 +89,23 @@ class postgresql {
         return boardGameSearchItems
     }
 
+    fun setFavoriteGame(username: String, id: String){
+        connectToDatabase()?.use { connection ->
+            try {
+                val statement = connection.prepareStatement("INSERT INTO liked_games(username, id_actual) VALUES (?, ?)")
+                statement.setString(2, id)
+                statement.setString(1, username)
+                val resultSet = statement.executeQuery()
+            } catch (e: Exception) {
+                val statement = connection.prepareStatement("DELETE FROM liked_games WHERE id_actual = ?")
+                statement.setString(2, id)
+                statement.setString(1, username)
+                val resultSet = statement.executeQuery()
+            }
+
+        }
+    }
+
     fun getBoardGame(id: String): BoardGame {
         connectToDatabase()?.use { connection ->
             val statement = connection.prepareStatement("SELECT * FROM boardgame WHERE id_actual = ?")
@@ -193,7 +210,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
-    val bgt = postgresql().getBoardGame("280453")
+    val bgt = postgresql().setFavoriteGame("static_user", "99630")
     //println(bg)
     //println(bgg)
     // println(bgs)

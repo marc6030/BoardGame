@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
         val favoriteViewModel = FavoriteViewModel(viewModel)
-        val boardGameInfoActivity = BoardGameInfoActivity(favoriteViewModel)
+        val boardGameInfoActivity = BoardGameInfoActivity()
 
         setContent {
             navController = rememberNavController()
