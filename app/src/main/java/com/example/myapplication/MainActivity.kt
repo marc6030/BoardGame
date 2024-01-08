@@ -36,6 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+
 class MainActivity : ComponentActivity() {
 
     val viewModel: SharedViewModel by viewModels()
@@ -63,15 +64,6 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    LaunchedEffect(true){
-        while (true) {
-            if (!isInternetAvailable(context)) {
-                navController.navigate("nointernet")
-            }
-            delay(5000)
-        }
-    }
-
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -91,7 +83,6 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         composable("personal") {
             PersonalActivity(navController)
         }
-
         composable(
             route = "boardgameinfo/{gameID}",
             arguments = listOf(navArgument("gameID") { type = NavType.StringType })
@@ -108,4 +99,13 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             )
         }
     }
+   LaunchedEffect(true){
+        while(true){
+            if(!isInternetAvailable(context)){
+                navController.navigate("nointernet")
+            }
+            delay(5000)
+        }
+   }
+
 }

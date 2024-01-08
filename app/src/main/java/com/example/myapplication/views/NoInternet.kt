@@ -33,14 +33,15 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun NoInternetScreen(navController: NavHostController) {
-    var isCrying by remember { mutableStateOf(false) }
+    var isSpinning by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    LaunchedEffect(isCrying) {
-        while (true) {
-            delay(2000)
-                isCrying = !isCrying
+    LaunchedEffect(isSpinning) {
+        delay(2000)
+        if(isInternetAvailable(context)){
+            navController.navigate("home")
         }
+        isSpinning = false
     }
 
     Column(
@@ -52,23 +53,20 @@ fun NoInternetScreen(navController: NavHostController) {
     ) {
         Text("No Internet", fontSize = 40.sp)
         Spacer(modifier = Modifier.height(36.dp))
-        BanditAnimation(isCrying)
+        BanditAnimation(isSpinning)
         Spacer(modifier = Modifier.height(16.dp))
-        if(!isCrying){
+        if(!isSpinning){
             RefreshButton(onClick = {
-                isCrying = !isCrying
+                isSpinning = true
             })
         } else {
-            Text("", fontSize = 55.sp)
-            if (isInternetAvailable(context)) {
-                navController.navigate("home")
-            }
+            Text("", fontSize = 60.sp)
         }
     }
 }
 
 @Composable
-fun BanditAnimation(isCrying: Boolean) {
+fun BanditAnimation(isSpinning: Boolean) {
     val infiniteTransition = rememberInfiniteTransition()
     val scale by infiniteTransition.animateFloat(
         initialValue = 1.0f,
@@ -98,10 +96,10 @@ fun BanditAnimation(isCrying: Boolean) {
     Box(
         modifier = Modifier
             .size(200.dp)
-            .background(color = Color.Gray, shape = CircleShape)
+            .background(color = Color.Transparent)
             .padding(8.dp)
     ) {
-        if(isCrying){
+        if(isSpinning){
             Image(
                 painter = painterResource(id = R.drawable.newbanditlogo),
                 contentDescription = null,
@@ -131,8 +129,8 @@ fun RefreshButton(onClick: () -> Unit) {
             .padding(16.dp)
             .height(50.dp),
     ) {
-        Icon(imageVector = Icons.Default.Refresh, contentDescription = null)
+        Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = Color.Black)
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = "Refresh")
+        Text(text = "Refresh", color = Color.Black)
     }
 }
