@@ -1,5 +1,6 @@
 package com.example.myapplication.modelviews
 
+import BoardGameRepository
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
-import com.example.myapplication.repositories.postgresql
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,11 +30,8 @@ class BoardGameInfoActivity() : ViewModel() {
         currentGameID = id
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val boardGame: BoardGame = postgresql().getBoardGame(id)
-                Log.v("bgload", "bgnotloading: $boardGame")
-                if (favoriteViewModel.favoriteBoardGameList.any { it?.id == boardGame.id }) {
-                    boardGame.isfavorite = true
-                }
+                val boardGame: BoardGame = BoardGameRepository().getBoardGame(id)
+
                 withContext(Dispatchers.Main) {
                     boardGameData = boardGame
                 }

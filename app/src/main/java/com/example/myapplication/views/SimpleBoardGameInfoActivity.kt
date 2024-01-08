@@ -64,7 +64,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     // Use LaunchedEffect peoples! Is much importante!
     boardGameInfoActivity.fetchBoardGameData(gameID)
     ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
-    favoriteViewModel.fetchFavoriteListFromDB()
 
 
     val colorMatrixDark = ColorMatrix().apply {

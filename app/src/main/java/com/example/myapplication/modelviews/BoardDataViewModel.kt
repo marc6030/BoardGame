@@ -1,5 +1,6 @@
 package com.example.myapplication.modelviews
 
+import BoardGameRepository
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,11 +9,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGameItem
-import com.example.myapplication.repositories.postgresql
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BoardDataViewModel(private var sharedViewModel: SharedViewModel, private var favoriteViewModel: FavoriteViewModel) : ViewModel(){
+class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewModel(){
     var boardGamesRow0 by mutableStateOf<List<BoardGameItem>>(emptyList())
     var boardGamesRow1 by mutableStateOf<List<BoardGameItem>>(emptyList())
     var boardGamesRow2 by mutableStateOf<List<BoardGameItem>>(emptyList())
@@ -52,14 +52,16 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel, private v
         offsetRow4 = 0
         offsetRow5 = 0
         // setIsLoading(true)
+        Log.v("tada", "tada")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                boardGamesRow0 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow0)
-                boardGamesRow1 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow1)
-                boardGamesRow2 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow2)
-                boardGamesRow3 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow3)
-                boardGamesRow4 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow4)
-                boardGamesRow5 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow5)
+                boardGamesRow0 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow0)
+                boardGamesRow1 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow1)
+                boardGamesRow2 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow2)
+                boardGamesRow3 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow3)
+                boardGamesRow4 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow4)
+                boardGamesRow5 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow5)
+                Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
             } finally {
@@ -74,22 +76,22 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel, private v
             try {
                 if (row == 0) {
                     offsetRow0 += limit
-                    boardGamesRow0 += postgresql().getBoardGameList(limit = limit, offset = offsetRow0, categoryRow0)
+                    boardGamesRow0 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow0, categoryRow0)
                 } else if (row == 1) {
                     offsetRow1 += limit
-                    boardGamesRow1 += postgresql().getBoardGameList(limit = limit, offset = offsetRow1, categoryRow1)
+                    boardGamesRow1 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow1, categoryRow1)
                 } else if (row == 2) {
                     offsetRow2 += limit
-                    boardGamesRow2 += postgresql().getBoardGameList(limit = limit, offset = offsetRow2, categoryRow2)
+                    boardGamesRow2 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow2, categoryRow2)
                 } else if (row == 3) {
                     offsetRow3 += limit
-                    boardGamesRow3 += postgresql().getBoardGameList(limit = limit, offset = offsetRow3, categoryRow3)
+                    boardGamesRow3 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow3, categoryRow3)
                 } else if (row == 4) {
                     offsetRow4 += limit
-                    boardGamesRow4 += postgresql().getBoardGameList(limit = limit, offset = offsetRow4, categoryRow4)
+                    boardGamesRow4 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow4, categoryRow4)
                 } else if (row == 5) {
                     offsetRow5 += limit
-                    boardGamesRow5 += postgresql().getBoardGameList(limit = limit, offset = offsetRow5, categoryRow5)
+                    boardGamesRow5 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow5, categoryRow5)
                 }
             } catch (e: Exception) {
                 Log.v("fetchAdditionalBoardGameCategories","Can't fetch additional boardGameCategories")

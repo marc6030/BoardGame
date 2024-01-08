@@ -26,7 +26,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +51,6 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
-import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -63,42 +60,20 @@ import kotlin.math.absoluteValue
 
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
-fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel, favoriteViewModel: FavoriteViewModel, sharedViewModel: SharedViewModel) {
+fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel, favoriteViewModel: FavoriteViewModel) {
 
-    val context = LocalContext.current
+    //val context = LocalContext.current
     // Check internet Connection - this does not belong here.
-    if (!isInternetAvailable(context)) {
-        Text("No Internet!")
-    }
+    //if (!isInternetAvailable(context)) {
+    //    Text("No Internet!")
+    //}
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        favoriteViewModel.fetchFavoriteListFromDB()
-        delay(300)
+        // delay(300)
         //sharedViewModel.animationHome = true
     }
 
-    val isLoading = sharedViewModel.isLoading
-
-    if (isLoading) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(200.dp),
-                strokeWidth = 50.dp
-            )
-        }
-    } else {
-
-        boardgameSelections(navController, viewModel)
-
-    }
+    boardgameSelections(navController, viewModel)
 
 }
 

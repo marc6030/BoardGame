@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
-        val favoriteViewModel = FavoriteViewModel(viewModel)
+        val favoriteViewModel = FavoriteViewModel()
         val boardGameInfoActivity = BoardGameInfoActivity()
 
         setContent {
@@ -96,7 +96,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             })
         {
-            HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
+            HomeActivity(navController, boardDataViewModel, favoriteViewModel)
         }
         composable(
             route = "search",
@@ -214,8 +214,8 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             }
         )
-        {backStackEntry ->
-            val gameID = navController.currentBackStackEntry?.arguments?.getString("gameID")!!
+        {navBackStackEntry ->
+            val gameID = navBackStackEntry.arguments?.getString("gameID")!!
             SimpleBoardGameInfoActivity(
                 navController,
                 boardDataViewModel,
@@ -252,11 +252,11 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                     animationSpec = tween(transitionDuration)
                 )
             }
-        ) {backStackEntry ->
-            val gameID = backStackEntry.id
+        ) {navBackStackEntry ->
+            val gameID = navBackStackEntry.arguments?.getString("gameID")!!
             ComplexBoardGameInfoActivity(
                 navController,
-                boardDataViewModel,
+                boardGameInfoActivity,
                 ratingsViewModel,
                 favoriteViewModel,
                 sharedViewModel,
