@@ -29,7 +29,7 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
 
     fun fetchFavoriteListFromDB() {
         val tempBg: ArrayList<BoardGame> = ArrayList()
-        setIsLoading(true)
+        // setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val favSnapshot = db.collection("BBUsers").document(getUserID())

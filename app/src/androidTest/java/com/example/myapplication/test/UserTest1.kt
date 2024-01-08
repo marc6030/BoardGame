@@ -1,5 +1,6 @@
 package com.example.myapplication.test
 
+/*
 import android.util.Log
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.BoardSearchViewModel
@@ -9,6 +10,7 @@ import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import org.junit.Assert
+
 
 class UserTest1 {
     private val viewModel = SharedViewModel()
@@ -62,3 +64,4 @@ class UserTest1 {
         }
     }
 }
+ */

@@ -60,7 +60,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -79,13 +78,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 fun SimpleBoardGameInfoActivity(navController: NavHostController,
-                                gameID: String?,
-                                boardDataViewModel: BoardDataViewModel,
-                                ratingsViewModel: RatingsViewModel,
-                                favoriteViewModel: FavoriteViewModel,
-                                sharedViewModel: SharedViewModel
+        boardDataViewModel: BoardDataViewModel,
+        ratingsViewModel: RatingsViewModel,
+        favoriteViewModel: FavoriteViewModel,
+        sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
@@ -93,20 +92,10 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     // Use LaunchedEffect peoples! Is much importante!
-    LaunchedEffect(gameID) {
-        boardDataViewModel.fetchBoardGameData(gameID!!)
-        ratingsViewModel.fetchRatings(gameID!!)
-        favoriteViewModel.fetchFavoriteListFromDB()
+    // boardDataViewModel.fetchBoardGameData(sharedViewModel.currentGameID)
+    ratingsViewModel.fetchRatings(sharedViewModel.currentGameID)
+    favoriteViewModel.fetchFavoriteListFromDB()
 
-        delay(800)
-        sharedViewModel.firstAnimationSimpleBoardInfo = true
-        delay(1000)
-        sharedViewModel.secondAnimationSimpleBoardInfo = true
-
-        // viewModel.isBoardGameFavourite(gameID)
-        Log.v("Fetch Game ID in boardgamedata", "$gameID")
-
-    }
 
     val colorMatrixDark = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
@@ -118,6 +107,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     val textStyleBody1 = MaterialTheme.typography.headlineMedium
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
+    var boardGame = sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
+
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
     if (gameID != null) {
@@ -495,29 +486,5 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     }
 }
 
-        @Composable
-        fun favoriteButton2(
-            navController: NavHostController,
-            viewModel: FavoriteViewModel,
-            sharedViewModel: SharedViewModel
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Icon(
-                    imageVector = if (
-                        sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite Icon",
-                    tint = Color.Red,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .size(55.dp)
-                        .padding(8.dp)
-                        .clickable {
-                            viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
-                            Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
-                        }
-                )
-            }
-        }
+
+

@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.graphics.Bitmap
-import androidx.compose.ui.graphics.Color
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
