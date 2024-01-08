@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BoardGameInfoActivity(private var favoriteViewModel: FavoriteViewModel) : ViewModel() {
+class BoardGameInfoActivity() : ViewModel() {
     //var boardGameList by mutableStateOf<BoardGameItems?>(null)
 
     var boardGameData by mutableStateOf(BoardGame())
@@ -28,7 +28,6 @@ class BoardGameInfoActivity(private var favoriteViewModel: FavoriteViewModel) : 
     fun fetchBoardGameData(id: String) {
         // setIsLoading(true)
         currentGameID = id
-        Log.v("kkk", "kkk")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val boardGame: BoardGame = postgresql().getBoardGame(id)

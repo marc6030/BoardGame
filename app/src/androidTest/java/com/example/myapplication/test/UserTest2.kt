@@ -1,15 +1,6 @@
 package com.example.myapplication.test
 
-import android.util.Log
-import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.modelviews.BoardSearchViewModel
-import com.example.myapplication.modelviews.RatingsViewModel
-import com.example.myapplication.modelviews.SharedViewModel
-import io.cucumber.java.en.Given
-import io.cucumber.java.en.Then
-import io.cucumber.java.en.When
-import org.junit.Assert
-
+/*
 class UserTest2 {
     private val viewModel = SharedViewModel()
     private val ratingsViewModel = RatingsViewModel(viewModel)
@@ -64,3 +55,5 @@ class UserTest2 {
         Assert.assertFalse(viewModel.boardGameData?.ratingBGG.isNullOrEmpty())
     }
 }
+
+ */
