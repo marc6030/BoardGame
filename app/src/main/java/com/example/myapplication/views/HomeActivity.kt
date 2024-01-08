@@ -33,10 +33,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -44,6 +49,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
@@ -60,6 +66,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -135,6 +142,7 @@ fun boardgameSelections(
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     var presses by remember { mutableIntStateOf(0) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val navBar = NavBar()
 
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
@@ -146,29 +154,26 @@ fun boardgameSelections(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color.White,
+                    containerColor = Color.White
                 ),
                 title = {
-                    Text(
-                        "Centered Top App Bar",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                        androidx.compose.material.Icon(modifier = Modifier.size(100.dp), painter = logo, contentDescription = "Logo" )
                 },
                 navigationIcon = {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "Localized description"
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "Localized description",
+                            tint = Color.Black
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Localized description",
+                            tint = Color.Black
                         )
                     }
                 },
@@ -178,14 +183,8 @@ fun boardgameSelections(
         bottomBar = {
             BottomAppBar(
                 containerColor = Color.Black,
-                contentColor = Color.White,
             ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    text = "Bottom app bar",
-                )
+                navBar.BottomNavigationBar(navController, "Home")
             }
         },
         floatingActionButton = {
@@ -214,38 +213,6 @@ fun boardgameSelections(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun TopMenu(){
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    val icon: Painter = painterResource(id = R.drawable.search)
-
-    Box(
-        modifier = Modifier
-            .height(150.dp)
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        Image(
-            painter = logo,
-            contentDescription = null, // Set a meaningful content description if needed
-            modifier = Modifier
-                .height(150.dp)
-                .width(150.dp)
-                .align(Alignment.Center)
-                .padding(0.dp, 10.dp, 0.dp, 0.dp)
-        )
-        Image(
-            painter = icon,
-            contentDescription = null, // Set a meaningful content description if needed
-            modifier = Modifier
-                .height(40.dp)
-                .width(40.dp)
-                .align(Alignment.TopEnd)
-                .padding(0.dp, 10.dp, 0.dp, 10.dp)
-        )
     }
 }
 
@@ -282,7 +249,7 @@ fun SwipeableHotnessRow(
     HorizontalPager(
         state = pagerState,
         modifier = Modifier.height(400.dp),
-        contentPadding = PaddingValues(horizontal = 32.dp),
+        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 20.dp),
         pageSpacing = 8.dp,
     ) { page ->
         val item = items[page]
