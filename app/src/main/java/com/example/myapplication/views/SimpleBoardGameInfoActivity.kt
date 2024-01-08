@@ -488,15 +488,13 @@ fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
             verticalArrangement = Arrangement.Center
         ) {
             Box {
-                val popupWidth = 350.dp
-                val popupHeight = 220.dp
                     Popup(
                         alignment = Alignment.Center,
                         properties = PopupProperties()
                     ) {
                         Box(
                             Modifier
-                                .size(popupWidth, popupHeight)
+                                .size(350.dp, 220.dp)
                                 .padding(top = 5.dp)
                                 .background(Color.DarkGray, RoundedCornerShape(10.dp))
                         ) {
