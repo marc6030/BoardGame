@@ -15,7 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
 import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
@@ -78,10 +77,13 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             },
             exitTransition = {
+                if(false){
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                     animationSpec = tween(transitionDuration)
-                )
+                )}
+                else{
+                    ExitTransition.None}
             },
             popEnterTransition = {
                 slideIntoContainer(
@@ -158,32 +160,8 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
         }
         composable(
-            route = "personal",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            }
-        ){
+            route = "personal"
+        ) {
             PersonalActivity(navController)
         }
 
@@ -221,46 +199,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 boardDataViewModel,
                 ratingsViewModel,
                 favoriteViewModel,
-                sharedViewModel,
-                boardGameInfoActivity,
-                gameID
-            )
-        }
-        composable(
-            route = "complexBoardgameinfo/{gameID}",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Up,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Down,
-                    animationSpec = tween(transitionDuration)
-                )
-            }
-        ) {navBackStackEntry ->
-            val gameID = navBackStackEntry.arguments?.getString("gameID")!!
-            ComplexBoardGameInfoActivity(
-                navController,
-                boardGameInfoActivity,
-                ratingsViewModel,
-                favoriteViewModel,
-                sharedViewModel,
-                gameID
+                sharedViewModel
             )
         }
     }
