@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
 import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
@@ -77,13 +78,10 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             },
             exitTransition = {
-                if(false){
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                     animationSpec = tween(transitionDuration)
-                )}
-                else{
-                    ExitTransition.None}
+                )
             },
             popEnterTransition = {
                 slideIntoContainer(
@@ -98,7 +96,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             })
         {
-            HomeActivity(navController, boardDataViewModel, favoriteViewModel)
+            HomeActivity(navController, boardDataViewModel)
         }
         composable(
             route = "search",
@@ -196,10 +194,9 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             val gameID = navBackStackEntry.arguments?.getString("gameID")!!
             SimpleBoardGameInfoActivity(
                 navController,
-                boardDataViewModel,
                 ratingsViewModel,
-                favoriteViewModel,
-                sharedViewModel
+                boardGameInfoActivity,
+                gameID
             )
         }
     }

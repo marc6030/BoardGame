@@ -34,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,20 +58,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.BoardGameInfoActivity
-import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
-import com.example.myapplication.modelviews.SharedViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SimpleBoardGameInfoActivity(navController: NavHostController,
-                                boardDataViewModel: BoardDataViewModel,
                                 ratingsViewModel: RatingsViewModel,
-                                favoriteViewModel: FavoriteViewModel,
-                                sharedViewModel: SharedViewModel,
                                 boardGameInfoActivity: BoardGameInfoActivity,
                                 gameID: String
 ) {
@@ -78,9 +73,12 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     val coroutineScope = rememberCoroutineScope()
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-    // Use LaunchedEffect peoples! Is much importante!
-    boardGameInfoActivity.fetchBoardGameData(gameID)
-    ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
+    LaunchedEffect(Unit) {
+        // Use LaunchedEffect peoples! Is much importante!
+        boardGameInfoActivity.fetchBoardGameData(gameID)
+        ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
+    }
+
 
 
     val colorMatrixDark = ColorMatrix().apply {
