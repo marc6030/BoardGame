@@ -1,6 +1,9 @@
 package com.example.myapplication.modelviews
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGame
@@ -12,10 +15,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
+class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private var boardGameInfoActivity: BoardGameInfoActivity) : ViewModel() {
 
 
     private var db = FirebaseFirestore.getInstance()
+    var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
 
 
     private fun getUserID() : String {
@@ -43,29 +47,28 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
                     tempBg.add(boardGame)
                 }
             } catch (e: Exception) {
-                sharedViewModel.favoriteBoardGameList = emptyList()
+                favoriteBoardGameList = emptyList()
             } finally {
                 setIsLoading(false)
-                sharedViewModel.favoriteBoardGameList = tempBg
+                favoriteBoardGameList = tempBg
             }
         }
     }
 
 
-    fun toggleFavorite(boardGame: BoardGame?) {
+    fun toggleFavorite(boardGame: BoardGame?): BoardGame {
         if (boardGame != null) {
             val updatedBoardGame = boardGame.copy(isfavorite = !boardGame.isfavorite)
             viewModelScope.launch(Dispatchers.Main) {
                 if (updatedBoardGame.isfavorite) {
                     insertIntoUserFavoriteDB(boardGame.id)
-                    sharedViewModel.favoriteBoardGameList = sharedViewModel.favoriteBoardGameList + updatedBoardGame
+                    favoriteBoardGameList = favoriteBoardGameList + updatedBoardGame
                 } else {
                     removeFromUserFavoriteDB(boardGame.id)
-                    sharedViewModel.favoriteBoardGameList = sharedViewModel.favoriteBoardGameList.filter { it?.id != boardGame.id }
+                    favoriteBoardGameList = favoriteBoardGameList.filter { it?.id != boardGame.id }
                 }
             }
-
-            sharedViewModel.boardGameData = updatedBoardGame
+            return updatedBoardGame
         }
     }
 
@@ -86,9 +89,9 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
                 // Update the LiveData on the main thread
                 withContext(Dispatchers.Main) {
                     // Use plus to add the new favorite BoardGame to the list
-                    sharedViewModel.favoriteBoardGameList += newFav
+                    favoriteBoardGameList += newFav
 
-                    Log.v("add fav list", "${sharedViewModel.favoriteBoardGameList}")
+                    Log.v("add fav list", "${favoriteBoardGameList}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error in insertIntoUserFavoriteDB", e)
@@ -105,8 +108,8 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewMode
                     .document(id).delete()
                     .await()
                 withContext(Dispatchers.Main) {
-                    sharedViewModel.favoriteBoardGameList = sharedViewModel.favoriteBoardGameList.filter { it!!.id != id }
-                    Log.v("remove fav list", "${sharedViewModel.favoriteBoardGameList.map { it?.id }}")
+                    favoriteBoardGameList = favoriteBoardGameList.filter { it!!.id != id }
+                    Log.v("remove fav list", "${favoriteBoardGameList.map { it?.id }}")
                 }
             } catch (e: Exception) {
                 Log.v("FirebaseTest", "Error writing document", e)

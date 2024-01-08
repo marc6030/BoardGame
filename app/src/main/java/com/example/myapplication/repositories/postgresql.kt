@@ -72,7 +72,7 @@ class postgresql {
 
 
         connectToDatabase()?.use { connection ->
-            val statement = connection.prepareStatement("SELECT id_actual, name FROM boardgame WHERE name LIKE ? LIMIT ? OFFSET ?")
+            val statement = connection.prepareStatement("SELECT id_actual, name FROM boardgame WHERE name LIKE ? LIMIT ? OFFSET ? ORDER BY ?")
             statement.setString(1, "%$userSearch%")
             statement.setInt(2, limit)
             statement.setInt(3, offset)

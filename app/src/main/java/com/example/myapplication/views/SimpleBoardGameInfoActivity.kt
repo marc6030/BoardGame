@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
@@ -54,13 +55,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         boardDataViewModel: BoardDataViewModel,
         ratingsViewModel: RatingsViewModel,
         favoriteViewModel: FavoriteViewModel,
-        sharedViewModel: SharedViewModel
+        sharedViewModel: SharedViewModel,
+        boardGameInfoActivity: BoardGameInfoActivity,
+        gameID: String
 ) {
     //val context = LocalContext.current
 
     // Use LaunchedEffect peoples! Is much importante!
-    // boardDataViewModel.fetchBoardGameData(sharedViewModel.currentGameID)
-    ratingsViewModel.fetchRatings(sharedViewModel.currentGameID)
+    boardGameInfoActivity.fetchBoardGameData(gameID)
+    ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
     favoriteViewModel.fetchFavoriteListFromDB()
 
 
@@ -68,7 +71,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
 
-    var boardGame = sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
+    var boardGame = boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
     AsyncImage(

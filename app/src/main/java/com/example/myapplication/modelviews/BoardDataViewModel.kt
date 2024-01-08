@@ -7,14 +7,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.repositories.postgresql
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewModel(){
+class BoardDataViewModel(private var sharedViewModel: SharedViewModel, private var favoriteViewModel: FavoriteViewModel) : ViewModel(){
     var boardGamesRow0 by mutableStateOf<List<BoardGameItem>>(emptyList())
     var boardGamesRow1 by mutableStateOf<List<BoardGameItem>>(emptyList())
     var boardGamesRow2 by mutableStateOf<List<BoardGameItem>>(emptyList())
@@ -63,7 +61,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 boardGamesRow4 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow4)
                 boardGamesRow5 = postgresql().getBoardGameList(limit = limit, offset = 0, categoryRow5)
             } catch (e: Exception) {
-                sharedViewModel.boardGameList = null
+                Log.v("Cant fetch GameCategories", "$e")
             } finally {
                 setIsLoading(false)
             }
@@ -95,28 +93,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 }
             } catch (e: Exception) {
                 Log.v("fetchAdditionalBoardGameCategories","Can't fetch additional boardGameCategories")
-            }
-        }
-    }
-
-    fun fetchBoardGameData(id: String) {
-        // setIsLoading(true)
-        sharedViewModel.currentGameID = id
-        Log.v("kkk", "kkk")
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val boardGame: BoardGame = postgresql().getBoardGame(id)
-                Log.v("bgload", "bgnotloading: $boardGame")
-                if (sharedViewModel.favoriteBoardGameList.any { it?.id == boardGame.id }) {
-                    boardGame.isfavorite = true
-                }
-                withContext(Dispatchers.Main) {
-                    sharedViewModel.boardGameData = boardGame
-                }
-            } catch (e: Exception) {
-                Log.v("can't fetch boardgamedata: ", "$e")
-            } finally {
-                setIsLoading(false)
             }
         }
     }

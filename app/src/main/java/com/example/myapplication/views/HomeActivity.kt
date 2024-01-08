@@ -285,10 +285,6 @@ fun boardGameSelection(headline: String,
             viewModel.fetchAdditionalBoardGameCategories(row)
         }
     }
-    fun UpdateAndNavigate (gameID: String) {
-        viewModel.fetchBoardGameData(gameID)
-        navController.navigate("boardgameinfo/$gameID")
-    }
 
     Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = Color.Black)
     LazyRow(
@@ -308,7 +304,7 @@ fun boardGameSelection(headline: String,
                     .padding(5.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .clickable {
-                        UpdateAndNavigate(gameID)
+                        navController.navigate("boardgameinfo/$gameID")
                     }
             )
             {
