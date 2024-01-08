@@ -6,11 +6,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.navigation.NavType
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,6 +33,7 @@ import com.google.android.gms.common.api.ApiException
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var navController: NavHostController
     val viewModel: SharedViewModel by viewModels()
 
     @ExperimentalComposeUiApi
@@ -43,75 +46,183 @@ class MainActivity : ComponentActivity() {
         val favoriteViewModel = FavoriteViewModel(viewModel)
 
         setContent {
+            navController = rememberNavController()
             AppTheme(useDarkTheme = true) {
                 boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
-                    viewModel, account)
+                    viewModel, account, navController)
             }
+        }
+    }
+    override fun onBackPressed() {
+        if (navController.currentBackStackEntry?.destination?.route == "home") {
+            super.onBackPressed()
+        } else {
+            navController.popBackStack()
         }
     }
 }
 
+
 @Composable
-fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel, boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?) {
-    val navController = rememberNavController()
+fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel,
+                 boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?, navController: NavHostController) {
+    val transitionDuration = 800
     NavHost(
         navController = navController,
         startDestination = "home"
     ) {
-        composable("home") {
+        composable(
+            route = "home",
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            })
+        {
             HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
         }
-        composable("search") {
-            searchActivity(navController, boardSearchViewModel, sharedViewModel)
+        composable(
+            route = "search",
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            }) {
+
+            searchActivity(navController, boardSearchViewModel)
+
+
         }
-        composable("favorite") {
+        composable(
+            route = "favorite",
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            }) {
             FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
         }
-        composable("personal"){
+        composable(
+            route = "personal",
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            }
+        ) {
             PersonalActivity(navController)
         }
 
         composable(
             route = "boardgameinfo/{gameID}",
-            arguments = listOf(navArgument("gameID") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val arguments = requireNotNull(backStackEntry.arguments)
-            val gameID = arguments.getString("gameID")
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            }
+        ) {
             SimpleBoardGameInfoActivity(
                 navController,
-                gameID,
                 boardDataViewModel,
                 ratingsViewModel,
                 favoriteViewModel,
                 sharedViewModel
             )
-        }
-        composable(
-            route = "complexBoardgameinfo/{gameID}",
-            arguments = listOf(navArgument("gameID") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val arguments = requireNotNull(backStackEntry.arguments)
-            val gameID = arguments.getString("gameID")
-            ComplexBoardGameInfoActivity(
-                navController,
-                gameID,
-                boardDataViewModel,
-                ratingsViewModel,
-                favoriteViewModel,
-                sharedViewModel
-            )
-        }
-    }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    LaunchedEffect(currentRoute) {
-        if (sharedViewModel.previousTab != "complexBoardgameinfo/{gameID}"
-            && currentRoute == "boardgameinfo/{gameID}"){
-            sharedViewModel.goBackToElseThanInfo = sharedViewModel.previousTab
-        }
-        if (currentRoute != null && currentRoute != sharedViewModel.previousTab) {
-            sharedViewModel.previousTab = currentRoute
         }
     }
 }

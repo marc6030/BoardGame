@@ -3,7 +3,6 @@ package com.example.myapplication
 import android.graphics.Bitmap
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
-import java.io.File
 
 
 @Root(name = "boardgame", strict = false)
@@ -95,4 +94,5 @@ data class BoardGame(
     override fun toString(): String {
         return "BoardGame(name=$name, yearPublished=$yearPublished, minPlayers=$minPlayers, maxPlayers=$maxPlayers, playingTime=$playingTime, description=$description, age=$age, imageURL=$imageURL, averageWeight=$averageWeight, overallRank=$overallRank)"
     }
+
 }

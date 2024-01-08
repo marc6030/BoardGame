@@ -48,6 +48,7 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -91,10 +92,10 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
         Text("No Internet!")
     }
     LaunchedEffect(Unit) {
-        viewModel.fetchBoardGameList()
+        viewModel.fetchBoardGameCategories()
         favoriteViewModel.fetchFavoriteListFromDB()
         delay(300)
-        sharedViewModel.animationHome = true
+        //sharedViewModel.animationHome = true
     }
 
     val isLoading = sharedViewModel.isLoading
@@ -115,12 +116,9 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
             )
         }
     } else {
-        AnimatedVisibility(sharedViewModel.animationHome,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ){
-            boardgameSelections(navController, sharedViewModel)
-        }
+
+        boardgameSelections(navController, viewModel)
+
     }
 
 }
@@ -129,7 +127,7 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
-    sharedViewModel: SharedViewModel
+    viewModel: BoardDataViewModel
 ) {
     val items = sharedViewModel.boardGameList
 
@@ -339,16 +337,48 @@ fun SwipeableHotnessRow(
 
 @Composable
 fun boardGameSelection(headline: String,
-                       items: List<BoardGameItem>,
-                       navController: NavHostController
+                       viewModel: BoardDataViewModel,
+                       row: Int,
+                       navController: NavHostController,
 ){
+    val scrollState = rememberLazyListState()
+
+    val currentRow = when (row) {
+        1 -> viewModel.boardGamesRow1
+        2 -> viewModel.boardGamesRow2
+        3 -> viewModel.boardGamesRow3
+        4 -> viewModel.boardGamesRow4
+        5 -> viewModel.boardGamesRow5
+        else -> emptyList() // Handle default case or invalid row
+    }
+
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val layoutInfo = scrollState.layoutInfo
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value) {
+            viewModel.fetchAdditionalBoardGameCategories(row)
+        }
+    }
+    fun UpdateAndNavigate (gameID: String) {
+        viewModel.fetchBoardGameData(gameID)
+        navController.navigate("boardgameinfo/$gameID")
+    }
+
     Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = Color.Black)
     LazyRow(
-        modifier = Modifier
-    )
+        modifier = Modifier,
+        state = scrollState
 
+    )
     {
-        items(items) { item ->
+
+        items(currentRow) { item ->
             val gameName: String = item.name
             val gameID: String = item.id
             Box(
@@ -358,7 +388,7 @@ fun boardGameSelection(headline: String,
                     .padding(5.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .clickable {
-                        navController.navigate("boardgameinfo/$gameID")
+                        UpdateAndNavigate(gameID)
                     }
             )
             {
