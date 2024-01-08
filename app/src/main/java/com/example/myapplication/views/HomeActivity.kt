@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.util.Log
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -72,6 +74,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -80,12 +83,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -132,6 +140,31 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 
 }
 
+@Composable
+fun YoutubePlayer(
+    youtubeVideoId: String,
+    lifecycleOwner: LifecycleOwner
+) {
+
+    AndroidView(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        factory = { context ->
+            YouTubePlayerView(context = context).apply {
+                lifecycleOwner.lifecycle.addObserver(this)
+
+                addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                    override fun onReady(youTubePlayer: YouTubePlayer) {
+                        youTubePlayer.loadVideo(youtubeVideoId, 0f)
+                    }
+                })
+            }
+        })
+
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun boardgameSelections(
@@ -143,10 +176,10 @@ fun boardgameSelections(
     var presses by remember { mutableIntStateOf(0) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val navBar = NavBar()
+    var showYouTubePlayer by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        //favoriteViewModel.fetchFavoriteListFromDB()
     }
 
     Scaffold(
@@ -160,7 +193,7 @@ fun boardgameSelections(
                         androidx.compose.material.Icon(modifier = Modifier.size(100.dp), painter = logo, contentDescription = "Logo" )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { showYouTubePlayer = true }) {
                         Icon(
                             imageVector = Icons.Filled.Info,
                             contentDescription = "Localized description",
@@ -193,6 +226,7 @@ fun boardgameSelections(
             }
         }
     ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -204,6 +238,9 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
+                    if (showYouTubePlayer) {
+                        YoutubePlayer(youtubeVideoId = "h1RxhtFYb2w", lifecycleOwner = LocalLifecycleOwner.current) // Assuming this is the videoId
+                    }
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
                     boardGameSelection("test", viewModel, 1, navController)
                     boardGameSelection("Superhot", viewModel, 2, navController)
