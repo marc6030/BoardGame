@@ -1,13 +1,11 @@
 package com.example.myapplication
 
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
@@ -25,11 +23,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.compose.AppTheme
 import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
@@ -38,7 +35,6 @@ import com.example.myapplication.views.PersonalActivity
 import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
 
 
 class MainActivity : ComponentActivity() {
@@ -53,13 +49,14 @@ class MainActivity : ComponentActivity() {
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
-        val favoriteViewModel = FavoriteViewModel(viewModel)
+        val favoriteViewModel = FavoriteViewModel()
+        val boardGameInfoActivity = BoardGameInfoActivity()
 
         setContent {
             navController = rememberNavController()
             AppTheme(useDarkTheme = true) {
                 boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
-                    viewModel, account, navController)
+                    viewModel, account, navController, boardGameInfoActivity)
             }
         }
     }
@@ -75,8 +72,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel,
-                 boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?, navController: NavHostController) {
-    val transitionDuration = 800
+                 boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?, navController: NavHostController,
+                 boardGameInfoActivity: BoardGameInfoActivity) {
+
+    val transitionDuration = 2000 // ms
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -90,13 +89,10 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             },
             exitTransition = {
-                if(false){
                 slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                     animationSpec = tween(transitionDuration)
-                )}
-                else{
-                    ExitTransition.None}
+                )
             },
             popEnterTransition = {
                 slideIntoContainer(
@@ -111,7 +107,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             })
         {
-            HomeActivity(navController, boardDataViewModel, favoriteViewModel, sharedViewModel)
+            HomeActivity(navController, boardDataViewModel)
         }
         composable(
             route = "search",
@@ -200,13 +196,14 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                     animationSpec = tween(transitionDuration)
                 )
             }
-        ) {
+        )
+        {navBackStackEntry ->
+            val gameID = navBackStackEntry.arguments?.getString("gameID")!!
             SimpleBoardGameInfoActivity(
                 navController,
-                boardDataViewModel,
                 ratingsViewModel,
-                favoriteViewModel,
-                sharedViewModel
+                boardGameInfoActivity,
+                gameID
             )
         }
     }

@@ -74,40 +74,41 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.modelviews.FavoriteViewModel
+import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
-
 @Composable
 fun SimpleBoardGameInfoActivity(navController: NavHostController,
-        boardDataViewModel: BoardDataViewModel,
-        ratingsViewModel: RatingsViewModel,
-        favoriteViewModel: FavoriteViewModel,
-        sharedViewModel: SharedViewModel
+                                ratingsViewModel: RatingsViewModel,
+                                boardGameInfoActivity: BoardGameInfoActivity,
+                                gameID: String
 ) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-    // Use LaunchedEffect peoples! Is much importante!
-    // boardDataViewModel.fetchBoardGameData(sharedViewModel.currentGameID)
-    ratingsViewModel.fetchRatings(sharedViewModel.currentGameID)
-    favoriteViewModel.fetchFavoriteListFromDB()
+    LaunchedEffect(Unit) {
+        // Use LaunchedEffect peoples! Is much importante!
+        boardGameInfoActivity.fetchBoardGameData(gameID)
+        ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
+    }
+
 
 
     val colorMatrixDark = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
+
+    var boardGame = boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
     val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp)
     var textStyle by remember {mutableStateOf(textStyleBody1)}
     var readyToDraw by remember { mutableStateOf(false) }
-    var boardGame =
-        sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
+
+
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
     DisposableEffect(boardGame!!.name) {
         textStyle = textStyleBody1
@@ -430,11 +431,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     }
                                     when (selectedTabIndex) {
                                         0 -> description(
-                                            boardGame!!
+                                            boardGame
                                         )
 
                                         1 -> generalInfo(
-                                            boardGame!!
+                                            boardGame
+                                        )
+
+                                        2 -> ratingTab(
+                                            boardGame, ratingsViewModel
                                         )
                                     }
                                 }
@@ -472,9 +477,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     Button(
         onClick = {
             navController.popBackStack()
-            coroutineScope.launch {
+            /*coroutineScope.launch {
                 textStyle.copy(fontSize = 50.sp)
-            }
+            }*/
         },
         modifier = Modifier
             .width(60.dp)

@@ -72,7 +72,7 @@ class postgresql {
 
 
         connectToDatabase()?.use { connection ->
-            val statement = connection.prepareStatement("SELECT id_actual, name FROM boardgame WHERE name LIKE ? LIMIT ? OFFSET ?")
+            val statement = connection.prepareStatement("SELECT id_actual, name FROM boardgame WHERE name LIKE ? LIMIT ? OFFSET ? ORDER BY ?")
             statement.setString(1, "%$userSearch%")
             statement.setInt(2, limit)
             statement.setInt(3, offset)
@@ -87,6 +87,23 @@ class postgresql {
         } ?: throw SQLException("Database connection failed")
 
         return boardGameSearchItems
+    }
+
+    fun setFavoriteGame(username: String, id: String){
+        connectToDatabase()?.use { connection ->
+            // I know it's bad to use a try-catch to update the database, but it's so easy..... And it works!
+            try {
+                val statement = connection.prepareStatement("INSERT INTO liked_games(username, id_actual) VALUES (?, ?)")
+                statement.setString(2, id)
+                statement.setString(1, username)
+                statement.execute()
+            } catch (e: Exception) {
+                val statement = connection.prepareStatement("DELETE FROM liked_games WHERE id_actual = ?")
+                statement.setString(1, id)
+                statement.execute()
+            }
+
+        }
     }
 
     fun getBoardGame(id: String): BoardGame {
@@ -193,10 +210,10 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
-    val bgt = postgresql().getBoardGame("280453")
+    postgresql().setFavoriteGame("static_user", "99630")
     //println(bg)
     //println(bgg)
     // println(bgs)
-    println(bgt)
+    // println(bgt)
 }
 

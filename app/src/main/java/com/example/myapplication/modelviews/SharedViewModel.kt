@@ -8,22 +8,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.BoardGame
-import com.example.myapplication.BoardGameItems
 
 class SharedViewModel : ViewModel() {
     //var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var userAuthenticated by mutableStateOf(false)
     var isLoading by mutableStateOf(false)
 
-    var boardGameData by mutableStateOf(BoardGame())
-    var boardGameList by mutableStateOf<BoardGameItems?>(null)
-    var favoriteBoardGameList by mutableStateOf<List<BoardGame?>>(emptyList())
 
-    var currentGameID = ""
 
-    var openRatingPopUp by  mutableStateOf(false)
-    var openAddPopUp by mutableStateOf(false)
 
     fun getUserID(): String {
         val userID: String = "static_user"
