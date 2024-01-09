@@ -1,16 +1,8 @@
 package com.example.myapplication
 
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.VerticalPager
@@ -37,22 +28,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -82,7 +65,6 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardGameInfoActivity
-import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -102,7 +84,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     LaunchedEffect(Unit) {
         // Use LaunchedEffect peoples! Is much importante!
         boardGameInfoActivity.fetchBoardGameData(gameID)
-        ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
     }
 
 
@@ -110,7 +91,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
 
-    var boardGame =
+    val boardGame =
         boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
     val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp)
     var textStyle by remember { mutableStateOf(textStyleBody1) }
@@ -404,7 +385,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                             exit = slideOutVertically()
                         ) {
                             PopupRatingDialog(
-                                boardGame = boardGame,
+                                boardGameInfoActivity = boardGameInfoActivity,
                                 viewModel = ratingsViewModel
                             )
                         }
@@ -509,8 +490,10 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
 }
 
+
+
 @Composable
-fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
+fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -536,7 +519,7 @@ fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
-                                ratingTab(boardGame = boardGame, viewModel = viewModel)
+                                ratingTab(boardGameInfoActivity = boardGameInfoActivity, viewModel = viewModel)
                             }
                         }
 

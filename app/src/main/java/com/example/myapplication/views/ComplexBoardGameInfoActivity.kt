@@ -4,11 +4,9 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,19 +19,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -86,8 +80,6 @@ fun ComplexBoardGameInfoActivity(
     sharedViewModel: SharedViewModel,
     gameID: String
     ) {
-
-    ratingsViewModel.fetchRatings(gameID)
 
 
     val colorMatrix = ColorMatrix().apply {
@@ -158,15 +150,15 @@ fun ComplexBoardGameInfoActivity(
                     }
                     when (selectedTabIndex) {
                         0 -> description(
-                            boardGame!!
+                            boardGame
                         )
 
                         1 -> generalInfo(
-                            boardGame!!
+                            boardGame
                         )
 
                         2 -> ratingTab(
-                            boardGame!!, ratingsViewModel
+                            boardGameInfoActivity, ratingsViewModel
                         )
                     }
                 }
@@ -445,12 +437,13 @@ fun complexInfo(title: String, infoList : List<String>) {
 }
 
 @Composable
-fun ratingTab(boardGame: BoardGame, viewModel: RatingsViewModel){
-    val averageRating = viewModel.averageRating
+fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel){
+    // val averageRating = viewModel.averageRating
+    val boardGame = boardGameInfoActivity.boardGameData
     Column {
         starDisplay(boardGame.ratingBGG, "BGG rating")
-        starDisplay(averageRating.toString(), text ="BoardBandit Average Rating")
-        ratingDisplay(text = "Your Rating" , viewModel =viewModel , boardGame =  boardGame)
+        starDisplay(boardGameInfoActivity.boardGameData.user_rating, text ="BoardBandit Average Rating")
+        ratingDisplay(text = "Your Rating" , viewModel =viewModel , boardGameInfoActivity =  boardGameInfoActivity)
         Log.v("BGG Rating", "${boardGame.ratingBGG}")
     }
 }
@@ -497,14 +490,15 @@ fun starDisplay(stars: String, text: String){
 @Composable
 fun ratingDisplay(text: String,
                   viewModel: RatingsViewModel,
-                  boardGame: BoardGame){
-    var numOfStars = 0.0
-    val userRating = viewModel.userRating
-    if(userRating == ""){
-        numOfStars = 0.0
-    }else{
-        numOfStars = userRating!!.toDouble()
-    }
+                  boardGameInfoActivity: BoardGameInfoActivity){
+
+    val numOfStars = boardGameInfoActivity.boardGameData.user_rating.toDouble()
+    Log.v("the_rating1", "${boardGameInfoActivity.boardGameData}")
+    val userRating = boardGameInfoActivity.boardGameData.user_rating
+
+    Log.v("the_rating", userRating)
+    Log.v("Interresting", "$numOfStars")
+
     Column {
         Box {
             Text(text + ": $numOfStars / 10 - Rate by tapping a Star")
@@ -522,7 +516,9 @@ fun ratingDisplay(text: String,
                             tint = if(numOfStars >= i) Color.White else Color.Black,
                             modifier = Modifier
                                 .size(34.dp)
-                                .clickable { viewModel.toggleRatings(boardGame, i.toString()) }
+                                .clickable {
+                                    boardGameInfoActivity.updateRating(i.toString())
+                                }
                             // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
                         )
                     }
@@ -545,7 +541,7 @@ fun favoriteButton(
             .fillMaxWidth(0.852f)
             .fillMaxHeight(0.75f)
     ) {
-        Icon(imageVector = if (boardGameInfoActivity.boardGameData!!.isfavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+        Icon(imageVector = if (boardGameInfoActivity.boardGameData.liked == "True") Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "favoriteButton",
             tint = Color.White,
             modifier = Modifier
@@ -554,7 +550,7 @@ fun favoriteButton(
                 .align(Alignment.BottomEnd)
                 .clickable {
                     triggerConfetti = !triggerConfetti
-                    //boardGameInfoActivity.toggleFavorite("static_user", boardGameInfoActivity.boardGameData!!.id)
+                    boardGameInfoActivity.toggleFavorite(boardGameInfoActivity.boardGameData!!.id)
                     boardGameInfoActivity.snackbarFavoriteVisible =
                         !boardGameInfoActivity.snackbarFavoriteVisible
                     Log.v("is still fav", "${boardGameInfoActivity.boardGameData!!.isfavorite}")
