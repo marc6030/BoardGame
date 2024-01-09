@@ -97,6 +97,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+import com.example.myapplication.views.YoutubePlayer
 
 
 // This is primarily a view. We should probably seperate the logic from the rest
@@ -137,31 +138,6 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
         boardgameSelections(navController, viewModel, sharedViewModel)
 
     }
-
-}
-
-@Composable
-fun YoutubePlayer(
-    youtubeVideoId: String,
-    lifecycleOwner: LifecycleOwner
-) {
-
-    AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clip(RoundedCornerShape(16.dp)),
-        factory = { context ->
-            YouTubePlayerView(context = context).apply {
-                lifecycleOwner.lifecycle.addObserver(this)
-
-                addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                    override fun onReady(youTubePlayer: YouTubePlayer) {
-                        youTubePlayer.loadVideo(youtubeVideoId, 0f)
-                    }
-                })
-            }
-        })
 
 }
 
@@ -239,7 +215,7 @@ fun boardgameSelections(
             {
                 item {
                     if (showYouTubePlayer) {
-                        YoutubePlayer(youtubeVideoId = "h1RxhtFYb2w", lifecycleOwner = LocalLifecycleOwner.current) // Assuming this is the videoId
+                        YoutubePlayer(youtubeVideoId = "h1RxhtFYb2w", lifecycleOwner = LocalLifecycleOwner.current)
                     }
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
                     boardGameSelection("test", viewModel, 1, navController)
