@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -99,14 +100,18 @@ fun boardgameSelections(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        ,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = Color.White
                 ),
                 title = {
-                        androidx.compose.material.Icon(modifier = Modifier.size(100.dp), painter = logo, contentDescription = "Logo" )
+                        androidx.compose.material.Icon(modifier = Modifier
+                            .size(80.dp)
+                            .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                    , painter = logo, contentDescription = "Logo" )
                 },
                 navigationIcon = {
                     IconButton(onClick = { /* do something */ }) {
@@ -119,14 +124,13 @@ fun boardgameSelections(
                 },
                 actions = {
                     IconButton(onClick = {navController.navigate("search")}) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
+                        Icon(imageVector = Icons.Filled.Search,
                             contentDescription = "Localized description",
                             tint = Color.Black
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = scrollBehavior
             )
         },
         bottomBar = {

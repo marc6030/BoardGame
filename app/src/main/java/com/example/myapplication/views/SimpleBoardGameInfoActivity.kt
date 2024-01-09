@@ -2,6 +2,7 @@ package com.example.myapplication
 
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -13,6 +14,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,20 +46,24 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -67,14 +74,18 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -86,6 +97,7 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -103,8 +115,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         // Use LaunchedEffect peoples! Is much importante!
         boardGameInfoActivity.fetchBoardGameData(gameID)
         ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
-    }
 
+    }
 
     val colorMatrixDark = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
@@ -122,13 +134,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         textStyle = textStyleBody1
         readyToDraw = false
         onDispose { }
-    }
-
-    LaunchedEffect(boardGameInfoActivity.snackbarFavoriteVisible) {
-        if (boardGameInfoActivity.snackbarFavoriteVisible) {
-            delay(2000) // Delay for 2 seconds
-            boardGameInfoActivity.snackbarFavoriteVisible = false
-        }
     }
 
     AsyncImage(
@@ -307,24 +312,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .size(45.dp)
                                         .background(Color.DarkGray, CircleShape)
                                         .align(Alignment.BottomStart)
-                                        .clickable {
-                                            boardGameInfoActivity.openRatingPopUp =
-                                                !boardGameInfoActivity.openRatingPopUp
+                                        .clickable { boardGameInfoActivity.openRatingPopUp = !boardGameInfoActivity.openRatingPopUp
                                         },
                                     tint = Color.DarkGray
-                                )
-                                Icon(
-                                    imageVector = Icons.Filled.Add,
-                                    contentDescription = "contentDescription",
-                                    modifier = Modifier
-                                        .size(45.dp)
-                                        .background(Color.DarkGray, CircleShape)
-                                        .align(Alignment.BottomEnd)
-                                        .clickable {
-                                            boardGameInfoActivity.openAddPopUp =
-                                                !boardGameInfoActivity.openAddPopUp
-                                        },
-                                    tint = Color.White,
                                 )
                             }
                             Row(
@@ -408,17 +398,17 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                 viewModel = ratingsViewModel
                             )
                         }
-                        AnimatedVisibility(
+                        /*AnimatedVisibility(
                             visible = boardGameInfoActivity.openAddPopUp,
                             enter = slideInVertically(),
                             exit = slideOutVertically()
                         ) {
                             PopupAddDialog()
-                        }
+                        }*/
+                        AddToChallengeButton(boardGameInfoActivity = boardGameInfoActivity)
                         favoriteButton(boardGameInfoActivity = boardGameInfoActivity)
                     }
                 }
-
                 1 -> {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(
@@ -489,9 +479,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     Button(
         onClick = {
             navController.popBackStack()
-            /*coroutineScope.launch {
-                textStyle.copy(fontSize = 50.sp)
-            }*/
         },
         modifier = Modifier
             .width(60.dp)
@@ -575,6 +562,337 @@ fun PopupAddDialog() {
                     ) {
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ratingTab(boardGame: BoardGame, viewModel: RatingsViewModel){
+    val averageRating = viewModel.averageRating
+    Column {
+        starDisplay(boardGame.ratingBGG, "BGG rating")
+        starDisplay(averageRating.toString(), text ="BoardBandit Average Rating")
+        ratingDisplay(text = "Your Rating" , viewModel =viewModel , boardGame =  boardGame)
+        Log.v("BGG Rating", "${boardGame.ratingBGG}")
+    }
+}
+
+@Composable
+fun starDisplay(stars: String, text: String){
+    val numOfStars: Double = stars.toDouble()
+    Column {
+        Box {
+            Text(text + ": $numOfStars / 10")
+        }
+        Box(
+            modifier = Modifier
+                .padding(2.dp)
+                .wrapContentWidth(Alignment.Start)
+        ) {
+            Row() {
+                for (i in 1..10) {
+                    if (numOfStars >= i) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Favorite Icon",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(34.dp)
+
+                            // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Favorite Icon",
+                            tint = Color.Black,
+                            modifier = Modifier
+                                .size(34.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ratingDisplay(text: String,
+                  viewModel: RatingsViewModel,
+                  boardGame: BoardGame){
+    var numOfStars = 0.0
+    val userRating = viewModel.userRating
+    if(userRating == ""){
+        numOfStars = 0.0
+    }else{
+        numOfStars = userRating!!.toDouble()
+    }
+    Column {
+        Box {
+            Text(text + ": $numOfStars / 10 - Rate by tapping a Star")
+        }
+        Box(
+            modifier = Modifier
+                .padding(2.dp)
+                .wrapContentWidth(Alignment.Start)
+        ) {
+            Row() {
+                for (i in 1..10) {
+                    Icon(
+                        imageVector = Icons.Outlined.Star,
+                        contentDescription = "Ratings Icon",
+                        tint = if(numOfStars >= i) Color.White else Color.Black,
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clickable { viewModel.toggleRatings(boardGame, i.toString()) }
+                        // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun favoriteButton(
+    boardGameInfoActivity: BoardGameInfoActivity,
+) {
+    var triggerConfetti by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.852f)
+            .fillMaxHeight(0.75f)
+    ) {
+        Icon(imageVector = if (boardGameInfoActivity.boardGameData!!.isfavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+            contentDescription = "favoriteButton",
+            tint = Color.White,
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color.Transparent, CircleShape)
+                .align(Alignment.BottomEnd)
+                .clickable {
+                    triggerConfetti = !triggerConfetti
+                    //boardGameInfoActivity.toggleFavorite("static_user", boardGameInfoActivity.boardGameData!!.id)
+                    boardGameInfoActivity.snackbarFavoriteVisible =
+                        !boardGameInfoActivity.snackbarFavoriteVisible
+                    Log.v("is still fav", "${boardGameInfoActivity.boardGameData!!.isfavorite}")
+                    if (boardGameInfoActivity.snackbarFavoriteVisible) {
+                        coroutineScope.launch {
+                            val result = snackbarHostState.showSnackbar(
+                                message = if (/*boardGameInfoActivity.boardGameData.isfavorite*/ true) "Added to My Games" else "Removed from My Games",
+                                actionLabel = "UNDO",
+                                duration = SnackbarDuration.Short,
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                //boardGameInfoActivity.toggleFavorite("static_user", boardGameInfoActivity.boardGameData.id)
+                            }
+                            boardGameInfoActivity.snackbarFavoriteVisible = false
+                        }
+                    }
+                }
+        )
+        if (triggerConfetti) {
+            ParticleSystem(
+                18.dp,
+                15.dp,
+                200,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(55.dp)
+                    .padding(8.dp)
+            )
+        }
+    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (boardGameInfoActivity.snackbarFavoriteVisible) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+            ){ data ->
+                Snackbar(
+                    snackbarData = data,
+                    actionColor = Color.LightGray, // Change the color of the "UNDO" text
+                    containerColor = Color.Gray, // Change the background color of the Snackbar
+                    contentColor = Color.White)// Change the color of the text in the Snackbar
+            }
+        }
+    }
+}
+
+
+data class Particle(
+    val position: Offset,
+    val velocity: Offset,
+    val acceleration: Offset,
+    val color: Color,
+    val size: Float,
+    val isCircle: Boolean
+)
+
+@Composable
+fun ParticleSystem(posXInDp: Dp, posYInDp: Dp, size: Int, modifier: Modifier) {
+
+    val posX = with(LocalDensity.current) { posXInDp.toPx() }
+    val posY = with(LocalDensity.current) { posYInDp.toPx() }
+
+    // List of particles
+    val particles: MutableList<Particle> = mutableListOf()
+    // For-loop that creates each individual particle and adds it to particles
+    for (i in 1..size) {
+        // Colors that particle can have
+        val colors = listOf(
+            Color(255, 0, 0, 255),
+            Color(0, 255, 0, 255),
+            Color(0, 0, 255, 255),
+            Color(255, 152, 0, 255),
+            Color(255, 235, 59, 255)
+        )
+
+        // Adding the particle to particles
+        particles.add(
+            Particle(
+                Offset(posX.toFloat(), posY.toFloat()),
+                Offset(1F, 1F),
+                Offset(0F, 0F),
+                colors[Random.nextInt(colors.size)],
+                10f,
+                Random.nextBoolean()
+            )
+        )
+    }
+
+    // Add all particles to a mutable state of particles
+    val mutableParticles = remember { mutableStateListOf<Particle>() }
+    mutableParticles.addAll(particles)
+
+    var counter = 0 // Counts how many iterations each particle has been updated
+
+    // Updates each particle pos, vel, acc, size and alpha
+    LaunchedEffect(Unit) {
+        while (true) {
+            val particlesCopy = ArrayList(mutableParticles.map { it.copy() })
+            particlesCopy.forEachIndexed { index, particle ->
+                mutableParticles[index] =
+                    particle.copy(
+                        position = particle.position + particle.velocity,
+                        velocity = particle.velocity + particle.acceleration + Offset(
+                            0.0f,
+                            0.3f
+                        ),
+                        acceleration = Offset(
+                            (Math.random() * 2 - 1).toFloat(),
+                            (Math.random() * 2 - 1).toFloat()
+                        ),
+                        color = particle.color.copy(
+                            red = particle.color.red,
+                            green = particle.color.green,
+                            blue = particle.color.blue,
+                            alpha = (particle.color.alpha + (Math.random() * 5 - 4).toFloat()).coerceIn(
+                                0F,
+                                1F
+                            )
+                        ),
+                        size = (particle.size + (Math.random() * 2 - 1).toFloat()).coerceIn(
+                            8.0f,
+                            12.0f
+                        )
+                    )
+
+            }
+
+            delay(16L) // Delay before next iteration
+            counter += 1
+
+            if (counter > 200) {
+                mutableParticles.clear()
+                break
+            }
+        }
+    }
+
+    // Draws the canvas with the particles on
+    Canvas(
+        modifier = modifier
+    ) {
+        mutableParticles.forEach { particle ->
+            if (particle.isCircle) {
+                drawCircle(
+                    color = particle.color,
+                    alpha = 0.6F,
+                    center = particle.position,
+                    radius = particle.size
+                )
+            } else {
+                drawRect(
+                    color = particle.color,
+                    alpha = 0.6F,
+                    topLeft = particle.position,
+                    size = Size(
+                        particle.size,
+                        particle.size
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .padding(30.dp)
+                .fillMaxWidth(0.85f)
+                .fillMaxHeight(0.863f)
+                .align(Alignment.TopCenter)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "contentDescription",
+                modifier = Modifier
+                    .size(45.dp)
+                    .background(Color.DarkGray, CircleShape)
+                    .align(Alignment.BottomEnd)
+                    .clickable{
+                        boardGameInfoActivity.snackbarChallengeVisible =
+                            !boardGameInfoActivity.snackbarChallengeVisible
+                        if (boardGameInfoActivity.snackbarChallengeVisible) {
+                            coroutineScope.launch {
+                                val result = snackbarHostState.showSnackbar(
+                                    message = "Congratulation on playing this game! Added to Challenges",
+                                    actionLabel = "UNDO",
+                                    duration = SnackbarDuration.Short,
+                                )
+                                if (result == SnackbarResult.ActionPerformed) {
+                                    //boardGameInfoActivity.(REMOVEFROMCHALLENGE)
+                                }
+                                boardGameInfoActivity.snackbarChallengeVisible = false
+                            }
+                        }
+                    },
+                tint = Color.White,
+            )
+        }
+        if (boardGameInfoActivity.snackbarChallengeVisible) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+            ){ data ->
+                Snackbar(
+                    snackbarData = data,
+                    actionColor = Color.LightGray, // Change the color of the "UNDO" text
+                    containerColor = Color.Gray, // Change the background color of the Snackbar
+                    contentColor = Color.White)// Change the color of the text in the Snackbar
             }
         }
     }

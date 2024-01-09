@@ -51,6 +51,29 @@ class BoardGameRepository {
         return boardGames
     }
 
+    fun addBoardGameToRecentList(
+        boardGame: BoardGame,
+        recentList: List<BoardGameItem>): List<BoardGameItem> {
+        val boardGames = mutableListOf<BoardGameItem>()
+        var i = 0
+        boardGames.add(
+            BoardGameItem(
+                id = boardGame.id,
+                name = boardGame.name,
+                imgUrl = boardGame.imageURL
+            )
+        )
+        for (game: BoardGameItem in recentList) {
+            if (boardGame.id != game.id) {
+                boardGames.add(game)
+                i++
+            }
+            if(i == 9)
+                break
+        }
+        return boardGames
+    }
+
     fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
         val urlPath = "/boardgamesearch/$userSearch/$limit/$offset/"
         val jsonResponse = makeApiRequest(urlPath)
