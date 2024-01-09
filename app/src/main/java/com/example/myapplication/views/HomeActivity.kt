@@ -1,5 +1,11 @@
 package com.example.myapplication
 
+import android.util.Log
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -140,6 +146,7 @@ fun boardgameSelections(
             }
         }
     ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()

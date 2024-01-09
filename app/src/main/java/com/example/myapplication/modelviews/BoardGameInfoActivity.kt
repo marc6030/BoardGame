@@ -21,12 +21,12 @@ class BoardGameInfoActivity() : ViewModel() {
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var isAtive by mutableStateOf(false)
     private var db = FirebaseFirestore.getInstance()
+    var youtubeID by mutableStateOf<String>("")
 
     var currentGameID = ""
 
 
     fun fetchBoardGameData(id: String) {
-        // setIsLoading(true)
         currentGameID = id
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -34,6 +34,24 @@ class BoardGameInfoActivity() : ViewModel() {
 
                 withContext(Dispatchers.Main) {
                     boardGameData = boardGame
+                }
+            } catch (e: Exception) {
+                Log.v("can't fetch boardgamedata: ", "$e")
+            } finally {
+                //
+            }
+        }
+    }
+
+    fun fetchYoutubeID(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val youtubeID_ = BoardGameRepository().searchYoutube(id + " Review")
+
+                withContext(Dispatchers.Main) {
+                    youtubeID = youtubeID_
+                    Log.v("MatthiasErSejMand2", "${id + " Review"}")
+                    Log.v("MatthiasErSejMand", "${youtubeID}")
                 }
             } catch (e: Exception) {
                 Log.v("can't fetch boardgamedata: ", "$e")

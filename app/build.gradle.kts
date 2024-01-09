@@ -122,6 +122,7 @@ dependencies {
     implementation("androidx.test.uiautomator:uiautomator:2.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.compose.ui:ui-util:1.5.4")
+    implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
 
 
     // Cucumber in androidtest
