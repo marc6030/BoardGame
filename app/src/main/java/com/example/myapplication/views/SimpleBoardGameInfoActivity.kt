@@ -159,7 +159,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         modifier = Modifier
             .fillMaxSize()
             .blur(30.dp)
-            .scale(1.5f)
+            .scale(1.3f)
             .animateContentSize(),
         colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
     )
