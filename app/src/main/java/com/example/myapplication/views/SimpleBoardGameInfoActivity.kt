@@ -24,13 +24,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -72,6 +75,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     var selectedTabIndex by remember { mutableStateOf(0) }
+    var showYouTubePlayer by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         // Use LaunchedEffect peoples! Is much importante!
@@ -103,7 +107,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             .blur(30.dp)
             .scale(1.5f)
             .animateContentSize(),
-        colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
+        colorFilter = ColorFilter.colorMatrix(colorMatrixDark),
     )
 
     VerticalPager(
