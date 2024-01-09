@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -45,6 +46,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
@@ -53,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +66,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.RatingsViewModel
+import com.example.myapplication.views.YoutubePlayer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -110,330 +114,363 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         colorFilter = ColorFilter.colorMatrix(colorMatrixDark),
     )
 
-    VerticalPager(
-        modifier = Modifier.fillMaxSize(),
-        state = pagerState,
-        pageContent = { page ->
-            when (page) {
-                0 -> {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp)
-                        ) {
-                            Spacer(modifier = Modifier.height(35.dp))
+    if (showYouTubePlayer) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            YoutubePlayer(youtubeVideoId = "h1RxhtFYb2w", lifecycleOwner = LocalLifecycleOwner.current)
+
+            // Close Button
+            IconButton(
+                onClick = { showYouTubePlayer = false },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = "Close", tint = Color.White)
+            }
+        }
+    }
+
+    if(!showYouTubePlayer) {
+        VerticalPager(
+            modifier = Modifier.fillMaxSize(),
+            state = pagerState,
+            pageContent = { page ->
+                when (page) {
+                    0 -> {
+                        Box(modifier = Modifier.fillMaxSize()) {
                             Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.9f)
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.Black)
+                                    .fillMaxSize()
+                                    .padding(16.dp)
                             ) {
-                                Text(
-                                    text = boardGame!!.name,
-                                    style = textStyle,
-                                    fontWeight = FontWeight.Bold,
+                                Spacer(modifier = Modifier.height(35.dp))
+                                Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .fillMaxHeight(0.2f)
-                                        .padding(0.dp)
-                                        .drawWithContent {
-                                            if (readyToDraw) drawContent()
-                                        },
-                                    textAlign = TextAlign.Center,
-                                    color = Color.White,
-                                    overflow = TextOverflow.Clip,
-                                    onTextLayout = { textLayoutResult ->
-                                        if (textLayoutResult.didOverflowHeight) {
-                                            textStyle =
-                                                textStyle.copy(fontSize = textStyle.fontSize * 0.9)
-                                        } else {
-                                            readyToDraw = true
+                                        .fillMaxHeight(0.9f)
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color.Black)
+                                ) {
+                                    Text(
+                                        text = boardGame!!.name,
+                                        style = textStyle,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .fillMaxHeight(0.2f)
+                                            .padding(0.dp)
+                                            .drawWithContent {
+                                                if (readyToDraw) drawContent()
+                                            },
+                                        textAlign = TextAlign.Center,
+                                        color = Color.White,
+                                        overflow = TextOverflow.Clip,
+                                        onTextLayout = { textLayoutResult ->
+                                            if (textLayoutResult.didOverflowHeight) {
+                                                textStyle =
+                                                    textStyle.copy(fontSize = textStyle.fontSize * 0.9)
+                                            } else {
+                                                readyToDraw = true
+                                            }
+                                        }
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxHeight(0.67f)
+                                            .padding(10.dp)
+                                    ) {
+                                        AsyncImage(
+                                            model = boardGame.imageURL,
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            alignment = Alignment.Center,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .clip(CircleShape)
+                                        )
+                                        IconButton(
+                                            onClick = { showYouTubePlayer = true },
+                                            modifier = Modifier
+                                                .align(Alignment.Center)
+                                                .size(80.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.PlayArrow,
+                                                contentDescription = "Localized description",
+                                                tint = Color.White,
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .alpha(0.7f)
+                                            )
                                         }
                                     }
-                                )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxHeight(0.8f)
+                                            .padding(10.dp)
+                                            .fillMaxWidth(0.5f)
+                                            .align(Alignment.CenterHorizontally)
+                                            .background(Color.Transparent),
+                                        horizontalArrangement = Arrangement.SpaceEvenly,
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxHeight()
+                                                .fillMaxWidth(0.5f),
+                                            verticalArrangement = Arrangement.SpaceAround,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+
+                                        ) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.people_alt),
+                                                contentDescription = null,
+                                                colorFilter = ColorFilter.tint(Color.White)
+                                            )
+                                            Text(
+                                                text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                modifier = Modifier.fillMaxWidth(),
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+
+                                            Image(
+                                                painter = painterResource(id = R.drawable.av_timer),
+                                                contentDescription = null,
+                                                colorFilter = ColorFilter.tint(Color.White)
+                                            )
+                                            Text(
+                                                text = "${boardGame.playingTime} min.",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                modifier = Modifier.fillMaxWidth(),
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+
+                                        }
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxHeight()
+                                                .fillMaxWidth(1f),
+                                            verticalArrangement = Arrangement.SpaceAround,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.elderly),
+                                                contentDescription = null,
+                                                colorFilter = ColorFilter.tint(Color.White)
+                                            )
+                                            Text(
+                                                text = "${boardGame.age}+",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                modifier = Modifier.fillMaxWidth(),
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+
+                                            Image(
+                                                painter = painterResource(id = R.drawable.fitness_center),
+                                                contentDescription = null,
+                                                colorFilter = ColorFilter.tint(Color.White)
+                                            )
+                                            Text(
+                                                text = boardGame.averageWeight,
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                modifier = Modifier.fillMaxWidth(),
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = FontWeight.Bold,
+                                                color = Color.White
+                                            )
+                                        }
+                                    }
+
+                                }
+                            }
+                            Box(modifier = Modifier.fillMaxSize()) {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxHeight(0.67f)
-                                        .padding(10.dp)
+                                        .padding(30.dp)
+                                        .fillMaxWidth(0.85f)
+                                        .fillMaxHeight(0.863f)
+                                        .align(Alignment.TopCenter)
                                 ) {
-                                    AsyncImage(
-                                        model = boardGame.imageURL,
-                                        contentDescription = null,
-                                        contentScale = ContentScale.Crop,
-                                        alignment = Alignment.Center,
+                                    Icon(
+                                        imageVector = Icons.Filled.Check,
+                                        contentDescription = "contentDescription",
                                         modifier = Modifier
-                                            .fillMaxSize()
-                                            .clip(CircleShape)
+                                            .size(45.dp)
+                                            .background(Color.DarkGray, CircleShape)
+                                            .align(Alignment.BottomStart),
+                                        tint = Color.DarkGray
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Filled.MoreVert,
+                                        contentDescription = "contentDescription",
+                                        modifier = Modifier
+                                            .size(45.dp)
+                                            .background(Color.DarkGray, CircleShape)
+                                            .align(Alignment.BottomEnd)
+                                            .clickable { },
+                                        tint = Color.White,
                                     )
                                 }
                                 Row(
                                     modifier = Modifier
-                                        .fillMaxHeight(0.8f)
-                                        .padding(10.dp)
-                                        .fillMaxWidth(0.5f)
-                                        .align(Alignment.CenterHorizontally)
-                                        .background(Color.Transparent),
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                        .padding(30.dp)
+                                        .fillMaxWidth(0.798f)
+                                        .fillMaxHeight(0.845f)
+                                        .align(Alignment.TopCenter)
                                 ) {
-                                    Column(
+                                    Text(
+                                        text = boardGame.ratingBGG,
+                                        style = MaterialTheme.typography.bodyLarge,
                                         modifier = Modifier
-                                            .fillMaxHeight()
-                                            .fillMaxWidth(0.5f),
-                                        verticalArrangement = Arrangement.SpaceAround,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.people_alt),
-                                            contentDescription = null,
-                                            colorFilter = ColorFilter.tint(Color.White)
-                                        )
-                                        Text(
-                                            text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White
-                                        )
-
-                                        Image(
-                                            painter = painterResource(id = R.drawable.av_timer),
-                                            contentDescription = null,
-                                            colorFilter = ColorFilter.tint(Color.White)
-                                        )
-                                        Text(
-                                            text = "${boardGame.playingTime} min.",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White
-                                        )
-
-                                    }
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxHeight()
-                                            .fillMaxWidth(1f),
-                                        verticalArrangement = Arrangement.SpaceAround,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.elderly),
-                                            contentDescription = null,
-                                            colorFilter = ColorFilter.tint(Color.White)
-                                        )
-                                        Text(
-                                            text = "${boardGame.age}+",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White
-                                        )
-
-                                        Image(
-                                            painter = painterResource(id = R.drawable.fitness_center),
-                                            contentDescription = null,
-                                            colorFilter = ColorFilter.tint(Color.White)
-                                        )
-                                        Text(
-                                            text = boardGame.averageWeight,
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White
-                                        )
-                                    }
+                                            .fillMaxWidth(0.5f)
+                                            .align(Alignment.Bottom),
+                                        textAlign = TextAlign.Start,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White,
+                                        fontSize = 16.sp
+                                    )
                                 }
-
-                            }
-                        }
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(30.dp)
-                                    .fillMaxWidth(0.85f)
-                                    .fillMaxHeight(0.863f)
-                                    .align(Alignment.TopCenter)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    contentDescription = "contentDescription",
+                                Box(
                                     modifier = Modifier
-                                        .size(45.dp)
-                                        .background(Color.DarkGray, CircleShape)
-                                        .align(Alignment.BottomStart),
-                                    tint = Color.DarkGray
-                                )
-                                Icon(
-                                    imageVector = Icons.Filled.MoreVert,
-                                    contentDescription = "contentDescription",
+                                        .padding(30.dp)
+                                        .fillMaxWidth(1f)
+                                        .fillMaxHeight(0.963f)
+                                        .align(Alignment.TopCenter)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.KeyboardArrowDown,
+                                        contentDescription = "contentDescription",
+                                        modifier = Modifier
+                                            .size(60.dp)
+                                            .background(Color.DarkGray, CircleShape)
+                                            .align(Alignment.BottomCenter)
+                                            .clickable {
+                                                coroutineScope.launch {
+                                                    pagerState.animateScrollToPage(1)
+                                                }
+                                            },
+                                        tint = Color.White,
+                                    )
+                                }
+                                Box(
                                     modifier = Modifier
-                                        .size(45.dp)
-                                        .background(Color.DarkGray, CircleShape)
-                                        .align(Alignment.BottomEnd)
-                                        .clickable { },
-                                    tint = Color.White,
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .padding(30.dp)
-                                    .fillMaxWidth(0.798f)
-                                    .fillMaxHeight(0.845f)
-                                    .align(Alignment.TopCenter)
-                            ) {
-                                Text(
-                                    text = boardGame.ratingBGG,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.5f)
-                                        .align(Alignment.Bottom),
-                                    textAlign = TextAlign.Start,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    fontSize = 16.sp
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .padding(30.dp)
-                                    .fillMaxWidth(1f)
-                                    .fillMaxHeight(0.963f)
-                                    .align(Alignment.TopCenter)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.KeyboardArrowDown,
-                                    contentDescription = "contentDescription",
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .background(Color.DarkGray, CircleShape)
-                                        .align(Alignment.BottomCenter)
-                                        .clickable {
-                                            coroutineScope.launch {
-                                                pagerState.animateScrollToPage(1)
-                                            }
-                                        },
-                                    tint = Color.White,
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .padding(30.dp)
-                                    .fillMaxWidth(0.693f)
-                                    .fillMaxHeight(0.823f)
-                                    .align(Alignment.TopCenter)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Star,
-                                    contentDescription = "contentdescription",
-                                    modifier = Modifier
-                                        .size(25.dp)
-                                        .align(Alignment.BottomStart)
-                                        .background(Color.Gray, CircleShape)
-                                        .clickable { },
-                                    tint = Color.White
-                                )
+                                        .padding(30.dp)
+                                        .fillMaxWidth(0.693f)
+                                        .fillMaxHeight(0.823f)
+                                        .align(Alignment.TopCenter)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Star,
+                                        contentDescription = "contentdescription",
+                                        modifier = Modifier
+                                            .size(25.dp)
+                                            .align(Alignment.BottomStart)
+                                            .background(Color.Gray, CircleShape)
+                                            .clickable { },
+                                        tint = Color.White
+                                    )
+                                }
                             }
                         }
                     }
-                }
 
-                1 -> {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
+                    1 -> {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Column(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.6f)
-                                    .padding(10.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .align(Alignment.CenterHorizontally),
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                Column() {
-                                    tabView(
-                                        texts = listOf(
-                                            "Description",
-                                            "General Info",
-                                            "BoardBandit Rating"
-                                        ),
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .fillMaxHeight(0.6f)
+                                        .padding(10.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .align(Alignment.CenterHorizontally),
+                                ) {
+                                    Column() {
+                                        tabView(
+                                            texts = listOf(
+                                                "Description",
+                                                "General Info",
+                                                "BoardBandit Rating"
+                                            ),
 
-                                        ) {
-                                        selectedTabIndex = it;
-                                    }
-                                    when (selectedTabIndex) {
-                                        0 -> description(
-                                            boardGame
-                                        )
+                                            ) {
+                                            selectedTabIndex = it;
+                                        }
+                                        when (selectedTabIndex) {
+                                            0 -> description(
+                                                boardGame
+                                            )
 
-                                        1 -> generalInfo(
-                                            boardGame
-                                        )
+                                            1 -> generalInfo(
+                                                boardGame
+                                            )
 
-                                        2 -> ratingTab(
-                                            boardGame, ratingsViewModel
-                                        )
+                                            2 -> ratingTab(
+                                                boardGame, ratingsViewModel
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
-                        Row {
-                            Box(
-                                modifier = Modifier
-                                    .padding(30.dp)
-                                    .fillMaxWidth(1f)
-                                    .fillMaxHeight(0.225f)
-                                    .align(Alignment.CenterVertically)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.KeyboardArrowUp,
-                                    contentDescription = "contentDescription",
+                            Row {
+                                Box(
                                     modifier = Modifier
-                                        .size(60.dp)
-                                        .background(Color.DarkGray, CircleShape)
-                                        .align(Alignment.BottomCenter)
-                                        .clickable {
-                                            coroutineScope.launch {
-                                                pagerState.animateScrollToPage(0)
-                                            }
-                                        },
-                                    tint = Color.White,
-                                )
+                                        .padding(30.dp)
+                                        .fillMaxWidth(1f)
+                                        .fillMaxHeight(0.225f)
+                                        .align(Alignment.CenterVertically)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.KeyboardArrowUp,
+                                        contentDescription = "contentDescription",
+                                        modifier = Modifier
+                                            .size(60.dp)
+                                            .background(Color.DarkGray, CircleShape)
+                                            .align(Alignment.BottomCenter)
+                                            .clickable {
+                                                coroutineScope.launch {
+                                                    pagerState.animateScrollToPage(0)
+                                                }
+                                            },
+                                        tint = Color.White,
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+        )
+        Button(
+            onClick = {
+                navController.popBackStack()
+            },
+            modifier = Modifier
+                .width(60.dp)
+                .height(60.dp)
+                .padding(8.dp),
+            colors = ButtonDefaults.buttonColors(Color.Transparent)
+        ) {
         }
-    )
-    Button(
-        onClick = {
-            navController.popBackStack()
-        },
-        modifier = Modifier
-            .width(60.dp)
-            .height(60.dp)
-            .padding(8.dp),
-        colors = ButtonDefaults.buttonColors(Color.Transparent)
-    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_action_name),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(18.dp)
+        )
     }
-    Image(
-        painter = painterResource(id = R.drawable.ic_action_name),
-        contentDescription = null,
-        modifier = Modifier
-            .padding(18.dp)
-    )
 }
 
 
