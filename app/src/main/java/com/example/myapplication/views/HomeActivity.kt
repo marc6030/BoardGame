@@ -1,5 +1,11 @@
 package com.example.myapplication
 
+import android.util.Log
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -60,7 +67,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
@@ -106,7 +112,10 @@ fun boardgameSelections(
                     containerColor = Color.White
                 ),
                 title = {
-                        androidx.compose.material.Icon(modifier = Modifier.size(100.dp), painter = logo, contentDescription = "Logo" )
+                        androidx.compose.material.Icon(modifier = Modifier
+                            .size(80.dp)
+                            .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                    , painter = logo, contentDescription = "Logo" )
                 },
                 navigationIcon = {
                     IconButton(onClick = { /* do something */ }) {
@@ -119,14 +128,13 @@ fun boardgameSelections(
                 },
                 actions = {
                     IconButton(onClick = {navController.navigate("search")}) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
+                        Icon(imageVector = Icons.Filled.Search,
                             contentDescription = "Localized description",
                             tint = Color.Black
                         )
                     }
                 },
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = scrollBehavior
             )
         },
         bottomBar = {
@@ -153,7 +161,7 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController, viewModel)
+                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
                     boardGameSelection("test", viewModel, 1, navController)
                     boardGameSelection("Superhot", viewModel, 2, navController)
                     boardGameSelection("rpggames", viewModel, 3, navController)
@@ -171,7 +179,6 @@ fun boardgameSelections(
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
     navController: NavHostController,
-    viewModel: BoardDataViewModel,
     autoScrollDuration: Long = 3000L
 ) {
     val pagerState = rememberPagerState(

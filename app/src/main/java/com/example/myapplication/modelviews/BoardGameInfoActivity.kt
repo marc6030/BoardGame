@@ -26,7 +26,9 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     var snackbarFavoriteVisible by mutableStateOf(false)
     var snackbarChallengeVisible by mutableStateOf(false)
 
+
     private var db = FirebaseFirestore.getInstance()
+    var youtubeID by mutableStateOf<String>("")
 
     var currentGameID = ""
 
@@ -57,7 +59,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
 
 
     fun fetchBoardGameData(id: String) {
-        // setIsLoading(true)
         currentGameID = id
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -65,8 +66,24 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
                 val boardGame: BoardGame = BoardGameRepository().getBoardGame(id)
                 withContext(Dispatchers.Main) {
                     boardGameData = boardGame
-                    Log.v("jklo","${boardGameData.liked}")
+                }
+            } catch (e: Exception) {
+                Log.v("can't fetch boardgamedata: ", "$e")
+            } finally {
+                //
+            }
+        }
+    }
 
+    fun fetchYoutubeID(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val youtubeID_ = BoardGameRepository().searchYoutube(id + " board game")
+
+                withContext(Dispatchers.Main) {
+                    youtubeID = youtubeID_
+                    Log.v("MatthiasErSejMand2", "${id + " Review"}")
+                    Log.v("MatthiasErSejMand", "${youtubeID}")
                 }
             } catch (e: Exception) {
                 Log.v("can't fetch boardgamedata: ", "$e")

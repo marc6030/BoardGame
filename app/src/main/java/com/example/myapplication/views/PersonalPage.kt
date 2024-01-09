@@ -15,26 +15,40 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.myapplication.R
+import com.example.myapplication.modelviews.BoardDataViewModel
 
 // played games, liked games, something fun
     @Composable
-fun PersonalActivity(navController: NavHostController) {
+fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     val icon: Painter = painterResource(id = R.drawable.search)
@@ -44,26 +58,27 @@ fun PersonalActivity(navController: NavHostController) {
     ) {
         Box(
             modifier = Modifier
-                .height(75.dp)
+                .height(100.dp)
                 .fillMaxWidth()
         ) {
-            Image(
-                painter = logo,
-                contentDescription = null,
-                modifier = Modifier
-                    .height(75.dp)
-                    .width(75.dp)
-                    .align(Alignment.Center)
-                    .padding(0.dp, 10.dp, 0.dp, 0.dp)
+            androidx.compose.material.Icon(modifier = Modifier
+                .size(75.dp)
+                .padding(0.dp, 5.dp, 0.dp, 0.dp)
+                .align(Alignment.TopCenter)
+                , painter = logo, contentDescription = "Logo" )
+            Icon(modifier = Modifier
+                .padding(0.dp, 18.dp, 15.dp, 0.dp)
+                .align(Alignment.TopEnd),
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Localized description",
+                tint = Color.Black
             )
-            Image(
-                painter = icon,
-                contentDescription = null, // Set a meaningful content description if needed
-                modifier = Modifier
-                    .height(40.dp)
-                    .width(40.dp)
-                    .align(Alignment.TopEnd)
-                    .padding(0.dp, 10.dp, 0.dp, 10.dp)
+            Icon(modifier = Modifier
+                .padding(15.dp, 18.dp, 0.dp, 0.dp)
+                .align(Alignment.TopStart),
+                imageVector = Icons.Filled.Info,
+                contentDescription = "Localized description",
+                tint = Color.Black
             )
         }
         Spacer(
@@ -88,7 +103,7 @@ fun PersonalActivity(navController: NavHostController) {
         KeyStats()
         Spacer(modifier = Modifier.height(10.dp))
         Menu(navController)
-        Recents()
+        Recents(viewModel = viewModel, 1, navController)
     }
     Box(
         contentAlignment = Alignment.BottomCenter,
@@ -194,7 +209,7 @@ fun Menu(navController: NavHostController){
                         .clickable { navController.navigate("favorite") }
                 ){
                     Text(
-                        text = "Liked",
+                        text = "My Games",
                         modifier = Modifier
                             .align(Alignment.Center),
                         fontSize = 20.sp,
@@ -209,9 +224,11 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
+                        .clickable { //navcontroller.navigate("ratedGames")
+                        }
                 ){
                     Text(
-                        text = "pp",
+                        text = "Rated Games",
                         modifier = Modifier
                             .align(Alignment.Center),
                         fontSize = 20.sp,
@@ -234,9 +251,12 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
+                        .clickable {
+                            //navcontroller.navigate("playedGames")
+                        }
                 ){
                     Text(
-                        text = "pp",
+                        text = "Played Games",
                         modifier = Modifier
                             .align(Alignment.Center),
                         fontSize = 20.sp,
@@ -251,9 +271,12 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
+                        .clickable {
+                            // navController.navigate("challenges")
+                        }
                 ){
                     Text(
-                        text = "pp",
+                        text = "Challenges",
                         modifier = Modifier
                             .align(Alignment.Center),
                         fontSize = 20.sp,
@@ -267,12 +290,12 @@ fun Menu(navController: NavHostController){
 }
 
 @Composable
-fun Recents(){
+fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(210.dp)
-    ){
+            .height(230.dp)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -280,16 +303,76 @@ fun Recents(){
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color.DarkGray)
 
-        ){
-            Text(
-                text = "Recents",
-                modifier = Modifier
-                    .padding(start = 10.dp, top = 5.dp),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.LightGray
-            )
+        ) {
+            boardGameSelection(headline = "Recents", viewModel =viewModel, row =row, navController =navController)
         }
     }
 }
 
+
+@Composable
+fun boardGameSelection(headline: String,
+                       viewModel: BoardDataViewModel,
+                       row: Int,
+                       navController: NavHostController,
+){
+    val scrollState = rememberLazyListState()
+
+    // currentrow is currently just a random category, but should be recent visited games.
+    // val currentRow = viewModel.boardGamesRowRecent
+    val currentRow = viewModel.boardGamesRow1
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val layoutInfo = scrollState.layoutInfo
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value) {
+            viewModel.fetchAdditionalBoardGameCategories(row)
+        }
+    }
+    Column {
+        androidx.compose.material3.Text(
+            text = headline,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(start = 10.dp, top = 7.dp),
+            color = Color.White
+        )
+        LazyRow(
+            modifier = Modifier,
+            state = scrollState
+
+        )
+        {
+
+            items(currentRow) { item ->
+                val gameID: String = item.id
+                Box(
+                    modifier = Modifier
+                        .size(100.dp, 150.dp)
+                        .testTag("items_1234")
+                        .padding(5.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .clickable {
+                            navController.navigate("boardgameinfo/$gameID")
+                        }
+                )
+                {
+                    AsyncImage(
+                        model = item.imgUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag("game_picture")
+                    )
+                }
+            }
+        }
+    }
+}

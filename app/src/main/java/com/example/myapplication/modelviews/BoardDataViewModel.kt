@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +20,8 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     var boardGamesRow3 by mutableStateOf<List<BoardGameItem>>(emptyList())
     var boardGamesRow4 by mutableStateOf<List<BoardGameItem>>(emptyList())
     var boardGamesRow5 by mutableStateOf<List<BoardGameItem>>(emptyList())
+
+    var boardGamesRowRecent by mutableStateOf<List<BoardGameItem>>(emptyList())
 
     val categoryRow0 = null
     val categoryRow1 = "fighting"
@@ -64,6 +67,19 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
+            } finally {
+                setIsLoading(false)
+            }
+        }
+    }
+
+    fun RecentBoardGames(boardGame: BoardGame){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                boardGamesRowRecent = BoardGameRepository().addBoardGameToRecentList(boardGame, boardGamesRowRecent)
+                Log.v("tada", "tada")
+            } catch (e: Exception) {
+                Log.v("Cant fetch recentGames", "$e")
             } finally {
                 setIsLoading(false)
             }

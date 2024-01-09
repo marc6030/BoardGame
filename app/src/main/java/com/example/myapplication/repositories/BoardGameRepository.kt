@@ -15,7 +15,8 @@ import java.net.URL
 
 class BoardGameRepository {
 
-    private val baseUrl = "http://192.168.50.82:5050" // Replace with your Flask API URL
+    private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
+    private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyDzVCdIQVEQZ9Epa8jU24HOJLgaX71NCIo&q="
 
     private fun makeApiRequest(urlPath: String): String {
         val url = URL(baseUrl + urlPath)
@@ -27,6 +28,32 @@ class BoardGameRepository {
         }
     }
 
+    suspend fun youtubeApiRequest(urlPath: String): String {
+        val type = "&type=video"
+        val url = URL(youtubeUrl + urlPath + type)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+
+        BufferedReader(InputStreamReader(connection.inputStream)).use {
+            return it.readText()
+        }
+    }
+
+    suspend fun searchYoutube(name: String): String {
+
+        val jsonResponse = youtubeApiRequest(name)
+        val jsonObject = JSONObject(jsonResponse)
+
+        val itemsArray = jsonObject.getJSONArray("items")
+        val firstItem = itemsArray.getJSONObject(0)
+        val idObject = firstItem.getJSONObject("id")
+
+        val videoId = idObject.getString("videoId")
+
+        return videoId
+    }
+
+    fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
     suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
         val urlPath = if (category != null) {
             "/boardgameitems/$category/$limit/$offset/"
@@ -47,6 +74,29 @@ class BoardGameRepository {
                     imgUrl = jsonObject.getString("image")
                 )
             )
+        }
+        return boardGames
+    }
+
+    fun addBoardGameToRecentList(
+        boardGame: BoardGame,
+        recentList: List<BoardGameItem>): List<BoardGameItem> {
+        val boardGames = mutableListOf<BoardGameItem>()
+        var i = 0
+        boardGames.add(
+            BoardGameItem(
+                id = boardGame.id,
+                name = boardGame.name,
+                imgUrl = boardGame.imageURL
+            )
+        )
+        for (game: BoardGameItem in recentList) {
+            if (boardGame.id != game.id) {
+                boardGames.add(game)
+                i++
+            }
+            if(i == 9)
+                break
         }
         return boardGames
     }
