@@ -15,7 +15,7 @@ import java.net.URL
 
 class BoardGameRepository {
 
-    private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
+    private val baseUrl = "http://192.168.50.82:5050" // Replace with your Flask API URL
 
     private fun makeApiRequest(urlPath: String): String {
         val url = URL(baseUrl + urlPath)
@@ -98,6 +98,8 @@ class BoardGameRepository {
             artists = convertJsonArrayToList(jsonObject.getJSONArray("artists")),
             overallRank = jsonObject.optString("overall_rank", "???"),
             categoryRank = jsonObject.optString("category_rank", "???"),
+            liked = jsonObject.optString("liked", "0"),
+            user_rating = jsonObject.optString("user_rating ", "0"),
             // picture = jsonObject.optByteArray("image_data") // Uncomment if needed
         )
     }

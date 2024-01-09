@@ -80,6 +80,10 @@ data class BoardGame(
     @field:Element(name = "Artists", required = false)
     var artists: List<String> = emptyList(),
 
+    var liked: String = "False",
+
+    var user_rating: String = "0",
+
     ) {
     fun shortTitel(): String{
         val index = name.indexOf(":")
