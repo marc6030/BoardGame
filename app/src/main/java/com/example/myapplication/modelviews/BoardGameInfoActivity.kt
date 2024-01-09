@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
+import com.example.myapplication.repositories.API_connection
+import com.example.myapplication.repositories.postgresql
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,9 +22,20 @@ class BoardGameInfoActivity() : ViewModel() {
     var boardGameData by mutableStateOf(BoardGame())
     var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var isAtive by mutableStateOf(false)
+
+    var openRatingPopUp by mutableStateOf(false)
+    var openAddPopUp by mutableStateOf(false)
+    var snackbarFavoriteVisible by mutableStateOf(false)
+    var snackbarChallengeVisible by mutableStateOf(false)
+
+
     private var db = FirebaseFirestore.getInstance()
 
     var currentGameID = ""
+
+    fun toggleFavorite(username : String, id : String){
+        BoardGameRepository().toggleFavoriteGame(username, id)
+    }
 
 
     fun fetchBoardGameData(id: String) {

@@ -75,7 +75,6 @@ import kotlin.math.absoluteValue
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        favoriteViewModel.fetchFavoriteListFromDB()
         //sharedViewModel.animationHome = true
     }
 
@@ -208,7 +207,7 @@ fun SwipeableHotnessRow(
             modifier = Modifier
                 .fillMaxSize()// Set a custom width for each item
                 .clip(RoundedCornerShape(30.dp))
-                .clickable { viewModel.fetchBoardGameData(item.id)
+                .clickable {
                     navController.navigate("boardgameinfo/${item.id}") }
                 .graphicsLayer {
                     val pageOffset =
