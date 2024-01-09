@@ -16,6 +16,7 @@ import java.net.URL
 class BoardGameRepository {
 
     private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
+    private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyDzVCdIQVEQZ9Epa8jU24HOJLgaX71NCIo&q="
 
     private fun makeApiRequest(urlPath: String): String {
         val url = URL(baseUrl + urlPath)
@@ -25,6 +26,31 @@ class BoardGameRepository {
         BufferedReader(InputStreamReader(connection.inputStream)).use {
             return it.readText()
         }
+    }
+
+    suspend fun youtubeApiRequest(urlPath: String): String {
+        val type = "&type=video"
+        val url = URL(youtubeUrl + urlPath + type)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+
+        BufferedReader(InputStreamReader(connection.inputStream)).use {
+            return it.readText()
+        }
+    }
+
+    suspend fun searchYoutube(name: String): String {
+
+        val jsonResponse = youtubeApiRequest(name)
+        val jsonObject = JSONObject(jsonResponse)
+
+        val itemsArray = jsonObject.getJSONArray("items")
+        val firstItem = itemsArray.getJSONObject(0)
+        val idObject = firstItem.getJSONObject("id")
+
+        val videoId = idObject.getString("videoId")
+
+        return videoId
     }
 
     fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
@@ -121,6 +147,8 @@ class BoardGameRepository {
             artists = convertJsonArrayToList(jsonObject.getJSONArray("artists")),
             overallRank = jsonObject.optString("overall_rank", "???"),
             categoryRank = jsonObject.optString("category_rank", "???"),
+            liked = jsonObject.optString("liked", "0"),
+            user_rating = jsonObject.optString("user_rating ", "0"),
             // picture = jsonObject.optByteArray("image_data") // Uncomment if needed
         )
     }

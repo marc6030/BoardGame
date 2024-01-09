@@ -1,5 +1,11 @@
 package com.example.myapplication
 
+import android.util.Log
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,7 +67,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
@@ -100,8 +105,7 @@ fun boardgameSelections(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-        ,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -157,7 +161,7 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController, viewModel)
+                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
                     boardGameSelection("test", viewModel, 1, navController)
                     boardGameSelection("Superhot", viewModel, 2, navController)
                     boardGameSelection("rpggames", viewModel, 3, navController)
@@ -175,7 +179,6 @@ fun boardgameSelections(
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
     navController: NavHostController,
-    viewModel: BoardDataViewModel,
     autoScrollDuration: Long = 3000L
 ) {
     val pagerState = rememberPagerState(
