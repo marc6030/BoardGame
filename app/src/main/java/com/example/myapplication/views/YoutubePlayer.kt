@@ -7,6 +7,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,7 +41,8 @@ fun YoutubePlayer(
 
     AndroidView(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .clip(CircleShape),
         factory = { context ->
             YouTubePlayerView(context = context).apply {
                 layoutParams = FrameLayout.LayoutParams(width, height)

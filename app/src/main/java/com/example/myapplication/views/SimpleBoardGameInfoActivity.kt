@@ -23,6 +23,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
@@ -68,6 +69,10 @@ import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.views.YoutubePlayer
 import kotlinx.coroutines.launch
+import BoardGameRepository
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -98,6 +103,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
 
+    boardGameInfoActivity.fetchYoutubeID(boardGame.name)
+
+
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
@@ -114,23 +122,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         colorFilter = ColorFilter.colorMatrix(colorMatrixDark),
     )
 
-    if (showYouTubePlayer) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            YoutubePlayer(youtubeVideoId = "h1RxhtFYb2w", lifecycleOwner = LocalLifecycleOwner.current)
-
-            // Close Button
-            IconButton(
-                onClick = { showYouTubePlayer = false },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = "Close", tint = Color.White)
-            }
-        }
-    }
-
-    if(!showYouTubePlayer) {
         VerticalPager(
             modifier = Modifier.fillMaxSize(),
             state = pagerState,
@@ -202,6 +193,19 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                                     .fillMaxSize()
                                                     .alpha(0.7f)
                                             )
+                                        }
+                                        if (showYouTubePlayer) {
+                                            YoutubePlayer(youtubeVideoId = boardGameInfoActivity.youtubeID, lifecycleOwner = LocalLifecycleOwner.current)
+
+                                            // Close Button
+                                            IconButton(
+                                                onClick = { showYouTubePlayer = false},
+                                                modifier = Modifier
+                                                    .align(Alignment.TopEnd)
+                                                    .padding(16.dp)
+                                            ) {
+                                                Icon(imageVector = Icons.Default.Close, contentDescription = "Close", tint = Color.White)
+                                            }
                                         }
                                     }
                                     Row(
@@ -470,7 +474,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             modifier = Modifier
                 .padding(18.dp)
         )
-    }
 }
 
 
