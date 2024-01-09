@@ -74,8 +74,6 @@ import kotlin.math.absoluteValue
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        // delay(300)
-        //sharedViewModel.animationHome = true
     }
 
     boardgameSelections(navController, viewModel)

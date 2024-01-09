@@ -45,8 +45,6 @@ import com.example.myapplication.views.NavBar
 fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, sharedViewModel: SharedViewModel) {
     val logo: Painter = painterResource(id = R.drawable.banditlogo)
 
-
-
     val favoriteBoardGame = viewModel.favoriteBoardGameList
 
     Column(
