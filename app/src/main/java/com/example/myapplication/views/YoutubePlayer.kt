@@ -41,8 +41,7 @@ fun YoutubePlayer(
 
     AndroidView(
         modifier = Modifier
-            .fillMaxSize()
-            .clip(CircleShape),
+            .fillMaxSize(),
         factory = { context ->
             YouTubePlayerView(context = context).apply {
                 layoutParams = FrameLayout.LayoutParams(width, height)

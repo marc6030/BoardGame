@@ -122,6 +122,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     var selectedTabIndex by remember { mutableStateOf(0) }
+    var showYouTubePlayer by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(Unit) {
         // Use LaunchedEffect peoples! Is much importante!
@@ -226,6 +228,34 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             .fillMaxSize()
                                             .clip(CircleShape)
                                     )
+                                    IconButton(
+                                        onClick = { showYouTubePlayer = true },
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
+                                            .size(80.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.PlayArrow,
+                                            contentDescription = "Localized description",
+                                            tint = Color.White,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .alpha(0.7f)
+                                        )
+                                    }
+                                    if (showYouTubePlayer) {
+                                        YoutubePlayer(youtubeVideoId = boardGameInfoActivity.youtubeID, lifecycleOwner = LocalLifecycleOwner.current)
+
+                                        // Close Button
+                                        IconButton(
+                                            onClick = { showYouTubePlayer = false},
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(16.dp)
+                                        ) {
+                                            Icon(imageVector = Icons.Default.Close, contentDescription = "Close", tint = Color.White)
+                                        }
+                                    }
                                 }
                                 Row(
                                     modifier = Modifier

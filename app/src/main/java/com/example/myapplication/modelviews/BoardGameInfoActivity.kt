@@ -59,7 +59,7 @@ class BoardGameInfoActivity() : ViewModel() {
     fun fetchYoutubeID(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val youtubeID_ = BoardGameRepository().searchYoutube(id + " Review")
+                val youtubeID_ = BoardGameRepository().searchYoutube(id + " board game")
 
                 withContext(Dispatchers.Main) {
                     youtubeID = youtubeID_
