@@ -60,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
@@ -74,6 +75,7 @@ import kotlin.math.absoluteValue
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
+        //sharedViewModel.animationHome = true
     }
 
     boardgameSelections(navController, viewModel)
@@ -116,7 +118,7 @@ fun boardgameSelections(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = {navController.navigate("search")}) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = "Localized description",
@@ -151,7 +153,7 @@ fun boardgameSelections(
                 .background(Color.White))
             {
                 item {
-                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController, viewModel)
                     boardGameSelection("test", viewModel, 1, navController)
                     boardGameSelection("Superhot", viewModel, 2, navController)
                     boardGameSelection("rpggames", viewModel, 3, navController)
@@ -169,6 +171,7 @@ fun boardgameSelections(
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
     navController: NavHostController,
+    viewModel: BoardDataViewModel,
     autoScrollDuration: Long = 3000L
 ) {
     val pagerState = rememberPagerState(
@@ -204,7 +207,8 @@ fun SwipeableHotnessRow(
             modifier = Modifier
                 .fillMaxSize()// Set a custom width for each item
                 .clip(RoundedCornerShape(30.dp))
-                .clickable { navController.navigate("boardgameinfo/${item.id}") }
+                .clickable {
+                    navController.navigate("boardgameinfo/${item.id}") }
                 .graphicsLayer {
                     val pageOffset =
                         ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
@@ -317,5 +321,4 @@ fun boardGameSelection(headline: String,
         }
     }
 }
-
 

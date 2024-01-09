@@ -1,7 +1,18 @@
 package com.example.myapplication
 
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.VerticalPager
@@ -23,17 +35,26 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,10 +77,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardGameInfoActivity
+import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -73,6 +98,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     val coroutineScope = rememberCoroutineScope()
     var selectedTabIndex by remember { mutableStateOf(0) }
 
+
     LaunchedEffect(Unit) {
         // Use LaunchedEffect peoples! Is much importante!
         boardGameInfoActivity.fetchBoardGameData(gameID)
@@ -80,18 +106,30 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     }
 
 
-
     val colorMatrixDark = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
 
-    var boardGame = boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
-    val textStyleBody1 = MaterialTheme.typography.headlineLarge
+    var boardGame =
+        boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
+    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp)
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
 
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
+    DisposableEffect(boardGame!!.name) {
+        textStyle = textStyleBody1
+        readyToDraw = false
+        onDispose { }
+    }
+
+    LaunchedEffect(boardGameInfoActivity.snackbarFavoriteVisible) {
+        if (boardGameInfoActivity.snackbarFavoriteVisible) {
+            delay(2000) // Delay for 2 seconds
+            boardGameInfoActivity.snackbarFavoriteVisible = false
+        }
+    }
 
     AsyncImage(
         model = boardGame.imageURL,
@@ -105,9 +143,13 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             .animateContentSize(),
         colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
     )
-
     VerticalPager(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(enabled = boardGameInfoActivity.openRatingPopUp || boardGameInfoActivity.openAddPopUp) {
+                boardGameInfoActivity.openRatingPopUp = false
+                boardGameInfoActivity.openAddPopUp = false
+            },
         state = pagerState,
         pageContent = { page ->
             when (page) {
@@ -126,6 +168,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .clip(RoundedCornerShape(20.dp))
                                     .background(Color.Black)
                             ) {
+                                Spacer(modifier = Modifier.height(10.dp))
                                 Text(
                                     text = boardGame!!.name,
                                     style = textStyle,
@@ -133,7 +176,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .fillMaxHeight(0.2f)
-                                        .padding(0.dp)
+                                        .padding(20.dp)
                                         .drawWithContent {
                                             if (readyToDraw) drawContent()
                                         },
@@ -263,18 +306,44 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     modifier = Modifier
                                         .size(45.dp)
                                         .background(Color.DarkGray, CircleShape)
-                                        .align(Alignment.BottomStart),
+                                        .align(Alignment.BottomStart)
+                                        .clickable {
+                                            boardGameInfoActivity.openRatingPopUp =
+                                                !boardGameInfoActivity.openRatingPopUp
+                                        },
                                     tint = Color.DarkGray
                                 )
                                 Icon(
-                                    imageVector = Icons.Filled.MoreVert,
+                                    imageVector = Icons.Filled.Add,
                                     contentDescription = "contentDescription",
                                     modifier = Modifier
                                         .size(45.dp)
                                         .background(Color.DarkGray, CircleShape)
                                         .align(Alignment.BottomEnd)
-                                        .clickable { },
+                                        .clickable {
+                                            boardGameInfoActivity.openAddPopUp =
+                                                !boardGameInfoActivity.openAddPopUp
+                                        },
                                     tint = Color.White,
+                                )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .padding(30.dp)
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(0.845f)
+                                    .align(Alignment.TopStart)
+                            ) {
+                                Text(
+                                    text = boardGame.ratingBGG,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.292f)
+                                        .align(Alignment.Bottom),
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    fontSize = 16.sp
                                 )
                             }
                             Row(
@@ -284,17 +353,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .fillMaxHeight(0.845f)
                                     .align(Alignment.TopCenter)
                             ) {
-                                Text(
-                                    text = boardGame.ratingBGG,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.5f)
-                                        .align(Alignment.Bottom),
-                                    textAlign = TextAlign.Start,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    fontSize = 16.sp
-                                )
                             }
                             Box(
                                 modifier = Modifier
@@ -332,11 +390,32 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .size(25.dp)
                                         .align(Alignment.BottomStart)
                                         .background(Color.Gray, CircleShape)
-                                        .clickable { },
+                                        .clickable {
+                                            boardGameInfoActivity.openRatingPopUp =
+                                                !boardGameInfoActivity.openRatingPopUp
+                                        },
                                     tint = Color.White
                                 )
                             }
                         }
+                        AnimatedVisibility(
+                            visible = boardGameInfoActivity.openRatingPopUp,
+                            enter = slideInVertically(),
+                            exit = slideOutVertically()
+                        ) {
+                            PopupRatingDialog(
+                                boardGame = boardGame,
+                                viewModel = ratingsViewModel
+                            )
+                        }
+                        AnimatedVisibility(
+                            visible = boardGameInfoActivity.openAddPopUp,
+                            enter = slideInVertically(),
+                            exit = slideOutVertically()
+                        ) {
+                            PopupAddDialog()
+                        }
+                        favoriteButton(boardGameInfoActivity = boardGameInfoActivity)
                     }
                 }
 
@@ -361,11 +440,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     tabView(
                                         texts = listOf(
                                             "Description",
-                                            "General Info",
-                                            "BoardBandit Rating"
-                                        ),
-
-                                        ) {
+                                            "General Info"
+                                        )
+                                    ) {
                                         selectedTabIndex = it;
                                     }
                                     when (selectedTabIndex) {
@@ -375,10 +452,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
                                         1 -> generalInfo(
                                             boardGame
-                                        )
-
-                                        2 -> ratingTab(
-                                            boardGame, ratingsViewModel
                                         )
                                     }
                                 }
@@ -416,6 +489,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     Button(
         onClick = {
             navController.popBackStack()
+            /*coroutineScope.launch {
+                textStyle.copy(fontSize = 50.sp)
+            }*/
         },
         modifier = Modifier
             .width(60.dp)
@@ -425,12 +501,81 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     ) {
     }
     Image(
-        painter = painterResource(id = R.drawable.ic_action_name),
+        painter = painterResource(id = R.drawable.ic_action_back),
         contentDescription = null,
         modifier = Modifier
             .padding(18.dp)
     )
+
 }
 
+@Composable
+fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box {
+                    Popup(
+                        alignment = Alignment.Center,
+                        properties = PopupProperties()
+                    ) {
+                        Box(
+                            Modifier
+                                .size(350.dp, 220.dp)
+                                .padding(top = 5.dp)
+                                .background(Color.DarkGray, RoundedCornerShape(10.dp))
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                ratingTab(boardGame = boardGame, viewModel = viewModel)
+                            }
+                        }
 
+                }
+            }
 
+    }
+}
+
+@Composable
+fun PopupAddDialog() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f)
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box {
+            Popup(
+                alignment = Alignment.Center,
+                properties = PopupProperties()
+            ) {
+                Box(
+                    Modifier
+                        .size(450.dp, 300.dp)
+                        .padding(top = 5.dp)
+                        .background(Color.DarkGray, RoundedCornerShape(10.dp))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                    }
+                }
+            }
+        }
+    }
+}

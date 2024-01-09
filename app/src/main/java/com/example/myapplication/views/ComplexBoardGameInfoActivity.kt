@@ -4,9 +4,11 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,14 +24,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -39,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +73,7 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 
@@ -163,8 +173,7 @@ fun ComplexBoardGameInfoActivity(
             }
 
         }
-        favoriteButton(navController, favoriteViewModel, boardGameInfoActivity, boardgameID = boardGame.id)
-}
+    }
 
 
 
@@ -448,10 +457,10 @@ fun ratingTab(boardGame: BoardGame, viewModel: RatingsViewModel){
 
 @Composable
 fun starDisplay(stars: String, text: String){
-    val num_of_stars: Double = stars.toDouble()
+    val numOfStars: Double = stars.toDouble()
     Column {
         Box {
-            Text(text + ": $num_of_stars / 10")
+            Text(text + ": $numOfStars / 10")
         }
         Box(
             modifier = Modifier
@@ -460,11 +469,11 @@ fun starDisplay(stars: String, text: String){
         ) {
             Row() {
                 for (i in 1..10) {
-                    if (num_of_stars >= i) {
+                    if (numOfStars >= i) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Favorite Icon",
-                            tint = Color.Yellow,
+                            tint = Color.White,
                             modifier = Modifier
                                 .size(34.dp)
 
@@ -489,16 +498,16 @@ fun starDisplay(stars: String, text: String){
 fun ratingDisplay(text: String,
                   viewModel: RatingsViewModel,
                   boardGame: BoardGame){
-    var num_of_stars = 0.0
+    var numOfStars = 0.0
     val userRating = viewModel.userRating
     if(userRating == ""){
-        num_of_stars = 0.0
+        numOfStars = 0.0
     }else{
-        num_of_stars = userRating!!.toDouble()
+        numOfStars = userRating!!.toDouble()
     }
     Column {
         Box {
-            Text(text + ": $num_of_stars / 10 - Rate by tapping a Star")
+            Text(text + ": $numOfStars / 10 - Rate by tapping a Star")
         }
         Box(
             modifier = Modifier
@@ -508,9 +517,9 @@ fun ratingDisplay(text: String,
             Row() {
                 for (i in 1..10) {
                         Icon(
-                            imageVector = Icons.Default.Star,
+                            imageVector = Icons.Outlined.Star,
                             contentDescription = "Ratings Icon",
-                            tint = if(num_of_stars >= i) Color.Yellow else Color.Black,
+                            tint = if(numOfStars >= i) Color.White else Color.Black,
                             modifier = Modifier
                                 .size(34.dp)
                                 .clickable { viewModel.toggleRatings(boardGame, i.toString()) }
@@ -525,63 +534,58 @@ fun ratingDisplay(text: String,
 
 @Composable
 fun favoriteButton(
-    navController: NavHostController,
-    viewModel: FavoriteViewModel,
     boardGameInfoActivity: BoardGameInfoActivity,
-    boardgameID : String
 ) {
+    var triggerConfetti by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-        var triggerConfetti by remember { mutableStateOf(false) }
-
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(0.852f)
+            .fillMaxHeight(0.75f)
+    ) {
+        Icon(imageVector = if (boardGameInfoActivity.boardGameData!!.isfavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+            contentDescription = "favoriteButton",
+            tint = Color.White,
             modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Button(
-                onClick = {
-                    //sharedViewModel.secondAnimationComplexBoardInfo = false
-                    //sharedViewModel.firstAnimationComplexBoardInfo = false
-                    // navController.navigate(sharedViewModel.goBackToElseThanInfo)
-                },
+                .size(40.dp)
+                .background(Color.Transparent, CircleShape)
+                .align(Alignment.BottomEnd)
+                .clickable {
+                    triggerConfetti = !triggerConfetti
+                    //boardGameInfoActivity.toggleFavorite("static_user", boardGameInfoActivity.boardGameData!!.id)
+                    boardGameInfoActivity.snackbarFavoriteVisible =
+                        !boardGameInfoActivity.snackbarFavoriteVisible
+                    Log.v("is still fav", "${boardGameInfoActivity.boardGameData!!.isfavorite}")
+                    if (boardGameInfoActivity.snackbarFavoriteVisible) {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Added to My Games")
+                        }
+                    }
+                }
+        )
+        if (triggerConfetti) {
+            ParticleSystem(
+                18.dp,
+                15.dp,
+                200,
                 modifier = Modifier
-                    .width(60.dp)
-                    .height(60.dp)
-                    .padding(8.dp),
-
-                ) {
-
-            }
-            Image(
-                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(18.dp)
-            )
-            Icon(
-                imageVector = if (
-                    boardGameInfoActivity.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = "Favorite Icon",
-                tint = Color.Red,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
+                    .align(Alignment.BottomEnd)
                     .size(55.dp)
                     .padding(8.dp)
-                    .clickable {
-                        triggerConfetti = !triggerConfetti
-                        viewModel.toggleFavorite(boardGameInfoActivity.boardGameData!!.id)
-                        Log.v("is still fav", "${boardGameInfoActivity.boardGameData!!.isfavorite}")
-                    }
             )
-            if (triggerConfetti) {
-                ParticleSystem(
-                    18.dp,
-                    15.dp,
-                    200,
-                    modifier = Modifier.align(Alignment.CenterEnd).size(55.dp).padding(8.dp)
-                ) // Confetti
-            }
         }
     }
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (boardGameInfoActivity.snackbarFavoriteVisible) {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
+    }
+}
 
 
     data class Particle(
