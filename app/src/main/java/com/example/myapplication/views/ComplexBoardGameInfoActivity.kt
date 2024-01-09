@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.myapplication.modelviews.BoardDataViewModel
+import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
@@ -70,15 +70,14 @@ import kotlin.random.Random
 @Composable
 fun ComplexBoardGameInfoActivity(
     navController: NavHostController,
-    boardDataViewModel: BoardDataViewModel,
+    boardGameInfoActivity: BoardGameInfoActivity,
     ratingsViewModel: RatingsViewModel,
     favoriteViewModel: FavoriteViewModel,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    gameID: String
     ) {
 
-    val gameID = sharedViewModel.boardGameData!!.id
-    ratingsViewModel.fetchRatings(sharedViewModel.currentGameID)
-    favoriteViewModel.fetchFavoriteListFromDB()
+    ratingsViewModel.fetchRatings(gameID)
 
 
     val colorMatrix = ColorMatrix().apply {
@@ -86,8 +85,7 @@ fun ComplexBoardGameInfoActivity(
     }
 
 
-    val isLoading = sharedViewModel.isLoading
-    val boardGame = sharedViewModel.boardGameData
+    val boardGame = boardGameInfoActivity.boardGameData
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
 
@@ -165,7 +163,7 @@ fun ComplexBoardGameInfoActivity(
             }
 
         }
-        favoriteButton(navController, favoriteViewModel, sharedViewModel, boardgameID = boardGame.id)
+        favoriteButton(navController, favoriteViewModel, boardGameInfoActivity, boardgameID = boardGame.id)
 }
 
 
@@ -529,7 +527,7 @@ fun ratingDisplay(text: String,
 fun favoriteButton(
     navController: NavHostController,
     viewModel: FavoriteViewModel,
-    sharedViewModel: SharedViewModel,
+    boardGameInfoActivity: BoardGameInfoActivity,
     boardgameID : String
 ) {
 
@@ -561,7 +559,7 @@ fun favoriteButton(
             )
             Icon(
                 imageVector = if (
-                    sharedViewModel.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
+                    boardGameInfoActivity.boardGameData!!.isfavorite) Icons.Outlined.Favorite else Icons.Default.FavoriteBorder,
                 contentDescription = "Favorite Icon",
                 tint = Color.Red,
                 modifier = Modifier
@@ -570,8 +568,8 @@ fun favoriteButton(
                     .padding(8.dp)
                     .clickable {
                         triggerConfetti = !triggerConfetti
-                        viewModel.toggleFavorite(sharedViewModel.boardGameData!!)
-                        Log.v("is still fav", "${sharedViewModel.boardGameData!!.isfavorite}")
+                        viewModel.toggleFavorite(boardGameInfoActivity.boardGameData!!.id)
+                        Log.v("is still fav", "${boardGameInfoActivity.boardGameData!!.isfavorite}")
                     }
             )
             if (triggerConfetti) {

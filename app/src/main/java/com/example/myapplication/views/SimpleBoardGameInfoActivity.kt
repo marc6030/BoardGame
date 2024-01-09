@@ -1,12 +1,7 @@
 package com.example.myapplication
 
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,18 +23,13 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,7 +51,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -69,42 +58,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.modelviews.FavoriteViewModel
+import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.RatingsViewModel
-import com.example.myapplication.modelviews.SharedViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
-
 @Composable
 fun SimpleBoardGameInfoActivity(navController: NavHostController,
-        boardDataViewModel: BoardDataViewModel,
-        ratingsViewModel: RatingsViewModel,
-        favoriteViewModel: FavoriteViewModel,
-        sharedViewModel: SharedViewModel
+                                ratingsViewModel: RatingsViewModel,
+                                boardGameInfoActivity: BoardGameInfoActivity,
+                                gameID: String
 ) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-    // Use LaunchedEffect peoples! Is much importante!
-    // boardDataViewModel.fetchBoardGameData(sharedViewModel.currentGameID)
-    ratingsViewModel.fetchRatings(sharedViewModel.currentGameID)
-    favoriteViewModel.fetchFavoriteListFromDB()
+    LaunchedEffect(Unit) {
+        // Use LaunchedEffect peoples! Is much importante!
+        boardGameInfoActivity.fetchBoardGameData(gameID)
+        ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
+    }
+
 
 
     val colorMatrixDark = ColorMatrix().apply {
         setToScale(0.2f, 0.2f, 0.2f, 1f)
     }
 
+    var boardGame = boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
     val textStyleBody1 = MaterialTheme.typography.headlineLarge
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
-    var boardGame =
-        sharedViewModel.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
+
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
 
@@ -385,15 +370,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     }
                                     when (selectedTabIndex) {
                                         0 -> description(
-                                            boardGame!!
+                                            boardGame
                                         )
 
                                         1 -> generalInfo(
-                                            boardGame!!
+                                            boardGame
                                         )
 
                                         2 -> ratingTab(
-                                            boardGame!!, ratingsViewModel
+                                            boardGame, ratingsViewModel
                                         )
                                     }
                                 }

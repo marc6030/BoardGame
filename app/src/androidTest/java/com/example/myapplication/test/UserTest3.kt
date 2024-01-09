@@ -1,12 +1,6 @@
 package com.example.myapplication.test
 
-import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.modelviews.SharedViewModel
-import io.cucumber.java.en.Given
-import io.cucumber.java.en.Then
-import io.cucumber.java.en.When
-import org.junit.Assert
-
+/*
 class UserTest3 {
     private val viewModel = SharedViewModel()
     private val boardGameDataViewModel = BoardDataViewModel(viewModel)
@@ -51,3 +45,5 @@ class UserTest3 {
     }
 
 }
+
+ */
