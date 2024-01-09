@@ -3,7 +3,6 @@ package com.example.myapplication
 
 import androidx.compose.animation.animateContentSize
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -107,6 +106,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import BoardGameRepository
 import android.util.Log
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.random.Random
