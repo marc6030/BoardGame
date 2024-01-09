@@ -53,7 +53,6 @@ class BoardGameRepository {
         return videoId
     }
 
-    fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
     suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
         val urlPath = if (category != null) {
             "/boardgameitems/$category/$limit/$offset/"
@@ -78,7 +77,7 @@ class BoardGameRepository {
         return boardGames
     }
 
-    fun addBoardGameToRecentList(
+    suspend fun addBoardGameToRecentList(
         boardGame: BoardGame,
         recentList: List<BoardGameItem>): List<BoardGameItem> {
         val boardGames = mutableListOf<BoardGameItem>()
