@@ -42,8 +42,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -108,36 +112,56 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
             }
         }
     ) { innerPadding ->
+        val gradientFrom = MaterialTheme.colorScheme.onError
+        val gradientTo = MaterialTheme.colorScheme.background
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background)
-        ){
-        Spacer(
-            Modifier.height(20.dp)
-        )
-        Box(
-            modifier = Modifier
-                .size(175.dp)
-                .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
-                .align(Alignment.CenterHorizontally)
+                .drawBehind {
+                    drawRect(
+                        Brush.linearGradient(
+                            start = Offset.Zero,
+                            end = Offset(this.size.width, this.size.height),
+                            colorStops = arrayOf(
+                                0.2f to gradientFrom,
+                                1f to Color.Magenta
+                            ),
+                            tileMode = TileMode.
+                        )
+                    )
+                }
         ) {
-            Text(
+            Column(
                 modifier = Modifier
-                    .align(Alignment.Center),
-                text = "?",
-                fontSize = 50.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ){
+                Spacer(
+                    Modifier.height(20.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .size(175.dp)
+                        .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.Center),
+                        text = "?",
+                        fontSize = 50.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                KeyStats()
+                Spacer(modifier = Modifier.height(10.dp))
+                Menu(navController)
+                Recents(viewModel = viewModel, 1, navController)
+            }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        KeyStats()
-        Spacer(modifier = Modifier.height(10.dp))
-        Menu(navController)
-        Recents(viewModel = viewModel, 1, navController)
-    }
     Box(
         contentAlignment = Alignment.BottomCenter,
         modifier = Modifier.fillMaxSize()
