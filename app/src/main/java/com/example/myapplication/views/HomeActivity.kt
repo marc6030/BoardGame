@@ -34,7 +34,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +46,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -60,6 +63,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -82,7 +86,6 @@ import kotlin.math.absoluteValue
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        //sharedViewModel.animationHome = true
     }
 
     boardgameSelections(navController, viewModel)
@@ -96,13 +99,17 @@ fun boardgameSelections(
     viewModel: BoardDataViewModel
 ) {
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    var presses by remember { mutableIntStateOf(0) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val navBar = NavBar()
+    var showDialog by remember { mutableStateOf(false) }
+
+    AlertDialogExample(
+        showDialog = showDialog,
+        onDismissRequest = { showDialog = false }
+    )
 
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        //favoriteViewModel.fetchFavoriteListFromDB()
     }
 
     Scaffold(
@@ -119,7 +126,7 @@ fun boardgameSelections(
                     , painter = logo, contentDescription = "Logo", tint = MaterialTheme.colorScheme.onBackground )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
+                    IconButton(onClick = { showDialog = true }) {
                         Icon(
                             imageVector = Icons.Filled.Info,
                             contentDescription = "Localized description",
@@ -168,6 +175,47 @@ fun boardgameSelections(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AlertDialogExample(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(
+            icon = {
+                Icon(Icons.Filled.Info, contentDescription = "Example Icon")
+            },
+            title = {
+                Text(text = "BoardGame Bandits")
+            },
+            text = {
+                Text(text = "Is an app developed in Kotlin for Android. Its a platform for " +
+                        "board game enthusiasts. It features functionalities for exploring " +
+                        "various board games, providing users with detailed information about " +
+                        "each game. Users can browse different categories of board games, view " +
+                        "specific details, and possibly interact with some aspects related to " +
+                        "board gaming. The app's design caters to those interested in discovering " +
+                        "and learning more about board games, enhancing their gaming experience " +
+                        "with accessible information and user-friendly navigation.")
+            },
+            onDismissRequest = {
+                onDismissRequest()
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("Close")
+                }
+            }
+        )
+    }
+}
+
 
 
 @OptIn(ExperimentalFoundationApi::class)
