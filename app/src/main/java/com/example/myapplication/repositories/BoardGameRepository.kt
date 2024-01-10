@@ -77,6 +77,26 @@ class BoardGameRepository {
         return boardGames
     }
 
+    suspend fun getFavoritesList(limit: Int, offset: Int, username: String): List<BoardGameItem> {
+        val urlPath = "/favorite-gameboard-all/$username/$limit/$offset/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val boardGames = mutableListOf<BoardGameItem>()
+
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            Log.v("tada", "${jsonArray.getJSONObject(i)}")
+            boardGames.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                )
+            )
+        }
+        return boardGames
+    }
+
     suspend fun addBoardGameToRecentList(
         boardGame: BoardGame,
         recentList: List<BoardGameItem>): List<BoardGameItem> {
