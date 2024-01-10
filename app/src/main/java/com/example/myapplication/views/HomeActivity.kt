@@ -176,19 +176,19 @@ fun boardgameSelections(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertDialogExample(
     showDialog: Boolean,
     onDismissRequest: () -> Unit
 ) {
     if (showDialog) {
-        AlertDialog(
+        AlertDialog( modifier = Modifier
+            .background(MaterialTheme.colorScheme.background),
             icon = {
-                Icon(Icons.Filled.Info, contentDescription = "Example Icon")
+                Icon(Icons.Filled.Info, contentDescription = "Info Icon", tint = MaterialTheme.colorScheme.onBackground)
             },
             title = {
-                Text(text = "BoardGame Bandits")
+                Text(text = "BoardGame Bandits", color = MaterialTheme.colorScheme.onBackground)
             },
             text = {
                 Text(text = "Is an app developed in Kotlin for Android. Its a platform for " +
@@ -198,7 +198,7 @@ fun AlertDialogExample(
                         "specific details, and possibly interact with some aspects related to " +
                         "board gaming. The app's design caters to those interested in discovering " +
                         "and learning more about board games, enhancing their gaming experience " +
-                        "with accessible information and user-friendly navigation.")
+                        "with accessible information and user-friendly navigation.", color = MaterialTheme.colorScheme.onBackground)
             },
             onDismissRequest = {
                 onDismissRequest()
@@ -209,7 +209,7 @@ fun AlertDialogExample(
                         onDismissRequest()
                     }
                 ) {
-                    Text("Close")
+                    Text("Close", color = MaterialTheme.colorScheme.onBackground)
                 }
             }
         )
