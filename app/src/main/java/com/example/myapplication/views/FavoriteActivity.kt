@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +47,13 @@ import com.example.myapplication.views.NavBar
 fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
     val logo: Painter = painterResource(id = R.drawable.banditlogo)
 
-    val favoriteBoardGame = viewModel.favoriteBoardGameList
+    LaunchedEffect(Unit) {
+        viewModel.fetchFavoriteBoardGames()
+    }
+    val favoriteBoardGames = viewModel.favoriteBoardGameList
+    Log.v("Favorites: ", "$favoriteBoardGames")
+
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -86,7 +94,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             .weight(1f)
             .background(MaterialTheme.colorScheme.background)
         ) {
-            items(favoriteBoardGame) { boardgame ->
+            items(favoriteBoardGames) { boardgame ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.background(MaterialTheme.colorScheme.background)
@@ -103,7 +111,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                             contentAlignment = Alignment.TopCenter
                         ) {
                             AsyncImage(
-                                model = boardgame.imageURL,
+                                model = boardgame.imgUrl,
                                 contentDescription = null,
                                 contentScale = ContentScale.FillBounds,
                             )
@@ -111,7 +119,8 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                         Column(
                             Modifier.weight(1f)
                         ) {
-                            Text(boardgame.shortTitel(),
+                            Text(
+                                shortTitel(boardgame.name),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.clickable {
                                     navController.navigate("boardgameinfo/${boardgame.id}")
@@ -139,5 +148,15 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             }
         }
         NavBar().BottomNavigationBar(navController, "Favorite")
+    }
+
+}
+
+fun shortTitel(name: String): String{
+    val index = name.indexOf(":")
+    return if (index != -1) {
+        name.substring(0, index)
+    } else {
+        name
     }
 }
