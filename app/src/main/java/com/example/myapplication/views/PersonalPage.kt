@@ -59,7 +59,6 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     viewModel.fetchRecentBoardGames()
     viewModel.fetchKeystats()
-    val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
 
     MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
