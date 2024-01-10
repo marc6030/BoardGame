@@ -164,7 +164,10 @@ fun StreakStat(streak : String){
                 .align(Alignment.BottomCenter)) {
                 Text(
                     text = if(streak.length == 0) "0" else streak,
-                    modifier = if(streak.length < 3) Modifier
+                    modifier = if(streak.length < 2) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                    else if(streak.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 1.dp)
@@ -209,7 +212,11 @@ fun RatedStat(nrOfRatedGames : String){
                 .align(Alignment.BottomCenter)) {
                 Text(
                     text = if(nrOfRatedGames.length == 0) "0" else nrOfRatedGames,
-                    modifier = if(nrOfRatedGames.length < 3) Modifier
+                    modifier = if(nrOfRatedGames.length < 2) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 3.dp)
+                    else if(nrOfRatedGames.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 5.dp)

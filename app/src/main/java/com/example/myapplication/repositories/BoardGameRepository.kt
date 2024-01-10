@@ -95,12 +95,11 @@ class BoardGameRepository {
         return recentBoardGameItems
     }
 
-    suspend fun getNumberOfGamesOrStreak(UserID : String, category : String) : String{
-        val urlPath = "/users/$UserID/$category"
+     suspend fun getNumberOfGamesOrStreak(UserID : String, category : String) : String{
+        val urlPath = "/users/$UserID/$category/"
         val jsonResponse = makeApiRequest(urlPath)
-        val jsonArray = JSONArray(jsonResponse)
-        val jsonObject = jsonArray.getJSONObject(0)
-        return jsonObject.getString("")
+        val jsonObject = JSONObject(jsonResponse)
+         return jsonObject.getString("result")
     }
 
     suspend fun addBoardGameToRecentList(userID: String, gameID : String){
@@ -212,6 +211,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
+    //print(BoardGameRepository().getNumberOfGamesOrStreak("static_user", "played_games"))
     // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
     //println(bg)
     //println(bgg)
