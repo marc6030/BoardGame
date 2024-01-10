@@ -34,7 +34,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +46,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -60,6 +63,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -71,7 +75,7 @@ import androidx.compose.ui.util.lerp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.views.NavBar
+import com.example.myapplication.views.MenuScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -82,93 +86,58 @@ import kotlin.math.absoluteValue
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        //sharedViewModel.animationHome = true
     }
 
     boardgameSelections(navController, viewModel)
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
     viewModel: BoardDataViewModel
 ) {
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    var presses by remember { mutableIntStateOf(0) }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    val navBar = NavBar()
 
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
-        //favoriteViewModel.fetchFavoriteListFromDB()
     }
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                ),
-                title = {
-                        androidx.compose.material.Icon(modifier = Modifier
-                            .size(80.dp)
-                            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                    , painter = logo, contentDescription = "Logo", tint = MaterialTheme.colorScheme.onBackground )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = "Localized description",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {navController.navigate("search")}) {
-                        Icon(imageVector = Icons.Filled.Search,
-                            contentDescription = "Localized description",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = Color.Black,
-            ) {
-                navBar.BottomNavigationBar(navController, "Home")
-            }
-        }
-    ) { innerPadding ->
+
+    MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-        ){
-            LazyColumn( modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(MaterialTheme.colorScheme.background))
-            {
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
                 item {
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                }
+                item {
                     boardGameSelection("test", viewModel, 1, navController)
+                }
+                item {
                     boardGameSelection("Superhot", viewModel, 2, navController)
+                }
+                item {
                     boardGameSelection("rpggames", viewModel, 3, navController)
+                }
+                item {
                     boardGameSelection("dungeon games", viewModel, 4, navController)
+                }
+                item {
                     boardGameSelection("shooters", viewModel, 5, navController)
                 }
+
             }
         }
-    }
+    })
 }
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

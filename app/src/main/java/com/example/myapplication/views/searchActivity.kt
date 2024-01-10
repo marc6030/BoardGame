@@ -49,7 +49,6 @@ fun searchActivity(navController: NavHostController, myViewModel: BoardSearchVie
     }
 
     Scaffold(
-        bottomBar = { NavBar().BottomNavigationBar(navController, "Search") }
     ) {
         Column(
             modifier = Modifier

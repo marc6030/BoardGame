@@ -19,11 +19,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -33,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -46,48 +54,28 @@ import com.example.myapplication.R
 import com.example.myapplication.modelviews.BoardDataViewModel
 
 // played games, liked games, something fun
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     viewModel.fetchRecentBoardGames()
     viewModel.fetchKeystats()
     val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Box(
+
+    MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
+        Column(
             modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth()
-        ) {
-            androidx.compose.material.Icon(modifier = Modifier
-                .size(75.dp)
-                .padding(0.dp, 5.dp, 0.dp, 0.dp)
-                .align(Alignment.TopCenter)
-                , painter = logo, contentDescription = "Logo" )
-            Icon(modifier = Modifier
-                .padding(0.dp, 18.dp, 15.dp, 0.dp)
-                .align(Alignment.TopEnd),
-                imageVector = Icons.Filled.Search,
-                contentDescription = "Localized description",
-                tint = Color.Black
-            )
-            Icon(modifier = Modifier
-                .padding(15.dp, 18.dp, 0.dp, 0.dp)
-                .align(Alignment.TopStart),
-                imageVector = Icons.Filled.Info,
-                contentDescription = "Localized description",
-                tint = Color.Black
-            )
-        }
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(MaterialTheme.colorScheme.background)
+        ){
         Spacer(
             Modifier.height(20.dp)
         )
         Box(
             modifier = Modifier
-                .size(100.dp, 100.dp)
-                .background(Color.DarkGray, shape = CircleShape)
+                .size(175.dp)
+                .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
                 .align(Alignment.CenterHorizontally)
         ) {
             Text(
@@ -96,7 +84,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 text = "?",
                 fontSize = 50.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.LightGray
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -105,12 +93,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
         Menu(navController)
         Recents(viewModel = viewModel, 1, navController)
     }
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        navBar.BottomNavigationBar(navController, "personal")
-    }
+    })
 }
 
 @Composable
@@ -326,7 +309,7 @@ fun Menu(navController: NavHostController){
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
-                        .background(Color.DarkGray)
+                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
                         .clickable { navController.navigate("favorite") }
                 ){
                     Text(
