@@ -49,6 +49,7 @@ import com.example.myapplication.modelviews.BoardDataViewModel
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     viewModel.fetchRecentBoardGames()
+    viewModel.fetchKeystats()
     val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     Column(
@@ -99,7 +100,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
-        KeyStats()
+        KeyStats(viewModel)
         Spacer(modifier = Modifier.height(10.dp))
         Menu(navController)
         Recents(viewModel = viewModel, 1, navController)
@@ -113,7 +114,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
 }
 
 @Composable
-fun KeyStats(){
+fun KeyStats(viewModel: BoardDataViewModel){
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -125,28 +126,27 @@ fun KeyStats(){
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            RatedStat()
+            RatedStat(viewModel.nrOfRatedGames)
         }
         Box(
             modifier = Modifier
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            StreakStat()
+            StreakStat(viewModel.streak)
         }
         Box(
             modifier = Modifier
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            playedGamesStat()
+            playedGamesStat(viewModel.nrOfPlayedGames)
         }
     }
 }
 
 @Composable
-fun StreakStat(){
-    val string = "90"
+fun StreakStat(streak : String){
     Column(modifier = Modifier.fillMaxSize())
     {
         Box(
@@ -163,8 +163,8 @@ fun StreakStat(){
                 .fillMaxHeight()
                 .align(Alignment.BottomCenter)) {
                 Text(
-                    text = if(string.length == 0) "0" else string,
-                    modifier = if(string.length < 3) Modifier
+                    text = if(streak.length == 0) "0" else streak,
+                    modifier = if(streak.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 1.dp)
@@ -175,9 +175,9 @@ fun StreakStat(){
                     textAlign = TextAlign.Center,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
-                    fontSize = if(string.length==1 ||string.length == 0) 30.sp
-                    else if(string.length == 2) 25.sp
-                    else if(string.length == 3) 19.sp
+                    fontSize = if(streak.length==1 ||streak.length == 0) 30.sp
+                    else if(streak.length == 2) 25.sp
+                    else if(streak.length == 3) 19.sp
                     else 14.sp)
             }
         }
@@ -191,8 +191,7 @@ fun StreakStat(){
     }
 }
 @Composable
-fun RatedStat(){
-    val string = "80"
+fun RatedStat(nrOfRatedGames : String){
     Column(modifier = Modifier.fillMaxSize())
     {
         Box(
@@ -209,12 +208,12 @@ fun RatedStat(){
                 .fillMaxHeight()
                 .align(Alignment.BottomCenter)) {
                 Text(
-                    text = if(string.length == 0) "0" else string,
-                    modifier = if(string.length < 3) Modifier
+                    text = if(nrOfRatedGames.length == 0) "0" else nrOfRatedGames,
+                    modifier = if(nrOfRatedGames.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 5.dp)
-                    else if(string.length < 4) Modifier
+                    else if(nrOfRatedGames.length < 4) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 8.dp)
@@ -225,9 +224,9 @@ fun RatedStat(){
                     textAlign = TextAlign.Center,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
-                    fontSize = if(string.length==1 ||string.length == 0) 29.sp
-                    else if(string.length == 2) 24.sp
-                    else if(string.length == 3) 19.sp
+                    fontSize = if(nrOfRatedGames.length==1 ||nrOfRatedGames.length == 0) 29.sp
+                    else if(nrOfRatedGames.length == 2) 24.sp
+                    else if(nrOfRatedGames.length == 3) 19.sp
                     else 14.sp)
             }
         }
@@ -242,8 +241,7 @@ fun RatedStat(){
 }
 
 @Composable
-fun playedGamesStat(){
-    val string = "9"
+fun playedGamesStat(nrOfPlayedGames : String){
     Column(modifier = Modifier.fillMaxSize())
     {
         Box(
@@ -261,16 +259,16 @@ fun playedGamesStat(){
                 .fillMaxHeight()
                 .align(Alignment.BottomCenter)) {
                 Text(
-                    text = if(string.length == 0) "0" else string,
-                    modifier = if(string.length < 2) Modifier
+                    text = if(nrOfPlayedGames.length == 0) "0" else nrOfPlayedGames,
+                    modifier = if(nrOfPlayedGames.length < 2) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 8.dp)
-                        else if(string.length < 3) Modifier
+                        else if(nrOfPlayedGames.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 10.dp)
-                    else if(string.length < 4) Modifier
+                    else if(nrOfPlayedGames.length < 4) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 15.dp)
@@ -281,9 +279,9 @@ fun playedGamesStat(){
                     textAlign = TextAlign.Center,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = if(string.length==1 ||string.length == 0) 25.sp
-                    else if(string.length == 2) 22.sp
-                    else if(string.length == 3) 15.sp
+                    fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
+                    else if(nrOfPlayedGames.length == 2) 22.sp
+                    else if(nrOfPlayedGames.length == 3) 15.sp
                     else 10.sp)
             }
         }

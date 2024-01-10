@@ -95,6 +95,14 @@ class BoardGameRepository {
         return recentBoardGameItems
     }
 
+    suspend fun getNumberOfGamesOrStreak(UserID : String, category : String) : String{
+        val urlPath = "/users/$UserID/$category"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val jsonObject = jsonArray.getJSONObject(0)
+        return jsonObject.getString("")
+    }
+
     suspend fun addBoardGameToRecentList(userID: String, gameID : String){
         val urlPath = "/recents/$userID/$gameID"
         makeApiRequest(urlPath)
