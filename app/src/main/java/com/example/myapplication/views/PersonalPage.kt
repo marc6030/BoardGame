@@ -25,6 +25,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -134,7 +135,7 @@ fun KeyStats(){
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            keyStat()
+            RatedStat()
         }
         Box(
             modifier = Modifier
@@ -148,10 +149,11 @@ fun KeyStats(){
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            keyStat()
+            playedGamesStat()
         }
     }
 }
+
 @Composable
 fun StreakStat(){
     val string = "90"
@@ -175,11 +177,11 @@ fun StreakStat(){
                     modifier = if(string.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
-                        .padding(0.dp,0.dp,0.dp,1.dp)
+                        .padding(0.dp, 0.dp, 0.dp, 1.dp)
                     else Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
-                        .padding(0.dp,0.dp,0.dp,4.dp),
+                        .padding(0.dp, 0.dp, 0.dp, 4.dp),
                     textAlign = TextAlign.Center,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -190,52 +192,118 @@ fun StreakStat(){
             }
         }
         Text(text = "Streak",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
         )
     }
 }
-
 @Composable
-fun keyStat(){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    )
+fun RatedStat(){
+    val string = "900"
+    Column(modifier = Modifier.fillMaxSize())
     {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.5f)
+                .weight(0.7f)
         ) {
-            Image(painter = painterResource(id = R.drawable.flamestreak),
+            Image(painter = painterResource(id = R.drawable.starstat),
                 contentDescription = null,
-                modifier = Modifier.align(Alignment.Center))
-            Text(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                text = "7",
-                textAlign = TextAlign.Center,
-                fontSize = 15.sp,
-                color = Color.White
-            )
+                    .align(Alignment.Center))
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .align(Alignment.BottomCenter)) {
+                Text(
+                    text = if(string.length == 0) "0" else string,
+                    modifier = if(string.length < 3) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 5.dp)
+                    else if(string.length < 4) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    else Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 12.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = if(string.length==1 ||string.length == 0) 29.sp
+                    else if(string.length == 2) 24.sp
+                    else if(string.length == 3) 19.sp
+                    else 14.sp)
+            }
         }
+        Text(text = "Rated Games",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .weight(0.3f),
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
+    }
+}
+
+@Composable
+fun playedGamesStat(){
+    val string = "9"
+    Column(modifier = Modifier.fillMaxSize())
+    {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.5f)
+                .weight(0.7f)
         ) {
-            Text(
+            Icon(painter = painterResource(id = R.drawable.token),
+                contentDescription = "token",
                 modifier = Modifier
-                    .fillMaxSize(),
-                text = "-------",
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
+                    .align(Alignment.Center),
+                tint = Color.Red)
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .align(Alignment.BottomCenter)) {
+                Text(
+                    text = if(string.length == 0) "0" else string,
+                    modifier = if(string.length < 2)Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                        else if(string.length < 3) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                    else if(string.length < 4) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 15.dp)
+                    else Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 20.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = if(string.length==1 ||string.length == 0) 25.sp
+                    else if(string.length == 2) 22.sp
+                    else if(string.length == 3) 15.sp
+                    else 10.sp)
+            }
         }
+        Text(text = "Played Games",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .weight(0.3f),
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
     }
 }
 
