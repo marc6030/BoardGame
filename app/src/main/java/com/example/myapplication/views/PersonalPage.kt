@@ -20,12 +20,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -39,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.testTag
@@ -56,46 +63,64 @@ import com.example.myapplication.R
 import com.example.myapplication.modelviews.BoardDataViewModel
 
 // played games, liked games, something fun
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Box(
-            modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth()
-        ) {
-            androidx.compose.material.Icon(modifier = Modifier
-                .size(75.dp)
-                .padding(0.dp, 5.dp, 0.dp, 0.dp)
-                .align(Alignment.TopCenter)
-                , painter = logo, contentDescription = "Logo" )
-            Icon(modifier = Modifier
-                .padding(0.dp, 18.dp, 15.dp, 0.dp)
-                .align(Alignment.TopEnd),
-                imageVector = Icons.Filled.Search,
-                contentDescription = "Localized description",
-                tint = Color.Black
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background
+                ),
+                title = {
+                    androidx.compose.material.Icon(modifier = Modifier
+                        .size(80.dp)
+                        .padding(0.dp, 10.dp, 0.dp, 0.dp)
+                        , painter = logo, contentDescription = "Logo", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { /* do something */ }) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "Localized description",
+                            tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {navController.navigate("search")}) {
+                        Icon(imageVector = Icons.Filled.Search,
+                            contentDescription = "Localized description",
+                            tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
             )
-            Icon(modifier = Modifier
-                .padding(15.dp, 18.dp, 0.dp, 0.dp)
-                .align(Alignment.TopStart),
-                imageVector = Icons.Filled.Info,
-                contentDescription = "Localized description",
-                tint = Color.Black
-            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = Color.Black,
+            ) {
+                navBar.BottomNavigationBar(navController, "Home")
+            }
         }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(MaterialTheme.colorScheme.background)
+        ){
         Spacer(
             Modifier.height(20.dp)
         )
         Box(
             modifier = Modifier
-                .size(100.dp, 100.dp)
-                .background(Color.DarkGray, shape = CircleShape)
+                .size(175.dp)
+                .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
                 .align(Alignment.CenterHorizontally)
         ) {
             Text(
@@ -104,7 +129,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 text = "?",
                 fontSize = 50.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.LightGray
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -118,6 +143,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
         modifier = Modifier.fillMaxSize()
     ) {
         navBar.BottomNavigationBar(navController, "personal")
+    }
     }
 }
 
@@ -175,11 +201,11 @@ fun StreakStat(){
                     modifier = if(string.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
-                        .padding(0.dp,0.dp,0.dp,1.dp)
+                        .padding(0.dp, 0.dp, 0.dp, 1.dp)
                     else Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
-                        .padding(0.dp,0.dp,0.dp,4.dp),
+                        .padding(0.dp, 0.dp, 0.dp, 4.dp),
                     textAlign = TextAlign.Center,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -190,7 +216,8 @@ fun StreakStat(){
             }
         }
         Text(text = "Streak",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
@@ -263,7 +290,7 @@ fun Menu(navController: NavHostController){
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
-                        .background(Color.DarkGray)
+                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
                         .clickable { navController.navigate("favorite") }
                 ){
                     Text(
