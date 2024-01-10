@@ -111,7 +111,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
 
     val colorMatrixDark = ColorMatrix().apply {
-        setToScale(0.2f, 0.2f, 0.2f, 1f)
+        setToScale(0.5f, 0.5f, 0.5f, 1f)
     }
 
     val boardGame =
@@ -138,7 +138,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         alignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .blur(30.dp)
+            .blur(10.dp)
             .scale(1.3f)
             .animateContentSize(),
         colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
@@ -166,7 +166,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .fillMaxWidth()
                                     .fillMaxHeight(0.9f)
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.Black)
+                                    .background(Color.Transparent)
                             ) {
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
@@ -445,15 +445,16 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .fillMaxHeight(0.6f)
                                     .padding(10.dp)
                                     .clip(RoundedCornerShape(10.dp))
-                                    .background(MaterialTheme.colorScheme.background)
+                                    .background(Color.Black.copy(alpha = 0.6f))
                                     .align(Alignment.CenterHorizontally),
                             ) {
-                                Column() {
+                                Column(modifier = Modifier.background(Color.Transparent)) {
                                     tabView(
                                         texts = listOf(
                                             "Description",
                                             "General Info"
-                                        )
+                                        ),
+                                        modifier = Modifier.background(Color.White)
                                     ) {
                                         selectedTabIndex = it;
                                     }

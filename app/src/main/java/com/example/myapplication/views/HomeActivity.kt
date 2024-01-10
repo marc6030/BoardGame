@@ -41,6 +41,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -109,20 +110,20 @@ fun boardgameSelections(
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.background
                 ),
                 title = {
                         androidx.compose.material.Icon(modifier = Modifier
                             .size(80.dp)
                             .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                    , painter = logo, contentDescription = "Logo" )
+                    , painter = logo, contentDescription = "Logo", tint = MaterialTheme.colorScheme.onBackground )
                 },
                 navigationIcon = {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(
                             imageVector = Icons.Filled.Info,
                             contentDescription = "Localized description",
-                            tint = Color.Black
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
@@ -130,7 +131,7 @@ fun boardgameSelections(
                     IconButton(onClick = {navController.navigate("search")}) {
                         Icon(imageVector = Icons.Filled.Search,
                             contentDescription = "Localized description",
-                            tint = Color.Black
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
@@ -143,11 +144,6 @@ fun boardgameSelections(
             ) {
                 navBar.BottomNavigationBar(navController, "Home")
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { presses++ }) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
-            }
         }
     ) { innerPadding ->
         Column(
@@ -158,7 +154,7 @@ fun boardgameSelections(
             LazyColumn( modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(Color.White))
+                .background(MaterialTheme.colorScheme.background))
             {
                 item {
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
@@ -215,7 +211,8 @@ fun SwipeableHotnessRow(
                 .fillMaxSize()// Set a custom width for each item
                 .clip(RoundedCornerShape(30.dp))
                 .clickable {
-                    navController.navigate("boardgameinfo/${item.id}") }
+                    navController.navigate("boardgameinfo/${item.id}")
+                }
                 .graphicsLayer {
                     val pageOffset =
                         ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
@@ -293,7 +290,7 @@ fun boardGameSelection(headline: String,
         }
     }
 
-    Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = Color.Black)
+    Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = MaterialTheme.colorScheme.onBackground)
     LazyRow(
         modifier = Modifier,
         state = scrollState

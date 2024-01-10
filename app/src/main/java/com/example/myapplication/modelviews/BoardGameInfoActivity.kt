@@ -82,8 +82,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
 
                 withContext(Dispatchers.Main) {
                     youtubeID = youtubeID_
-                    Log.v("MatthiasErSejMand2", "${id + " Review"}")
-                    Log.v("MatthiasErSejMand", "${youtubeID}")
                 }
             } catch (e: Exception) {
                 Log.v("can't fetch boardgamedata: ", "$e")

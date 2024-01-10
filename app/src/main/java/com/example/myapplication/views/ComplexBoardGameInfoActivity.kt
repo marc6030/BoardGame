@@ -294,14 +294,13 @@ fun tabView(
     val inactiveColor = Color(0xFF777777)
     TabRow(
         selectedTabIndex = selectedTabIndex,
-        modifier = modifier
+        modifier = Modifier.background(Color.Black.copy(alpha = 0.2f))
     ) {
         texts.forEachIndexed { index, item ->
             Tab(
-                modifier = modifier.background(MaterialTheme.colorScheme.background),
                 selected = selectedTabIndex == index,
-                selectedContentColor = MaterialTheme.colorScheme.background,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.Gray,
                 onClick = {
                     selectedTabIndex = index
                     onTabSelected(index)
@@ -331,7 +330,8 @@ fun description(boardGame: BoardGame) {
                 Text(
                     text = boardGame.description,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White
                 )
             }
         }
@@ -375,21 +375,24 @@ fun simpleInfo(title: String, info1: String, info2: String?) {
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left,
                 modifier = Modifier.fillMaxWidth(0.65f),
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = Color.White
             )
             if (info2 != null) {
                 Text(
                     text = info1 + " - " + info2,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.fillMaxWidth(1f),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = Color.White
                 )
             } else {
                 Text(
                     text = info1,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.fillMaxWidth(1f),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = Color.White
                 )
             }
         }
@@ -410,6 +413,7 @@ fun complexInfo(title: String, infoList : List<String>) {
                 textAlign = TextAlign.Left,
                 modifier = Modifier.fillMaxWidth(0.5f),
                 fontSize = 20.sp,
+                color = Color.White
             )
             Row(
                 modifier = Modifier
@@ -421,7 +425,8 @@ fun complexInfo(title: String, infoList : List<String>) {
                             text = infoList.get(i),
                             fontSize = 10.sp,
                             textAlign = TextAlign.Left,
-                            modifier = Modifier.fillMaxWidth(0.5f)
+                            modifier = Modifier.fillMaxWidth(0.5f),
+                            color = Color.White
                         )
                     }
                 }
@@ -431,7 +436,8 @@ fun complexInfo(title: String, infoList : List<String>) {
                             text = infoList.get(i),
                             fontSize = 10.sp,
                             textAlign = TextAlign.Right,
-                            modifier = Modifier.fillMaxWidth(1f)
+                            modifier = Modifier.fillMaxWidth(1f),
+                            color = Color.White
                         )
                     }
                 }
