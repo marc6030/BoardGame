@@ -117,7 +117,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     val boardGame =
         boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
-    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp)
+    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp, textAlign = TextAlign.Center)
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
 
@@ -169,9 +169,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .clip(RoundedCornerShape(20.dp))
                                     .background(Color.Transparent)
                             ) {
-                                Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = boardGame!!.name,
+                                    text = boardGame.name,
                                     style = textStyle,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier
@@ -180,13 +179,12 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .drawWithContent {
                                             if (readyToDraw) drawContent()
                                         },
-                                    textAlign = TextAlign.Center,
                                     color = Color.White,
                                     overflow = TextOverflow.Clip,
                                     onTextLayout = { textLayoutResult ->
                                         if (textLayoutResult.didOverflowHeight) {
                                             textStyle =
-                                                textStyle.copy(fontSize = textStyle.fontSize * 0.9)
+                                                textStyle.copy(fontSize = textStyle.fontSize * 0.9, textAlign = TextAlign.Center)
                                         } else {
                                             readyToDraw = true
                                         }
