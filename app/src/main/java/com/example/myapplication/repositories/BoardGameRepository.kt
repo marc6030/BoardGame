@@ -77,27 +77,27 @@ class BoardGameRepository {
         return boardGames
     }
 
-    suspend fun addBoardGameToRecentList(
-        boardGame: BoardGame,
-        recentList: List<BoardGameItem>): List<BoardGameItem> {
-        val boardGames = mutableListOf<BoardGameItem>()
-        var i = 0
-        boardGames.add(
-            BoardGameItem(
-                id = boardGame.id,
-                name = boardGame.name,
-                imgUrl = boardGame.imageURL
+    suspend fun getBoardGameToRecentList(userID: String): List<BoardGameItem>{
+        val urlPath = "/recents/$userID/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val recentBoardGameItems = mutableListOf<BoardGameItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            recentBoardGameItems.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image")
+                )
             )
-        )
-        for (game: BoardGameItem in recentList) {
-            if (boardGame.id != game.id) {
-                boardGames.add(game)
-                i++
-            }
-            if(i == 9)
-                break
         }
-        return boardGames
+        return recentBoardGameItems
+    }
+
+    suspend fun addBoardGameToRecentList(userID: String, gameID : String){
+        val urlPath = "/recents/$userID/$gameID"
+        makeApiRequest(urlPath)
     }
 
     suspend fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {

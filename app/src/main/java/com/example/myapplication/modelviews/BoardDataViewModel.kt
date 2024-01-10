@@ -73,15 +73,13 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         }
     }
 
-    fun RecentBoardGames(boardGame: BoardGame){
+    fun fetchRecentBoardGames(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                boardGamesRowRecent = BoardGameRepository().addBoardGameToRecentList(boardGame, boardGamesRowRecent)
+                boardGamesRowRecent = BoardGameRepository().getBoardGameToRecentList(getUserID())
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch recentGames", "$e")
-            } finally {
-                setIsLoading(false)
             }
         }
     }
@@ -113,5 +111,10 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 Log.v("fetchAdditionalBoardGameCategories","Can't fetch additional boardGameCategories")
             }
         }
+    }
+    fun getUserID(): String {
+        val userID: String = "static_user"
+        Log.v("UserID is: ", userID)
+        return userID
     }
 }

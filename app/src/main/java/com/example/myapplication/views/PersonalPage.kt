@@ -14,41 +14,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -59,6 +48,7 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 // played games, liked games, something fun
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
+    viewModel.fetchRecentBoardGames()
     val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
     Column(
@@ -202,7 +192,7 @@ fun StreakStat(){
 }
 @Composable
 fun RatedStat(){
-    val string = "900"
+    val string = "80"
     Column(modifier = Modifier.fillMaxSize())
     {
         Box(
@@ -272,7 +262,7 @@ fun playedGamesStat(){
                 .align(Alignment.BottomCenter)) {
                 Text(
                     text = if(string.length == 0) "0" else string,
-                    modifier = if(string.length < 2)Modifier
+                    modifier = if(string.length < 2) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 8.dp)
@@ -430,36 +420,23 @@ fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostContr
                 .background(Color.DarkGray)
 
         ) {
-            boardGameSelection(headline = "Recents", viewModel =viewModel, row =row, navController =navController)
+            recentBoardGameSelection(headline = "Recents", viewModel =viewModel, navController =navController)
         }
     }
 }
 
 
 @Composable
-fun boardGameSelection(headline: String,
-                       viewModel: BoardDataViewModel,
-                       row: Int,
-                       navController: NavHostController,
+fun recentBoardGameSelection(headline: String,
+                             viewModel: BoardDataViewModel,
+                             navController: NavHostController,
 ){
     val scrollState = rememberLazyListState()
 
     // currentrow is currently just a random category, but should be recent visited games.
     // val currentRow = viewModel.boardGamesRowRecent
-    val currentRow = viewModel.boardGamesRow1
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val layoutInfo = scrollState.layoutInfo
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
-        }
-    }
+    val currentRow = viewModel.boardGamesRowRecent
 
-    LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalBoardGameCategories(row)
-        }
-    }
     Column {
         androidx.compose.material3.Text(
             text = headline,

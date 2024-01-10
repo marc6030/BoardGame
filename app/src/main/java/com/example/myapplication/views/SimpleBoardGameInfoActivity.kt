@@ -107,6 +107,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     LaunchedEffect(Unit) {
         // Use LaunchedEffect peoples! Is much importante!
         boardGameInfoActivity.fetchBoardGameData(gameID)
+        boardGameInfoActivity.addToRecentBoardGames(gameID)
     }
 
 
