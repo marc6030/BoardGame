@@ -97,12 +97,12 @@ fun boardgameSelections(
     navController: NavHostController,
     viewModel: BoardDataViewModel
 ) {
-    // LaunchedEffect to fetch data
+
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
     }
 
-    // MenuScreen with dynamic content
+
     MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
         Column(
             modifier = Modifier
@@ -133,53 +133,11 @@ fun boardgameSelections(
                 item {
                     boardGameSelection("shooters", viewModel, 5, navController)
                 }
-                // Add more items as needed
+
             }
         }
     })
 }
-
-@Composable
-fun AlertDialogExample(
-    showDialog: Boolean,
-    onDismissRequest: () -> Unit
-) {
-    if (showDialog) {
-        AlertDialog( modifier = Modifier
-            .background(MaterialTheme.colorScheme.background),
-            icon = {
-                Icon(Icons.Filled.Info, contentDescription = "Info Icon", tint = MaterialTheme.colorScheme.onBackground)
-            },
-            title = {
-                Text(text = "BoardGame Bandits", color = MaterialTheme.colorScheme.onBackground)
-            },
-            text = {
-                Text(text = "Is an app developed in Kotlin for Android. Its a platform for " +
-                        "board game enthusiasts. It features functionalities for exploring " +
-                        "various board games, providing users with detailed information about " +
-                        "each game. Users can browse different categories of board games, view " +
-                        "specific details, and possibly interact with some aspects related to " +
-                        "board gaming. The app's design caters to those interested in discovering " +
-                        "and learning more about board games, enhancing their gaming experience " +
-                        "with accessible information and user-friendly navigation.", color = MaterialTheme.colorScheme.onBackground)
-            },
-            onDismissRequest = {
-                onDismissRequest()
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDismissRequest()
-                    }
-                ) {
-                    Text("Close", color = MaterialTheme.colorScheme.onBackground)
-                }
-            }
-        )
-    }
-}
-
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

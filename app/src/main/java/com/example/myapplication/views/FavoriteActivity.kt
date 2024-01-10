@@ -39,62 +39,41 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.FavoriteViewModel
-import com.example.myapplication.views.NavBar
-
+import com.example.myapplication.views.MenuScreen
 
 
 @Composable
 fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
-    val logo: Painter = painterResource(id = R.drawable.banditlogo)
 
     LaunchedEffect(Unit) {
         viewModel.fetchFavoriteBoardGames()
     }
+
     val favoriteBoardGames = viewModel.favoriteBoardGameList
-    Log.v("Favorites: ", "$favoriteBoardGames")
 
-
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(
+    MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
+        Column(
             modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            Image(
-                painter = logo,
-                contentDescription = null, // Set a meaningful content description if needed
+            Text(
+                text = "Favorites",
                 modifier = Modifier
-                    .height(120.dp)
-                    .width(120.dp)
-                    .align(Alignment.Center)
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
-        }
-        Box(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-        )
-        Text(
-            text = "Favorites",
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxWidth()
-                .padding(12.dp),
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-            )
-        LazyColumn (modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)
-            .background(MaterialTheme.colorScheme.background)
-        ) {
-            items(favoriteBoardGames) { boardgame ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                items(favoriteBoardGames) { boardgame ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.background(MaterialTheme.colorScheme.background)
@@ -116,24 +95,15 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                                 contentScale = ContentScale.FillBounds,
                             )
                         }
-                        Column(
-                            Modifier.weight(1f)
-                        ) {
+                        Column(Modifier.weight(1f)) {
                             Text(
-                                shortTitel(boardgame.name),
+                                text = shortTitel(boardgame.name),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 modifier = Modifier.clickable {
                                     navController.navigate("boardgameinfo/${boardgame.id}")
                                 }
                             )
                         }
-                        Spacer(modifier = Modifier
-                            .weight(1f)
-                            .background(MaterialTheme.colorScheme.background)
-                            .clickable {
-                                navController.navigate("boardgameinfo/${boardgame.id}")
-                            }
-                        )
                         Icon(
                             imageVector = Icons.Outlined.Favorite,
                             contentDescription = "Favorite Icon",
@@ -144,12 +114,10 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                         )
                         Spacer(Modifier.width(10.dp))
                     }
-
+                }
             }
         }
-        NavBar().BottomNavigationBar(navController, "Favorite")
-    }
-
+    })
 }
 
 fun shortTitel(name: String): String{
