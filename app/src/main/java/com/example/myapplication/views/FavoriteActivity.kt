@@ -35,14 +35,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.FavoriteViewModel
-import com.example.myapplication.modelviews.SharedViewModel
 import com.example.myapplication.views.NavBar
 
 
 
 @Composable
-fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, sharedViewModel: SharedViewModel) {
+fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
     val logo: Painter = painterResource(id = R.drawable.banditlogo)
 
     val favoriteBoardGame = viewModel.favoriteBoardGameList
@@ -131,7 +131,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                             tint = Color.White,
                             modifier = Modifier
                                 .size(32.dp)
-                                .clickable { viewModel.toggleFavorite(boardgame.id) }
+                                .clickable { boardGameInfoActivity.toggleFavorite(boardgame.id) }
                         )
                         Spacer(Modifier.width(10.dp))
                     }

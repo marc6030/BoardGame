@@ -7,17 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -51,8 +44,8 @@ class MainActivity : ComponentActivity() {
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
-        val favoriteViewModel = FavoriteViewModel()
-        val boardGameInfoActivity = BoardGameInfoActivity()
+        val boardGameInfoActivity = BoardGameInfoActivity(viewModel)
+        val favoriteViewModel = FavoriteViewModel(viewModel, boardGameInfoActivity)
 
         setContent {
             navController = rememberNavController()
@@ -89,7 +82,8 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
     }
     NavHost(
         navController = navController,
-        startDestination = "personal"
+        startDestination = "home"
+
     ) {
         composable("nointernet") {
             NoInternetScreen(navController)
@@ -180,7 +174,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                     animationSpec = tween(transitionDuration)
                 )
             }) {
-            FavoriteActivity(navController, favoriteViewModel, sharedViewModel)
+            FavoriteActivity(navController, favoriteViewModel, boardGameInfoActivity)
         }
         composable(
             route = "personal"

@@ -4,11 +4,9 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,17 +19,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
@@ -77,6 +74,214 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+
+@Composable
+fun ComplexBoardGameInfoActivity(
+    navController: NavHostController,
+    boardGameInfoActivity: BoardGameInfoActivity,
+    ratingsViewModel: RatingsViewModel,
+    favoriteViewModel: FavoriteViewModel,
+    sharedViewModel: SharedViewModel,
+    gameID: String
+    ) {
+
+
+    val colorMatrix = ColorMatrix().apply {
+        setToScale(0.2f, 0.2f, 0.2f, 1f)
+    }
+
+
+    val boardGame = boardGameInfoActivity.boardGameData
+    // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
+
+
+
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+
+    AsyncImage(
+        model = boardGame.imageURL,
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        alignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .blur(30.dp)
+            //.scale(if (sharedViewModel.firstAnimationComplexBoardInfo) 1.5f else 0.3f)
+            .animateContentSize(),
+        colorFilter = ColorFilter.colorMatrix(colorMatrix)
+    )
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = boardGame!!.name,
+                style = TextStyle(
+                    fontSize = 50.sp
+                ),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+                textAlign = TextAlign.Center
+            )
+
+            pictureAndKeyInfo(boardGame!!)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.background)
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Column() {
+                    tabView(
+                        texts = listOf(
+                            "Description",
+                            "General Info",
+                            "BoardBandit Rating"
+                        )
+                    ) {
+                        selectedTabIndex = it;
+                    }
+                    when (selectedTabIndex) {
+                        0 -> description(
+                            boardGame
+                        )
+
+                        1 -> generalInfo(
+                            boardGame
+                        )
+
+                        2 -> ratingTab(
+                            boardGameInfoActivity, ratingsViewModel
+                        )
+                    }
+                }
+            }
+
+        }
+    }
+
+
+
+@Composable
+fun pictureAndKeyInfo(boardGame: BoardGame){
+    Row(
+        modifier = Modifier.height(175.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .padding(10.dp)
+        ) {
+            AsyncImage(
+                model = boardGame.imageURL,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(20.dp))
+            )
+
+        }
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(1f)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.background),
+
+            ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.5f),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ) {
+
+
+                    Image(
+                        painter = painterResource(id = R.drawable.people_alt),
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.av_timer),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "${boardGame.playingTime} min.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(1f),
+                    verticalArrangement = Arrangement.SpaceAround,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.elderly),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "${boardGame.age}+",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.fitness_center),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = boardGame.averageWeight,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+            }
+        }
+    }
+
+}
+
 @Composable
 fun tabView(
     modifier: Modifier = Modifier,
@@ -89,14 +294,13 @@ fun tabView(
     val inactiveColor = Color(0xFF777777)
     TabRow(
         selectedTabIndex = selectedTabIndex,
-        modifier = modifier
+        modifier = Modifier.background(Color.Black.copy(alpha = 0.2f))
     ) {
         texts.forEachIndexed { index, item ->
             Tab(
-                modifier = modifier.background(MaterialTheme.colorScheme.background),
                 selected = selectedTabIndex == index,
-                selectedContentColor = MaterialTheme.colorScheme.background,
-                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.Gray,
                 onClick = {
                     selectedTabIndex = index
                     onTabSelected(index)
@@ -126,7 +330,8 @@ fun description(boardGame: BoardGame) {
                 Text(
                     text = boardGame.description,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.White
                 )
             }
         }
@@ -170,21 +375,24 @@ fun simpleInfo(title: String, info1: String, info2: String?) {
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left,
                 modifier = Modifier.fillMaxWidth(0.65f),
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = Color.White
             )
             if (info2 != null) {
                 Text(
                     text = info1 + " - " + info2,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.fillMaxWidth(1f),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = Color.White
                 )
             } else {
                 Text(
                     text = info1,
                     textAlign = TextAlign.Right,
                     modifier = Modifier.fillMaxWidth(1f),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = Color.White
                 )
             }
         }
@@ -205,6 +413,7 @@ fun complexInfo(title: String, infoList : List<String>) {
                 textAlign = TextAlign.Left,
                 modifier = Modifier.fillMaxWidth(0.5f),
                 fontSize = 20.sp,
+                color = Color.White
             )
             Row(
                 modifier = Modifier
@@ -216,7 +425,8 @@ fun complexInfo(title: String, infoList : List<String>) {
                             text = infoList.get(i),
                             fontSize = 10.sp,
                             textAlign = TextAlign.Left,
-                            modifier = Modifier.fillMaxWidth(0.5f)
+                            modifier = Modifier.fillMaxWidth(0.5f),
+                            color = Color.White
                         )
                     }
                 }
@@ -226,7 +436,8 @@ fun complexInfo(title: String, infoList : List<String>) {
                             text = infoList.get(i),
                             fontSize = 10.sp,
                             textAlign = TextAlign.Right,
-                            modifier = Modifier.fillMaxWidth(1f)
+                            modifier = Modifier.fillMaxWidth(1f),
+                            color = Color.White
                         )
                     }
                 }
@@ -234,3 +445,8 @@ fun complexInfo(title: String, infoList : List<String>) {
         }
     }
 }
+
+
+
+
+

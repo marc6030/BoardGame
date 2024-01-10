@@ -1,9 +1,9 @@
 package com.example.myapplication
 
 
-import androidx.compose.animation.animateContentSize
-import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -32,14 +31,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -49,7 +44,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -57,7 +51,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -88,20 +81,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardGameInfoActivity
-import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.views.YoutubePlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import BoardGameRepository
-import android.util.Log
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -119,15 +107,14 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     LaunchedEffect(Unit) {
         // Use LaunchedEffect peoples! Is much importante!
         boardGameInfoActivity.fetchBoardGameData(gameID)
-        ratingsViewModel.fetchRatings(boardGameInfoActivity.currentGameID)
-
     }
+
 
     val colorMatrixDark = ColorMatrix().apply {
-        setToScale(0.2f, 0.2f, 0.2f, 1f)
+        setToScale(0.5f, 0.5f, 0.5f, 1f)
     }
 
-    var boardGame =
+    val boardGame =
         boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
     val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp)
     var textStyle by remember { mutableStateOf(textStyleBody1) }
@@ -151,7 +138,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         alignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .blur(30.dp)
+            .blur(10.dp)
             .scale(1.3f)
             .animateContentSize(),
         colorFilter = ColorFilter.colorMatrix(colorMatrixDark)
@@ -179,7 +166,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .fillMaxWidth()
                                     .fillMaxHeight(0.9f)
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color.Black)
+                                    .background(Color.Transparent)
                             ) {
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
@@ -428,7 +415,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                             exit = slideOutVertically()
                         ) {
                             PopupRatingDialog(
-                                boardGame = boardGame,
+                                boardGameInfoActivity = boardGameInfoActivity,
                                 viewModel = ratingsViewModel
                             )
                         }
@@ -457,15 +444,16 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     .fillMaxHeight(0.6f)
                                     .padding(10.dp)
                                     .clip(RoundedCornerShape(10.dp))
-                                    .background(MaterialTheme.colorScheme.background)
+                                    .background(Color.Black.copy(alpha = 0.6f))
                                     .align(Alignment.CenterHorizontally),
                             ) {
-                                Column() {
+                                Column(modifier = Modifier.background(Color.Transparent)) {
                                     tabView(
                                         texts = listOf(
                                             "Description",
                                             "General Info"
-                                        )
+                                        ),
+                                        modifier = Modifier.background(Color.White)
                                     ) {
                                         selectedTabIndex = it;
                                     }
@@ -531,7 +519,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 }
 
 @Composable
-fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
+fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -557,7 +545,7 @@ fun PopupRatingDialog(boardGame: BoardGame, viewModel: RatingsViewModel) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        ratingTab(boardGame = boardGame, viewModel = viewModel)
+                        ratingTab(boardGameInfoActivity = boardGameInfoActivity, viewModel = viewModel)
                     }
                 }
             }
@@ -606,20 +594,20 @@ fun PopupAddDialog() {
 }
 
 @Composable
-fun ratingTab(boardGame: BoardGame, viewModel: RatingsViewModel) {
-    val averageRating = viewModel.averageRating
+fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel) {
+    val averageRating = boardGameInfoActivity.boardGameData.user_rating // Placeholder, real coming
     Column {
-        starDisplay(boardGame.ratingBGG, "BGG rating")
+        starDisplay(boardGameInfoActivity.boardGameData.ratingBGG, "BGG rating")
         starDisplay(
-            averageRating.toString(),
+            averageRating,
             text = "BoardBandit Average Rating"
         )
         ratingDisplay(
             text = "Your Rating",
             viewModel = viewModel,
-            boardGame = boardGame
+            boardGameInfoActivity = boardGameInfoActivity
         )
-        Log.v("BGG Rating", "${boardGame.ratingBGG}")
+        Log.v("BGG Rating", "${boardGameInfoActivity.boardGameData.ratingBGG}")
     }
 }
 
@@ -666,15 +654,12 @@ fun starDisplay(stars: String, text: String) {
 fun ratingDisplay(
                     text: String,
                     viewModel: RatingsViewModel,
-                    boardGame: BoardGame
+                    boardGameInfoActivity: BoardGameInfoActivity
                 ) {
-    var numOfStars = 0.0
-    val userRating = viewModel.userRating
-    if (userRating == "") {
-        numOfStars = 0.0
-    } else {
-        numOfStars = userRating!!.toDouble()
-    }
+
+
+    val numOfStars = boardGameInfoActivity.boardGameData.user_rating.toDouble()
+
     Column {
         Box {
             Text(text + ": $numOfStars / 10 - Rate by tapping a Star")
@@ -693,8 +678,7 @@ fun ratingDisplay(
                         modifier = Modifier
                             .size(34.dp)
                             .clickable {
-                                viewModel.toggleRatings(
-                                    boardGame,
+                                boardGameInfoActivity.updateRating(
                                     i.toString()
                                 )
                             }
@@ -720,7 +704,7 @@ fun favoriteButton(
             .fillMaxWidth(0.852f)
             .fillMaxHeight(0.75f)
     ) {
-        Icon(imageVector = if (boardGameInfoActivity.boardGameData!!.isfavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+        Icon(imageVector = if (boardGameInfoActivity.boardGameData.liked == "True") Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "favoriteButton",
             tint = Color.White,
             modifier = Modifier
@@ -728,8 +712,12 @@ fun favoriteButton(
                 .background(Color.Transparent, CircleShape)
                 .align(Alignment.BottomEnd)
                 .clickable {
-                    triggerConfetti = !triggerConfetti
-                    //boardGameInfoActivity.toggleFavorite("static_user", boardGameInfoActivity.boardGameData!!.id)
+                    if (boardGameInfoActivity.boardGameData.liked == "False") {
+                        triggerConfetti = true
+                    } else if (boardGameInfoActivity.boardGameData.liked == "True") {
+                        triggerConfetti = false
+                    }
+                    boardGameInfoActivity.toggleFavorite(boardGameInfoActivity.boardGameData.id)
                     boardGameInfoActivity.snackbarFavoriteVisible =
                         !boardGameInfoActivity.snackbarFavoriteVisible
                     Log.v(
@@ -739,12 +727,12 @@ fun favoriteButton(
                     if (boardGameInfoActivity.snackbarFavoriteVisible) {
                         coroutineScope.launch {
                             val result = snackbarHostState.showSnackbar(
-                                message = if (/*boardGameInfoActivity.boardGameData.isfavorite*/ true) "Added to My Games" else "Removed from My Games",
+                                message = if (boardGameInfoActivity.boardGameData.liked == "True") "Added to My Games" else "Removed from My Games",
                                 actionLabel = "UNDO",
                                 duration = SnackbarDuration.Short,
                             )
                             if (result == SnackbarResult.ActionPerformed) {
-                                //boardGameInfoActivity.toggleFavorite("static_user", boardGameInfoActivity.boardGameData.id)
+                                boardGameInfoActivity.toggleFavorite(boardGameInfoActivity.boardGameData.id)
                             }
                             boardGameInfoActivity.snackbarFavoriteVisible =
                                 false

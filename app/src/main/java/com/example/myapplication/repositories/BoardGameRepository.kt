@@ -53,7 +53,7 @@ class BoardGameRepository {
         return videoId
     }
 
-    fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
+    suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
         val urlPath = if (category != null) {
             "/boardgameitems/$category/$limit/$offset/"
         } else {
@@ -77,7 +77,7 @@ class BoardGameRepository {
         return boardGames
     }
 
-    fun addBoardGameToRecentList(
+    suspend fun addBoardGameToRecentList(
         boardGame: BoardGame,
         recentList: List<BoardGameItem>): List<BoardGameItem> {
         val boardGames = mutableListOf<BoardGameItem>()
@@ -100,7 +100,7 @@ class BoardGameRepository {
         return boardGames
     }
 
-    fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
+    suspend fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
         val urlPath = "/boardgamesearch/$userSearch/$limit/$offset/"
         val jsonResponse = makeApiRequest(urlPath)
         val jsonArray = JSONArray(jsonResponse)
@@ -119,14 +119,14 @@ class BoardGameRepository {
     }
 
 
-    fun getBoardGame(id: String): BoardGame {
+    suspend fun getBoardGame(id: String): BoardGame {
 
         val urlPath = "/boardgame/$id/"
         val jsonResponse = makeApiRequest(urlPath)
         val jsonObject = JSONObject(jsonResponse)
 
         val textContent = convertHtmlToStructuredText(jsonObject.getString("description"))
-
+        // Log.v("WTF", "$jsonObject")
         return BoardGame(
             id = jsonObject.getString("id_actual"),
             name = jsonObject.getString("name"),
@@ -147,20 +147,25 @@ class BoardGameRepository {
             artists = convertJsonArrayToList(jsonObject.getJSONArray("artists")),
             overallRank = jsonObject.optString("overall_rank", "???"),
             categoryRank = jsonObject.optString("category_rank", "???"),
-            liked = jsonObject.optString("liked", "0"),
-            user_rating = jsonObject.optString("user_rating ", "0"),
+            liked = jsonObject.optString("is_liked", "False"),
+            user_rating = jsonObject.optString("user_rating", "0"),
             // picture = jsonObject.optByteArray("image_data") // Uncomment if needed
         )
     }
-    fun convertJsonArrayToList(jsonArray: JSONArray): List<String> {
+    suspend fun convertJsonArrayToList(jsonArray: JSONArray): List<String> {
         val list = mutableListOf<String>()
         for (i in 0 until jsonArray.length()) {
             list.add(jsonArray.getString(i))
         }
         return list
     }
-    fun toggleFavoriteGame(username: String, id: String) {
+    suspend fun toggleFavoriteGame(username: String, id: String) {
         val urlPath = "/favoritetoggle/$id/$username/"
+        makeApiRequest(urlPath) // Assuming this is a POST request
+    }
+
+    suspend fun toggleRatingGame(username: String, id: String, rating: String) {
+        val urlPath = "/ratingstoggle/$id/$username/$rating/"
         makeApiRequest(urlPath) // Assuming this is a POST request
     }
 
@@ -199,7 +204,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
-    print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
+    // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
     //println(bg)
     //println(bgg)
     // println(bgs)

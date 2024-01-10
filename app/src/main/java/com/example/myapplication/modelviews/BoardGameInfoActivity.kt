@@ -9,14 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItems
-import com.example.myapplication.repositories.API_connection
-import com.example.myapplication.repositories.postgresql
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BoardGameInfoActivity() : ViewModel() {
+class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : ViewModel() {
     //var boardGameList by mutableStateOf<BoardGameItems?>(null)
 
     var boardGameData by mutableStateOf(BoardGame())
@@ -34,17 +32,38 @@ class BoardGameInfoActivity() : ViewModel() {
 
     var currentGameID = ""
 
-    fun toggleFavorite(username : String, id : String){
-        BoardGameRepository().toggleFavoriteGame(username, id)
+    private fun getUserID() : String {
+        return sharedViewModel.getUserID()
     }
+
+    fun toggleFavorite(gameID: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (boardGameData.liked == "True"){
+                    boardGameData.liked = "False"
+                } else {
+                    boardGameData.liked = "True"
+                }
+
+
+                BoardGameRepository().toggleFavoriteGame(getUserID(), gameID)
+            } catch (e: Exception) {
+                Log.v("bgsearch_fault", "searchlogs: $e")
+                // boardGameSearch = null
+            }
+        }
+
+    }
+
+
 
 
     fun fetchBoardGameData(id: String) {
         currentGameID = id
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val boardGame: BoardGame = BoardGameRepository().getBoardGame(id)
-
                 withContext(Dispatchers.Main) {
                     boardGameData = boardGame
                 }
@@ -63,8 +82,6 @@ class BoardGameInfoActivity() : ViewModel() {
 
                 withContext(Dispatchers.Main) {
                     youtubeID = youtubeID_
-                    Log.v("MatthiasErSejMand2", "${id + " Review"}")
-                    Log.v("MatthiasErSejMand", "${youtubeID}")
                 }
             } catch (e: Exception) {
                 Log.v("can't fetch boardgamedata: ", "$e")
@@ -74,5 +91,22 @@ class BoardGameInfoActivity() : ViewModel() {
         }
     }
 
+    fun updateRating(newRating: String) {
+        if (boardGameData.user_rating == newRating){
+            val updatedGame = boardGameData.copy(user_rating = "0")
+            boardGameData = updatedGame
+        } else {
+            val updatedGame = boardGameData.copy(user_rating = newRating)
+            boardGameData = updatedGame
+        }
 
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                BoardGameRepository().toggleRatingGame(getUserID(), boardGameData.id, newRating)
+            } catch (e: Exception) {
+                Log.v("bgsearch_fault", "searchlogs: $e")
+                // boardGameSearch = null
+            }
+        }
+    }
 }
