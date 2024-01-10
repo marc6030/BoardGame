@@ -75,7 +75,7 @@ import androidx.compose.ui.util.lerp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.views.NavBar
+import com.example.myapplication.views.MenuScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -92,88 +92,51 @@ fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun boardgameSelections(
     navController: NavHostController,
     viewModel: BoardDataViewModel
 ) {
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    val navBar = NavBar()
-    var showDialog by remember { mutableStateOf(false) }
-
-    AlertDialogExample(
-        showDialog = showDialog,
-        onDismissRequest = { showDialog = false }
-    )
-
+    // LaunchedEffect to fetch data
     LaunchedEffect(Unit) {
         viewModel.fetchBoardGameCategories()
     }
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                ),
-                title = {
-                        androidx.compose.material.Icon(modifier = Modifier
-                            .size(80.dp)
-                            .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                    , painter = logo, contentDescription = "Logo", tint = MaterialTheme.colorScheme.onBackground )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { showDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = "Localized description",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {navController.navigate("search")}) {
-                        Icon(imageVector = Icons.Filled.Search,
-                            contentDescription = "Localized description",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = Color.Black,
-            ) {
-                navBar.BottomNavigationBar(navController, "Home")
-            }
-        }
-    ) { innerPadding ->
+    // MenuScreen with dynamic content
+    MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-        ){
-            LazyColumn( modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(MaterialTheme.colorScheme.background))
-            {
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
                 item {
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                }
+                item {
                     boardGameSelection("test", viewModel, 1, navController)
+                }
+                item {
                     boardGameSelection("Superhot", viewModel, 2, navController)
+                }
+                item {
                     boardGameSelection("rpggames", viewModel, 3, navController)
+                }
+                item {
                     boardGameSelection("dungeon games", viewModel, 4, navController)
+                }
+                item {
                     boardGameSelection("shooters", viewModel, 5, navController)
                 }
+                // Add more items as needed
             }
         }
-    }
+    })
 }
 
 @Composable

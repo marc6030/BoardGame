@@ -66,48 +66,9 @@ import com.example.myapplication.modelviews.BoardDataViewModel
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
-    val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background
-                ),
-                title = {
-                    androidx.compose.material.Icon(modifier = Modifier
-                        .size(80.dp)
-                        .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                        , painter = logo, contentDescription = "Logo", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = "Localized description",
-                            tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {navController.navigate("search")}) {
-                        Icon(imageVector = Icons.Filled.Search,
-                            contentDescription = "Localized description",
-                            tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = Color.Black,
-            ) {
-                navBar.BottomNavigationBar(navController, "Home")
-            }
-        }
-    ) { innerPadding ->
+    MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -138,13 +99,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
         Menu(navController)
         Recents(viewModel = viewModel, 1, navController)
     }
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        navBar.BottomNavigationBar(navController, "personal")
-    }
-    }
+    })
 }
 
 @Composable
