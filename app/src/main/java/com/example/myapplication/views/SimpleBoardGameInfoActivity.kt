@@ -187,7 +187,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     style = textStyle,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier
-                                        .fillMaxWidth()
                                         .fillMaxHeight(0.2f)
                                         .padding(20.dp, 30.dp, 20.dp, 20.dp)
                                         .drawWithContent {

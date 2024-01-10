@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -28,17 +29,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -51,7 +60,6 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     val navBar = NavBar()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
-    val icon: Painter = painterResource(id = R.drawable.search)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,27 +131,73 @@ fun KeyStats(){
     ) {
         Box(
             modifier = Modifier
-                .weight(0.3f)
+                .weight(0.33f)
                 .height(70.dp)
         ) {
             keyStat()
         }
         Box(
             modifier = Modifier
-                .weight(0.3f)
+                .weight(0.33f)
                 .height(70.dp)
         ) {
-            keyStat()
+            StreakStat()
         }
         Box(
             modifier = Modifier
-                .weight(0.3f)
+                .weight(0.33f)
                 .height(70.dp)
         ) {
             keyStat()
         }
     }
 }
+@Composable
+fun StreakStat(){
+    val string = "90"
+    Column(modifier = Modifier.fillMaxSize())
+    {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.7f)
+        ) {
+            Image(painter = painterResource(id = R.drawable.flamestreak),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.Center))
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .align(Alignment.BottomCenter)) {
+                Text(
+                    text = if(string.length == 0) "0" else string,
+                    modifier = if(string.length < 3) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp,0.dp,0.dp,1.dp)
+                    else Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp,0.dp,0.dp,4.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = if(string.length==1 ||string.length == 0) 30.sp
+                    else if(string.length == 2) 25.sp
+                    else if(string.length == 3) 19.sp
+                    else 14.sp)
+            }
+        }
+        Text(text = "Streak",
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+                .weight(0.3f),
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp
+        )
+    }
+}
+
 @Composable
 fun keyStat(){
     Column(
@@ -156,12 +210,16 @@ fun keyStat(){
                 .fillMaxWidth()
                 .weight(0.5f)
         ) {
+            Image(painter = painterResource(id = R.drawable.flamestreak),
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.Center))
             Text(
                 modifier = Modifier
-                    .fillMaxSize(),
-                text = "-----",
+                    .fillMaxWidth(),
+                text = "7",
                 textAlign = TextAlign.Center,
-                fontSize = 20.sp
+                fontSize = 15.sp,
+                color = Color.White
             )
         }
         Box(
