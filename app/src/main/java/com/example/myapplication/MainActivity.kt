@@ -10,7 +10,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,10 +24,12 @@ import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
+import com.example.myapplication.views.NoInternetScreen
 import com.example.myapplication.views.PersonalActivity
 import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import kotlinx.coroutines.delay
 
 
 class MainActivity : ComponentActivity() {
@@ -67,10 +71,23 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                  boardGameInfoActivity: BoardGameInfoActivity) {
 
     val transitionDuration = 2000 // ms
+    val context = LocalContext.current
+    LaunchedEffect(true){
+        while(true){
+            if(!isInternetAvailable(context)){
+                navController.navigate("nointernet")
+            }
+            delay(5000)
+        }
+    }
     NavHost(
         navController = navController,
         startDestination = "home"
+
     ) {
+        composable("nointernet") {
+            NoInternetScreen(navController)
+        }
         composable(
             route = "home",
             enterTransition = {
