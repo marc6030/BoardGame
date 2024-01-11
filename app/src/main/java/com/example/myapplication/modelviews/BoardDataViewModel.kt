@@ -69,7 +69,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 boardGamesRow3 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow3)
                 boardGamesRow4 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow4)
                 boardGamesRow5 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow5)
-                bigPictureGame = BoardGameRepository().getBoardGame("339484")
+                bigPictureGame = BoardGameRepository().getBoardGame("316554")
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
