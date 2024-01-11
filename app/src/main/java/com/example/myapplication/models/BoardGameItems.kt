@@ -29,4 +29,7 @@ data class BoardGameItem (
     var bitmap: Bitmap? = null,
 
     var liked: String = "False",
+
+    var playedCount: String = "0"
+
 )

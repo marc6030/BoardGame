@@ -171,6 +171,24 @@ class BoardGameRepository {
         makeApiRequest(urlPath) // Assuming this is a POST request
     }
 
+     fun getFavoriteGames(username: String, limit: Int, offset: Int) : List<BoardGameItem> {
+        val urlPath = "/favorite-gameboard-all/$username/$limit/$offset/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val favoriteBoardGames = mutableListOf<BoardGameItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            favoriteBoardGames.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image")
+                )
+            )
+        }
+        return favoriteBoardGames
+    }
+
     suspend fun toggleRatingGame(username: String, id: String, rating: String) {
         val urlPath = "/ratingstoggle/$id/$username/$rating/"
         makeApiRequest(urlPath) // Assuming this is a POST request
@@ -211,6 +229,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
+    print(BoardGameRepository().getFavoriteGames("static_user", 10, 0))
     //print(BoardGameRepository().getNumberOfGamesOrStreak("static_user", "played_games"))
     // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
     //println(bg)

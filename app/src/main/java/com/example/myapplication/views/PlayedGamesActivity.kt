@@ -1,5 +1,4 @@
-package com.example.myapplication
-
+package com.example.myapplication.views
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -46,7 +45,7 @@ import com.example.myapplication.views.MenuScreen
 
 
 @Composable
-fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
+fun PlayedGamesActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
 
 
     val scrollState = rememberLazyListState()
@@ -77,7 +76,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                 .padding(innerPadding)
         ) {
             Text(
-                text = "My Games",
+                text = "Played Games",
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxWidth()
@@ -123,7 +122,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                         }
                         Icon(
                             imageVector = Icons.Outlined.Favorite,
-                            contentDescription = "Favorite Icon",
+                            contentDescription = "Minus Icon",
                             tint = Color.White,
                             modifier = Modifier
                                 .size(32.dp)
@@ -138,7 +137,6 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
         }
     })
 }
-
 fun shortTitel(name: String): String{
     val index = name.indexOf(":")
     return if (index != -1) {

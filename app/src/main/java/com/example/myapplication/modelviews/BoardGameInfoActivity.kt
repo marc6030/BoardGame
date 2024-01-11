@@ -52,7 +52,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
                 // boardGameSearch = null
             }
         }
-
     }
 
     fun addToRecentBoardGames(boardGameId : String){

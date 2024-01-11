@@ -84,15 +84,9 @@ data class BoardGame(
 
     var user_rating: String = "0",
 
-    ) {
-    fun shortTitel(): String{
-        val index = name.indexOf(":")
-        return if (index != -1) {
-            name.substring(0, index)
-        } else {
-            name
-        }
-    }
+    var played_count: String = "0"
+
+) {
 
     // debugging
     override fun toString(): String {

@@ -17,14 +17,21 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
 
     var favoriteBoardGameList by mutableStateOf<List<BoardGameItem>>(emptyList())
 
-    private fun getUserID() : String {
+    var offset = 0
+    private var limit = 10
+    private fun getUserID(): String {
         return sharedViewModel.getUserID()
     }
 
     fun fetchFavoriteBoardGames() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                favoriteBoardGameList = BoardGameRepository().getFavoritesList(limit = 50, offset = 0, getUserID())
+                offset = 0
+                favoriteBoardGameList = BoardGameRepository().getFavoriteGames(
+                    username = getUserID(),
+                    limit = limit,
+                    offset = offset
+                )
                 Log.v("Fetch Favorites ", "success!")
             } catch (e: Exception) {
                 Log.v("Fetch Favorites failed!: ", "$e")
@@ -32,6 +39,33 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
         }
     }
 
-
+    fun fetchAdditionalFavoriteBoardGames() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                offset += limit
+                favoriteBoardGameList += BoardGameRepository().getFavoriteGames(
+                    getUserID(),
+                    limit = limit,
+                    offset = offset
+                )
+            } catch (e: Exception) {
+                Log.v(
+                    "fetchAdditionalFavoriteBoardGame",
+                    "Can't fetch additional favorite boardGames"
+                )
+            }
+        }
+    }
+    fun toggleFavorite(boardgame : BoardGameItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                favoriteBoardGameList = favoriteBoardGameList.drop(favoriteBoardGameList.indexOf(boardgame))
+                BoardGameRepository().toggleFavoriteGame(getUserID(), boardgame.id)
+            } catch (e: Exception) {
+                Log.v("bgsearch_fault", "searchlogs: $e")
+                // boardGameSearch = null
+            }
+        }
+    }
 
 }
