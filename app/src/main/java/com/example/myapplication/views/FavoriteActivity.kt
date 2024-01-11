@@ -28,7 +28,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -52,15 +55,24 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
     val favoriteBoardGames = viewModel.favoriteBoardGameList
 
     MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
+        val gradientFrom = MaterialTheme.colorScheme.surface
+        val gradientTo = MaterialTheme.colorScheme.background
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .drawBehind {
+                    drawRect(
+                        Brush.verticalGradient(
+                            colorStops = arrayOf(0f to gradientFrom, 1f to gradientTo),
+                            tileMode = TileMode.Decal
+                        )
+                    )
+                }
         ) {
+            Spacer(Modifier.height(innerPadding.calculateTopPadding()))
             Text(
                 text = "Favorites",
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxWidth()
                     .padding(12.dp),
                 fontSize = 26.sp,
@@ -71,7 +83,6 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .background(MaterialTheme.colorScheme.background)
             ) {
                 items(favoriteBoardGames) { boardgame ->
                     Row(

@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -74,13 +75,14 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 .fillMaxSize()
                 .drawBehind {
                     drawRect(
-                        Brush.linearGradient(
-                            start = Offset.Zero,
-                            end = Offset.Infinite,
+                        Brush.radialGradient(
+                            center = Offset(this.size.width / 2, 525f),
+                            radius = this.size.width * 1.5f,
                             colorStops = arrayOf(
                                 0f to gradientFrom,
-                                0.75f to gradientTo
-                            )
+                                0.8f to gradientTo
+                            ),
+                            tileMode = TileMode.Decal
                         )
                     )
                 }
