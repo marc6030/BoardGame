@@ -16,7 +16,7 @@ import java.net.URL
 class BoardGameRepository {
 
     private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
-    private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyDzVCdIQVEQZ9Epa8jU24HOJLgaX71NCIo&q="
+    private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyCUsP8-FIzZFeCNKk4yVgVUiY6pYAsl5SQ&q="
 
     private fun makeApiRequest(urlPath: String): String {
         val url = URL(baseUrl + urlPath)
@@ -77,27 +77,34 @@ class BoardGameRepository {
         return boardGames
     }
 
-    suspend fun addBoardGameToRecentList(
-        boardGame: BoardGame,
-        recentList: List<BoardGameItem>): List<BoardGameItem> {
-        val boardGames = mutableListOf<BoardGameItem>()
-        var i = 0
-        boardGames.add(
-            BoardGameItem(
-                id = boardGame.id,
-                name = boardGame.name,
-                imgUrl = boardGame.imageURL
+    suspend fun getBoardGameToRecentList(userID: String): List<BoardGameItem>{
+        val urlPath = "/recents/$userID/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val recentBoardGameItems = mutableListOf<BoardGameItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            recentBoardGameItems.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image")
+                )
             )
-        )
-        for (game: BoardGameItem in recentList) {
-            if (boardGame.id != game.id) {
-                boardGames.add(game)
-                i++
-            }
-            if(i == 9)
-                break
         }
-        return boardGames
+        return recentBoardGameItems
+    }
+
+     suspend fun getNumberOfGamesOrStreak(UserID : String, category : String) : String{
+        val urlPath = "/users/$UserID/$category/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonObject = JSONObject(jsonResponse)
+         return jsonObject.getString("result")
+    }
+
+    suspend fun addBoardGameToRecentList(userID: String, gameID : String){
+        val urlPath = "/recents/$userID/$gameID"
+        makeApiRequest(urlPath)
     }
 
     suspend fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
@@ -204,6 +211,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
+    //print(BoardGameRepository().getNumberOfGamesOrStreak("static_user", "played_games"))
     // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
     //println(bg)
     //println(bgg)

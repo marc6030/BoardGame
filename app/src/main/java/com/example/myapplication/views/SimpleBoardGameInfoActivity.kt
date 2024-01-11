@@ -104,10 +104,10 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var selectedTabIndex by remember { mutableStateOf(0) }
     var showYouTubePlayer by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        // Use LaunchedEffect peoples! Is much importante!
-        boardGameInfoActivity.fetchBoardGameData(gameID)
-    }
+
+    boardGameInfoActivity.fetchBoardGameData(gameID)
+    boardGameInfoActivity.addToRecentBoardGames(gameID)
+
 
 
     val colorMatrixDark = ColorMatrix().apply {
@@ -116,7 +116,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     val boardGame =
         boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
-    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(fontSize = 50.sp)
+    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center, fontSize = 50.sp)
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
 
@@ -160,26 +160,25 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                 .fillMaxSize()
                                 .padding(16.dp)
                         ) {
-                            Spacer(modifier = Modifier.height(35.dp))
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight(0.9f)
                                     .clip(RoundedCornerShape(20.dp))
                                     .background(Color.Transparent)
+                                    .align(Alignment.CenterHorizontally)
                             ) {
-                                Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = boardGame!!.name,
+                                    text = boardGame.name,
                                     style = textStyle,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier
                                         .fillMaxHeight(0.2f)
+                                        .fillMaxWidth()
                                         .padding(20.dp, 30.dp, 20.dp, 20.dp)
                                         .drawWithContent {
                                             if (readyToDraw) drawContent()
                                         },
-                                    textAlign = TextAlign.Center,
                                     color = Color.White,
                                     overflow = TextOverflow.Clip,
                                     onTextLayout = { textLayoutResult ->
@@ -189,7 +188,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         } else {
                                             readyToDraw = true
                                         }
-                                    }
+                                    },
+                                    textAlign = TextAlign.Center
                                 )
                                 Box(
                                     modifier = Modifier

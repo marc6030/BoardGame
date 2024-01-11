@@ -28,5 +28,5 @@ data class BoardGameItem (
     @field:Element(name = "bitmap", required = false)
     var bitmap: Bitmap? = null,
 
-
+    var liked: String = "False",
 )

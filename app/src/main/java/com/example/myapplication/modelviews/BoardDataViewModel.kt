@@ -23,6 +23,10 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
 
     var boardGamesRowRecent by mutableStateOf<List<BoardGameItem>>(emptyList())
 
+    var streak by mutableStateOf("0")
+    var nrOfPlayedGames by mutableStateOf("0")
+    var nrOfRatedGames by mutableStateOf("0")
+
     val categoryRow0 = null
     val categoryRow1 = "fighting"
     val categoryRow2 = "Economic"
@@ -73,18 +77,31 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         }
     }
 
-    fun RecentBoardGames(boardGame: BoardGame){
+    fun fetchRecentBoardGames(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                boardGamesRowRecent = BoardGameRepository().addBoardGameToRecentList(boardGame, boardGamesRowRecent)
+                boardGamesRowRecent = BoardGameRepository().getBoardGameToRecentList(getUserID())
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch recentGames", "$e")
-            } finally {
-                setIsLoading(false)
             }
         }
     }
+
+    fun fetchKeystats(){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                streak = BoardGameRepository().getNumberOfGamesOrStreak(getUserID(), "streak")
+                nrOfPlayedGames = BoardGameRepository().getNumberOfGamesOrStreak(getUserID(), "played_games")
+                nrOfRatedGames = BoardGameRepository().getNumberOfGamesOrStreak(getUserID(), "rated_games")
+                Log.v("tada", "tada")
+            } catch (e: Exception) {
+                Log.v("Cant fetch recentGames", "$e")
+            }
+        }
+    }
+
+
 
     fun fetchAdditionalBoardGameCategories(row: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -113,5 +130,10 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 Log.v("fetchAdditionalBoardGameCategories","Can't fetch additional boardGameCategories")
             }
         }
+    }
+    fun getUserID(): String {
+        val userID: String = "static_user"
+        Log.v("UserID is: ", userID)
+        return userID
     }
 }

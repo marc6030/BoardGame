@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -35,10 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,14 +47,10 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -70,49 +62,12 @@ import com.example.myapplication.modelviews.BoardDataViewModel
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
-    val navBar = NavBar()
+    viewModel.fetchRecentBoardGames()
+    viewModel.fetchKeystats()
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background
-                ),
-                title = {
-                    androidx.compose.material.Icon(modifier = Modifier
-                        .size(80.dp)
-                        .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                        , painter = logo, contentDescription = "Logo", tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = "Localized description",
-                            tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {navController.navigate("search")}) {
-                        Icon(imageVector = Icons.Filled.Search,
-                            contentDescription = "Localized description",
-                            tint = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = Color.Black,
-            ) {
-                navBar.BottomNavigationBar(navController, "Home")
-            }
-        }
-    ) { innerPadding ->
-        val gradientFrom = MaterialTheme.colorScheme.onError
+    MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
+        val gradientFrom = MaterialTheme.colorScheme.onBackground
         val gradientTo = MaterialTheme.colorScheme.background
         Column(
             modifier = Modifier
@@ -156,23 +111,23 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                KeyStats()
+                KeyStats(viewModel)
                 Spacer(modifier = Modifier.height(10.dp))
                 Menu(navController)
                 Recents(viewModel = viewModel, 1, navController)
             }
         }
-    Box(
-        contentAlignment = Alignment.BottomCenter,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        navBar.BottomNavigationBar(navController, "personal")
-    }
-    }
+        Spacer(modifier = Modifier.height(20.dp))
+        KeyStats(viewModel)
+        Spacer(modifier = Modifier.height(10.dp))
+        Menu(navController)
+        Recents(viewModel = viewModel, 1, navController)
+    })
 }
 
+
 @Composable
-fun KeyStats(){
+fun KeyStats(viewModel: BoardDataViewModel){
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -184,27 +139,27 @@ fun KeyStats(){
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            keyStat()
+            RatedStat(viewModel.nrOfRatedGames)
         }
         Box(
             modifier = Modifier
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            StreakStat()
+            StreakStat(viewModel.streak)
         }
         Box(
             modifier = Modifier
                 .weight(0.33f)
                 .height(70.dp)
         ) {
-            keyStat()
+            playedGamesStat(viewModel.nrOfPlayedGames)
         }
     }
 }
+
 @Composable
-fun StreakStat(){
-    val string = "90"
+fun StreakStat(streak : String){
     Column(modifier = Modifier.fillMaxSize())
     {
         Box(
@@ -221,8 +176,11 @@ fun StreakStat(){
                 .fillMaxHeight()
                 .align(Alignment.BottomCenter)) {
                 Text(
-                    text = if(string.length == 0) "0" else string,
-                    modifier = if(string.length < 3) Modifier
+                    text = if(streak.length == 0) "0" else streak,
+                    modifier = if(streak.length < 2) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                    else if(streak.length < 3) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 1.dp)
@@ -233,9 +191,9 @@ fun StreakStat(){
                     textAlign = TextAlign.Center,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
-                    fontSize = if(string.length==1 ||string.length == 0) 30.sp
-                    else if(string.length == 2) 25.sp
-                    else if(string.length == 3) 19.sp
+                    fontSize = if(streak.length==1 ||streak.length == 0) 30.sp
+                    else if(streak.length == 2) 25.sp
+                    else if(streak.length == 3) 19.sp
                     else 14.sp)
             }
         }
@@ -248,45 +206,112 @@ fun StreakStat(){
         )
     }
 }
-
 @Composable
-fun keyStat(){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    )
+fun RatedStat(nrOfRatedGames : String){
+    Column(modifier = Modifier.fillMaxSize())
     {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.5f)
+                .weight(0.7f)
         ) {
-            Image(painter = painterResource(id = R.drawable.flamestreak),
+            Image(painter = painterResource(id = R.drawable.starstat),
                 contentDescription = null,
-                modifier = Modifier.align(Alignment.Center))
-            Text(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                text = "7",
-                textAlign = TextAlign.Center,
-                fontSize = 15.sp,
-                color = Color.White
-            )
+                    .align(Alignment.Center))
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .align(Alignment.BottomCenter)) {
+                Text(
+                    text = if(nrOfRatedGames.length == 0) "0" else nrOfRatedGames,
+                    modifier = if(nrOfRatedGames.length < 2) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 3.dp)
+                    else if(nrOfRatedGames.length < 3) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 5.dp)
+                    else if(nrOfRatedGames.length < 4) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                    else Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 12.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = if(nrOfRatedGames.length==1 ||nrOfRatedGames.length == 0) 29.sp
+                    else if(nrOfRatedGames.length == 2) 24.sp
+                    else if(nrOfRatedGames.length == 3) 19.sp
+                    else 14.sp)
+            }
         }
+        Text(text = "Rated Games",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .weight(0.3f),
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
+    }
+}
+
+@Composable
+fun playedGamesStat(nrOfPlayedGames : String){
+    Column(modifier = Modifier.fillMaxSize())
+    {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.5f)
+                .weight(0.7f)
         ) {
-            Text(
+            Icon(painter = painterResource(id = R.drawable.token),
+                contentDescription = "token",
                 modifier = Modifier
-                    .fillMaxSize(),
-                text = "-------",
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
+                    .align(Alignment.Center),
+                tint = Color.Red)
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .align(Alignment.BottomCenter)) {
+                Text(
+                    text = if(nrOfPlayedGames.length == 0) "0" else nrOfPlayedGames,
+                    modifier = if(nrOfPlayedGames.length < 2) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 8.dp)
+                        else if(nrOfPlayedGames.length < 3) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                    else if(nrOfPlayedGames.length < 4) Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 15.dp)
+                    else Modifier
+                        .fillMaxWidth(0.3f)
+                        .align(Alignment.BottomCenter)
+                        .padding(0.dp, 0.dp, 0.dp, 20.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
+                    else if(nrOfPlayedGames.length == 2) 22.sp
+                    else if(nrOfPlayedGames.length == 3) 15.sp
+                    else 10.sp)
+            }
         }
+        Text(text = "Played Games",
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .weight(0.3f),
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp
+        )
     }
 }
 
@@ -413,36 +438,23 @@ fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostContr
                 .background(Color.DarkGray)
 
         ) {
-            boardGameSelection(headline = "Recents", viewModel =viewModel, row =row, navController =navController)
+            recentBoardGameSelection(headline = "Recents", viewModel =viewModel, navController =navController)
         }
     }
 }
 
 
 @Composable
-fun boardGameSelection(headline: String,
-                       viewModel: BoardDataViewModel,
-                       row: Int,
-                       navController: NavHostController,
+fun recentBoardGameSelection(headline: String,
+                             viewModel: BoardDataViewModel,
+                             navController: NavHostController,
 ){
     val scrollState = rememberLazyListState()
 
     // currentrow is currently just a random category, but should be recent visited games.
     // val currentRow = viewModel.boardGamesRowRecent
-    val currentRow = viewModel.boardGamesRow1
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val layoutInfo = scrollState.layoutInfo
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
-        }
-    }
+    val currentRow = viewModel.boardGamesRowRecent
 
-    LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalBoardGameCategories(row)
-        }
-    }
     Column {
         androidx.compose.material3.Text(
             text = headline,

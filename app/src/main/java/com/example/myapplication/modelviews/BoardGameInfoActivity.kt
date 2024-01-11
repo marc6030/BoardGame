@@ -55,6 +55,15 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
 
     }
 
+    fun addToRecentBoardGames(boardGameId : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                BoardGameRepository().addBoardGameToRecentList(getUserID(), boardGameId)
+            } catch (e: Exception) {
+                Log.v("Cant add to recentGames", "$e")
+            }
+        }
+    }
 
 
 
