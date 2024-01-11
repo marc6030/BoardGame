@@ -104,7 +104,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var selectedTabIndex by remember { mutableStateOf(0) }
     var showYouTubePlayer by remember { mutableStateOf(false) }
 
-
     boardGameInfoActivity.fetchBoardGameData(gameID)
     boardGameInfoActivity.addToRecentBoardGames(gameID)
 
@@ -914,6 +913,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                     .background(Color.DarkGray, CircleShape)
                     .align(Alignment.BottomEnd)
                     .clickable {
+                        boardGameInfoActivity.addOrRemovePlayedGames(boardGameInfoActivity.currentGameID, "True")
                         boardGameInfoActivity.snackbarChallengeVisible =
                             !boardGameInfoActivity.snackbarChallengeVisible
                         if (boardGameInfoActivity.snackbarChallengeVisible) {
@@ -924,7 +924,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                                     duration = SnackbarDuration.Short,
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
-                                    //boardGameInfoActivity.(REMOVEFROMCHALLENGE)
+                                    boardGameInfoActivity.addOrRemovePlayedGames(gameID = boardGameInfoActivity.currentGameID, increment = "False")
                                 }
                                 boardGameInfoActivity.snackbarChallengeVisible =
                                     false

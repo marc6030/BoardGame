@@ -117,4 +117,16 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
             }
         }
     }
+
+    fun addOrRemovePlayedGames(gameID : String, increment : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                BoardGameRepository().addOrRemovePlayedGame(getUserID(), gameID, increment)
+                Log.v("update Played Games ", "success!")
+            }
+            catch (e : Exception){
+                Log.v("update Played games failed!: ", "$e")
+            }
+        }
+    }
 }

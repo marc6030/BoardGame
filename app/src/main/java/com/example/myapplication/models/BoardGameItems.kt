@@ -30,6 +30,8 @@ data class BoardGameItem (
 
     var liked: String = "False",
 
-    var playedCount: String = "0"
+    var playedCount: String = "0",
+
+    var rating: String = ""
 
 )

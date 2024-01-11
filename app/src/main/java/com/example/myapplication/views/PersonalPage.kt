@@ -266,7 +266,7 @@ fun playedGamesStat(nrOfPlayedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 20.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.White,
+                    color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
                     else if(nrOfPlayedGames.length == 2) 22.sp
@@ -327,7 +327,7 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
-                        .clickable { //navcontroller.navigate("ratedGames")
+                        .clickable { navController.navigate("ratedGames")
                         }
                 ){
                     Text(
@@ -355,7 +355,7 @@ fun Menu(navController: NavHostController){
                         .clip(RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable {
-                            //navcontroller.navigate("playedGames")
+                            navController.navigate("playedGames")
                         }
                 ){
                     Text(
@@ -433,7 +433,7 @@ fun recentBoardGameSelection(headline: String,
             color = Color.White
         )
         LazyRow(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxHeight(),
             state = scrollState
 
         )

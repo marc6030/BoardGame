@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,7 +55,7 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
             }
         }
     }
-    fun toggleFavorite(boardgame : BoardGameItem) {
+    fun removeFavorite(boardgame : BoardGameItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 favoriteBoardGameList = favoriteBoardGameList.drop(favoriteBoardGameList.indexOf(boardgame))

@@ -167,7 +167,7 @@ fun SwipeableHotnessRow(
             LaunchedEffect(key1 = currentPageKey) {
                 launch {
                     delay(timeMillis = autoScrollDuration)
-                    val nextPage = (currentPage + 1).mod(pageCount)
+                    val nextPage = (currentPage + 1).mod(10)
                     animateScrollToPage(page = nextPage)
                     currentPageKey = nextPage
                 }

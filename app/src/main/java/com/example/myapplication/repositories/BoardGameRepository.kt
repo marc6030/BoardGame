@@ -189,6 +189,48 @@ class BoardGameRepository {
         return favoriteBoardGames
     }
 
+    suspend fun getPlayedGames(username: String, limit: Int, offset: Int): List<BoardGameItem>{
+        val urlPath = "/get_user_played/$username/$limit/$offset/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val playedBoardGames = mutableListOf<BoardGameItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            playedBoardGames.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image")
+                )
+            )
+        }
+        return playedBoardGames
+    }
+
+    suspend fun getRatedGames(UserID: String, limit : Int, offset: Int): List<BoardGameItem>{
+        val urlPath = "/get_user_ratings/$UserID/$limit/$offset/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val ratedBoardGames = mutableListOf<BoardGameItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            ratedBoardGames.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                    rating = jsonObject.getString("liked")
+                )
+            )
+        }
+        return ratedBoardGames
+    }
+
+    suspend fun addOrRemovePlayedGame(UserID: String, gameID: String, increment : String){
+        val urlPath = "/update_played_games/$UserID/$gameID/$increment/"
+        print(makeApiRequest(urlPath))
+    }
+
     suspend fun toggleRatingGame(username: String, id: String, rating: String) {
         val urlPath = "/ratingstoggle/$id/$username/$rating/"
         makeApiRequest(urlPath) // Assuming this is a POST request
@@ -219,7 +261,6 @@ class BoardGameRepository {
         return sb.toString().trim()
     }
 
-
 }
 
 
@@ -229,7 +270,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
-    print(BoardGameRepository().getFavoriteGames("static_user", 10, 0))
+    //BoardGameRepository().addOrRemovePlayedGame("static_user", "1", "True")
     //print(BoardGameRepository().getNumberOfGamesOrStreak("static_user", "played_games"))
     // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
     //println(bg)

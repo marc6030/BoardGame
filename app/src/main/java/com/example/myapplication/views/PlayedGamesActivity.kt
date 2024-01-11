@@ -1,7 +1,5 @@
 package com.example.myapplication.views
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,9 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,11 +38,11 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.FavoriteViewModel
-import com.example.myapplication.views.MenuScreen
+import com.example.myapplication.modelviews.PlayedGamesViewModel
 
 
 @Composable
-fun PlayedGamesActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
+fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGamesViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
 
 
     val scrollState = rememberLazyListState()
@@ -60,13 +57,13 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: FavoriteVie
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalFavoriteBoardGames()
+            viewModel.fetchAdditionalPlayedBoardGames()
         }
     }
-    viewModel.fetchFavoriteBoardGames()
+    viewModel.fetchPlayedBoardGames()
 
-    LaunchedEffect(viewModel.favoriteBoardGameList){
-        viewModel.fetchFavoriteBoardGames()
+    LaunchedEffect(viewModel.playedGamesList){
+        viewModel.fetchPlayedBoardGames()
     }
 
     MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
@@ -91,7 +88,7 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: FavoriteVie
                     .weight(1f)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                items(viewModel.favoriteBoardGameList) { boardgame ->
+                items(viewModel.playedGamesList) { boardgame ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -121,13 +118,13 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: FavoriteVie
                             )
                         }
                         Icon(
-                            imageVector = Icons.Outlined.Favorite,
+                            imageVector = Icons.Filled.Favorite,
                             contentDescription = "Minus Icon",
                             tint = Color.White,
                             modifier = Modifier
                                 .size(32.dp)
                                 .clickable {
-                                    viewModel.toggleFavorite(boardgame)
+                                    viewModel.removeOrDecrementPlayedGames(boardgame)
                                 }
                         )
                         Spacer(Modifier.width(10.dp))

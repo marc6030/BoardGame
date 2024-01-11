@@ -1,7 +1,5 @@
 package com.example.myapplication.views
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -31,21 +29,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardGameInfoActivity
-import com.example.myapplication.modelviews.FavoriteViewModel
-import com.example.myapplication.views.MenuScreen
+import com.example.myapplication.modelviews.RatingsViewModel
 
 
 @Composable
-fun RatedGamesActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
+fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
+
 
 
     val scrollState = rememberLazyListState()
@@ -60,13 +56,13 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: FavoriteView
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalFavoriteBoardGames()
+            viewModel.fetchAdditionalRatedBoardGames()
         }
     }
-    viewModel.fetchFavoriteBoardGames()
+    viewModel.fetchRatedBoardGames()
 
-    LaunchedEffect(viewModel.favoriteBoardGameList){
-        viewModel.fetchFavoriteBoardGames()
+    LaunchedEffect(viewModel.ratedGamesList){
+        viewModel.fetchRatedBoardGames()
     }
 
     MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
@@ -76,7 +72,7 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: FavoriteView
                 .padding(innerPadding)
         ) {
             Text(
-                text = "Played Games",
+                text = "Rated Games",
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxWidth()
@@ -91,7 +87,7 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: FavoriteView
                     .weight(1f)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                items(viewModel.favoriteBoardGameList) { boardgame ->
+                items(viewModel.ratedGamesList) { boardgame ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -120,16 +116,10 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: FavoriteView
                                 color = MaterialTheme.colorScheme.onBackground,
                             )
                         }
-                        Icon(
-                            imageVector = Icons.Outlined.Favorite,
-                            contentDescription = "Minus Icon",
-                            tint = Color.White,
+                        Text(text = boardgame.rating + "/10",
+                            fontSize = 22.sp,
                             modifier = Modifier
-                                .size(32.dp)
-                                .clickable {
-                                    viewModel.toggleFavorite(boardgame)
-                                }
-                        )
+                                .padding(5.dp))
                         Spacer(Modifier.width(10.dp))
                     }
                 }
