@@ -59,6 +59,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
@@ -121,10 +122,16 @@ fun boardgameSelections(
                     .background(MaterialTheme.colorScheme.background)
             ) {
                 item {
-                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                    BigPicture(viewModel, navController)
                 }
                 item {
                     boardGameSelection("test", viewModel, 1, navController)
+                }
+                item {
+                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                }
+                item {
+                    RoundboardGameSelection("Categories", viewModel, 1, navController)
                 }
                 item {
                     boardGameSelection("Superhot", viewModel, 2, navController)
@@ -300,3 +307,110 @@ fun boardGameSelection(headline: String,
     }
 }
 
+@Composable
+fun RoundboardGameSelection(headline: String,
+                       viewModel: BoardDataViewModel,
+                       row: Int,
+                       navController: NavHostController,
+){
+    val scrollState = rememberLazyListState()
+
+    val currentRow = when (row) {
+        1 -> viewModel.boardGamesRow1
+        2 -> viewModel.boardGamesRow2
+        3 -> viewModel.boardGamesRow3
+        4 -> viewModel.boardGamesRow4
+        5 -> viewModel.boardGamesRow5
+        else -> emptyList() // Handle default case or invalid row
+    }
+
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val layoutInfo = scrollState.layoutInfo
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value) {
+            viewModel.fetchAdditionalBoardGameCategories(row)
+        }
+    }
+
+    Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = MaterialTheme.colorScheme.onBackground)
+    LazyRow(
+        modifier = Modifier,
+        state = scrollState
+
+    )
+    {
+
+        items(currentRow) { item ->
+            val gameName: String = item.name
+            val gameID: String = item.id
+            Box(
+                modifier = Modifier
+                    .size(100.dp, 100.dp)
+                    .testTag("items_1234")
+                    .padding(5.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate("boardgameinfo/$gameID")
+                    }
+            )
+            {
+                AsyncImage(
+                    model = item.imgUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("game_picture")
+                        .blur(3.dp)
+                )
+                Text("RPG",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.align(Alignment.Center))
+            }
+        }
+    }
+}
+
+@Composable
+fun BigPicture(
+    viewModel: BoardDataViewModel,
+    navController: NavHostController
+){
+    val item = viewModel.bigPictureGame
+    Log.v("MyTest", "${viewModel.bigPictureGame}")
+
+
+    val gameName: String = item.name
+    val gameID: String = item.id
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .fillMaxWidth()
+            .height(500.dp)
+            .testTag("items_1234")
+            .clickable {
+                navController.navigate("boardgameinfo/$gameID")
+            }
+    )
+    {
+        AsyncImage(
+            model = item.imageURL,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            alignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("game_picture")
+                .clip(RoundedCornerShape(10.dp))
+        )
+    }
+}
