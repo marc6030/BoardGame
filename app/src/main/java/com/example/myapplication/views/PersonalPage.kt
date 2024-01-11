@@ -2,6 +2,7 @@ package com.example.myapplication.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -41,45 +49,91 @@ import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.modelviews.BoardDataViewModel
 
+// played games, liked games, something fun
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     viewModel.fetchRecentBoardGames()
     viewModel.fetchKeyStats()
+    val profilepicture: Painter = painterResource(id = R.drawable.profilepicture)
+    val bronze: Painter = painterResource(id = R.drawable.bronze)
+    val gold: Painter = painterResource(id = R.drawable.gold)
 
     MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
+        val gradientFrom = MaterialTheme.colorScheme.surface
+        val gradientTo = MaterialTheme.colorScheme.background
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.background)
-        ){
-        Spacer(
-            Modifier.height(20.dp)
-        )
-        Box(
-            modifier = Modifier
-                .size(175.dp)
-                .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
-                .align(Alignment.CenterHorizontally)
+                .drawBehind {
+                    drawRect(
+                        Brush.radialGradient(
+                            center = Offset(this.size.width / 2, 525f),
+                            radius = this.size.width * 1.5f,
+                            colorStops = arrayOf(
+                                0f to gradientFrom,
+                                0.8f to gradientTo
+                            ),
+                            tileMode = TileMode.Decal
+                        )
+                    )
+                }
         ) {
-            Text(
+            Column(
                 modifier = Modifier
-                    .align(Alignment.Center),
-                text = "?",
-                fontSize = 50.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ){
+                Spacer(
+                    Modifier.height(20.dp)
+                )
+                Box(modifier = Modifier
+                    //.size(300.dp) bronze
+                    .size(250.dp)
+                    .align(Alignment.CenterHorizontally)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(130.dp)
+                            .align(Alignment.Center)
+                    ) {
+                        Image(
+                            contentDescription = "profile",
+                            painter = profilepicture,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .fillMaxSize()
+                        )
+                    }
+                    if(false) {
+                        Image(
+                            contentDescription = "bronze",
+                            painter = bronze,
+                            modifier = Modifier
+                                .size(275.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
+                    if(true){
+                        Image(
+                            contentDescription = "gold",
+                            painter = gold,
+                            modifier = Modifier
+                                .size(600.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                KeyStats(viewModel)
+                Spacer(modifier = Modifier.height(10.dp))
+                Menu(navController)
+                Recents(viewModel = viewModel, 1, navController)
+            }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        KeyStats(viewModel)
-        Spacer(modifier = Modifier.height(10.dp))
-        Menu(navController)
-        Recents(viewModel = viewModel, 1, navController)
-    }
     })
 }
+
 
 @Composable
 fun KeyStats(viewModel: BoardDataViewModel){
@@ -157,7 +211,8 @@ fun StreakStat(streak : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -210,7 +265,8 @@ fun RatedStat(nrOfRatedGames : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -234,7 +290,7 @@ fun playedGamesStat(nrOfPlayedGames : String){
                 .fillMaxHeight()
                 .align(Alignment.BottomCenter)) {
                 Text(
-                    text = if(nrOfPlayedGames.length == 0) "0" else nrOfPlayedGames,
+                    text = nrOfPlayedGames,
                     modifier = if(nrOfPlayedGames.length < 2) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
@@ -252,7 +308,7 @@ fun playedGamesStat(nrOfPlayedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 20.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
                     fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
                     else if(nrOfPlayedGames.length == 2) 22.sp
@@ -265,7 +321,8 @@ fun playedGamesStat(nrOfPlayedGames : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -293,8 +350,8 @@ fun Menu(navController: NavHostController){
                         .padding(bottom = 3.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
-                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
+                        .background(Color.DarkGray)
                         .clickable { navController.navigate("favorite") }
                 ){
                     Text(
@@ -303,7 +360,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Box(
@@ -311,7 +368,7 @@ fun Menu(navController: NavHostController){
                         .padding(top = 3.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable { navController.navigate("ratedGames")
                         }
@@ -322,7 +379,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -337,7 +394,7 @@ fun Menu(navController: NavHostController){
                         .padding(bottom = 3.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable {
                             navController.navigate("playedGames")
@@ -349,7 +406,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Box(
@@ -357,7 +414,7 @@ fun Menu(navController: NavHostController){
                         .padding(top = 3.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable {
                             // navController.navigate("challenges")
@@ -369,7 +426,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -388,11 +445,11 @@ fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostContr
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .shadow(8.dp, RoundedCornerShape(5.dp))
                 .background(Color.DarkGray)
 
         ) {
-            recentBoardGameSelection(headline = "Recents", viewModel =viewModel, navController =navController)
+            recentBoardGameSelection(headline = "Recents", viewModel = viewModel, navController = navController)
         }
     }
 }
@@ -415,7 +472,7 @@ fun recentBoardGameSelection(headline: String,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 10.dp, top = 7.dp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onBackground
         )
         LazyRow(
             modifier = Modifier.fillMaxHeight(),
@@ -431,7 +488,7 @@ fun recentBoardGameSelection(headline: String,
                         .size(100.dp, 150.dp)
                         .testTag("items_1234")
                         .padding(5.dp)
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .clickable {
                             navController.navigate("boardgameinfo/$gameID")
                         }

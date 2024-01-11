@@ -18,8 +18,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +34,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,7 +53,6 @@ import com.example.myapplication.views.MenuScreen
 
 @Composable
 fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
-
 
     val scrollState = rememberLazyListState()
 
@@ -66,73 +75,88 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
         viewModel.fetchFavoriteBoardGames()
     }
 
-    MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
-        Column(
+
+    val gradientFrom = MaterialTheme.colorScheme.surface
+    val gradientTo = MaterialTheme.colorScheme.background
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .drawBehind {
+                drawRect(
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(0f to gradientFrom, 1f to gradientTo),
+                        tileMode = TileMode.Decal
+                    )
+                )
+            }
+    ) {
+        Spacer(Modifier.height(40.dp))
+        Text(
+            text = "My Games",
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .fillMaxWidth()
+                .padding(12.dp),
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
-            Text(
-                text = "My Games",
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                items(viewModel.favoriteBoardGameList) { boardgame ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+            items(viewModel.favoriteBoardGameList) { boardgame ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate("boardgameinfo/${boardgame.id}")
+                        }
+                ) {
+                    Box(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .clickable {
-                                navController.navigate("boardgameinfo/${boardgame.id}")
-                            }
+                            .height(100.dp)
+                            .width(100.dp)
+                            .padding(7.dp)
+                            .shadow(8.dp, RoundedCornerShape(20.dp)),
+                        contentAlignment = Alignment.TopCenter
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .height(100.dp)
-                                .width(100.dp)
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(20.dp)),
-                            contentAlignment = Alignment.TopCenter
-                        ) {
-                            AsyncImage(
-                                model = boardgame.imgUrl,
-                                contentDescription = null,
-                                contentScale = ContentScale.FillBounds,
-                            )
-                        }
-                        Column(Modifier.weight(1f)) {
-                            Text(
-                                text = shortTitel(boardgame.name),
-                                color = MaterialTheme.colorScheme.onBackground,
-                            )
-                        }
-                        Icon(
-                            imageVector = Icons.Outlined.Favorite,
-                            contentDescription = "Favorite Icon",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clickable {
-                                    viewModel.removeFavorite(boardgame)
-                                }
+                        AsyncImage(
+                            model = boardgame.imgUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
                         )
-                        Spacer(Modifier.width(10.dp))
                     }
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            text = shortTitel(boardgame.name),
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Outlined.Favorite,
+                        contentDescription = "Favorite Icon",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable {
+                                viewModel.removeFavorite(boardgame)
+                            }
+                    )
+                    Spacer(Modifier.width(10.dp))
                 }
             }
         }
-    })
+    }
+    IconButton(
+        onClick = { navController.popBackStack() }
+    ){
+        Icon(
+            imageVector = Icons.Filled.KeyboardArrowLeft,
+            contentDescription = "back arrow",
+            tint = MaterialTheme.colorScheme.onBackground
+        )
+    }
 }
 
 fun shortTitel(name: String): String{

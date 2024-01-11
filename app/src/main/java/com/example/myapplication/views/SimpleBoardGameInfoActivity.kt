@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
@@ -66,6 +67,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -178,7 +180,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .drawWithContent {
                                             if (readyToDraw) drawContent()
                                         },
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     overflow = TextOverflow.Clip,
                                     onTextLayout = { textLayoutResult ->
                                         if (textLayoutResult.didOverflowHeight) {
@@ -202,13 +204,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         alignment = Alignment.Center,
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .clip(CircleShape)
+                                            .shadow(8.dp, CircleShape)
                                     )
                                     IconButton(
                                         onClick = { showYouTubePlayer = true },
                                         modifier = Modifier
                                             .align(Alignment.Center)
                                             .size(80.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.PlayArrow,
@@ -376,14 +380,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     contentDescription = "contentDescription",
                                     modifier = Modifier
                                         .size(60.dp)
-                                        .background(Color.DarkGray, CircleShape)
+                                        .shadow(8.dp, CircleShape)
+                                        .background(MaterialTheme.colorScheme.background)
                                         .align(Alignment.BottomCenter)
                                         .clickable {
                                             coroutineScope.launch {
                                                 pagerState.animateScrollToPage(1)
                                             }
                                         },
-                                    tint = Color.White,
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                 )
                             }
                             Box(
@@ -399,12 +404,12 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     modifier = Modifier
                                         .size(25.dp)
                                         .align(Alignment.BottomStart)
-                                        .background(Color.Gray, CircleShape)
+                                        .background(MaterialTheme.colorScheme.background, CircleShape)
                                         .clickable {
                                             boardGameInfoActivity.openRatingPopUp =
                                                 !boardGameInfoActivity.openRatingPopUp
                                         },
-                                    tint = Color.White
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -452,7 +457,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             "Description",
                                             "General Info"
                                         ),
-                                        modifier = Modifier.background(Color.White)
+                                        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground)
                                     ) {
                                         selectedTabIndex = it;
                                     }
@@ -488,7 +493,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                                 pagerState.animateScrollToPage(0)
                                             }
                                         },
-                                    tint = Color.White,
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                 )
                             }
                         }
@@ -497,24 +502,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             }
         }
     )
-    Button(
-        onClick = {
-            navController.popBackStack()
-        },
-        modifier = Modifier
-            .width(60.dp)
-            .height(60.dp)
-            .padding(8.dp),
-        colors = ButtonDefaults.buttonColors(Color.Transparent)
-    ) {
+    IconButton(
+        onClick = { navController.popBackStack() }
+    ){
+        Icon(
+            imageVector = Icons.Filled.KeyboardArrowLeft,
+            contentDescription = "back arrow",
+            tint = MaterialTheme.colorScheme.onBackground
+        )
     }
-    Image(
-        painter = painterResource(id = R.drawable.ic_action_back),
-        contentDescription = null,
-        modifier = Modifier
-            .padding(18.dp)
-    )
-
 }
 
 @Composable
@@ -536,7 +532,7 @@ fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: R
                     Modifier
                         .size(350.dp, 220.dp)
                         .padding(top = 5.dp)
-                        .background(Color.DarkGray, RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(10.dp))
                 ) {
                     Column(
                         modifier = Modifier
@@ -575,7 +571,7 @@ fun PopupAddDialog() {
                         .size(450.dp, 300.dp)
                         .padding(top = 5.dp)
                         .background(
-                            Color.DarkGray,
+                            MaterialTheme.colorScheme.background,
                             RoundedCornerShape(10.dp)
                         )
                 ) {
@@ -628,7 +624,7 @@ fun starDisplay(stars: String, text: String) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Favorite Icon",
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .size(34.dp)
 
@@ -910,7 +906,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                 contentDescription = "contentDescription",
                 modifier = Modifier
                     .size(45.dp)
-                    .background(Color.DarkGray, CircleShape)
+                    .background(MaterialTheme.colorScheme.background, CircleShape)
                     .align(Alignment.BottomEnd)
                     .clickable {
                         boardGameInfoActivity.addOrRemovePlayedGames(boardGameInfoActivity.currentGameID, "True")
