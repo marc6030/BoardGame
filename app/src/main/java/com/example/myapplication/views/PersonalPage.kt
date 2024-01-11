@@ -103,7 +103,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(175.dp)
+                            .size(130.dp)
                             .align(Alignment.Center)
                     ) {
                         Image(
@@ -123,7 +123,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                                 .align(Alignment.Center)
                         )
                     }
-                    if(false){
+                    if(true){
                         Image(
                             contentDescription = "gold",
                             painter = gold,
