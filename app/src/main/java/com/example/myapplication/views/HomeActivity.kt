@@ -64,6 +64,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -196,7 +197,7 @@ fun SwipeableHotnessRow(
             Box(
                 modifier = Modifier
                     .fillMaxSize()// Set a custom width for each item
-                    .clip(RoundedCornerShape(30.dp))
+                    .shadow(8.dp, RoundedCornerShape(30.dp))
                     .clickable {
                         navController.navigate("boardgameinfo/${item.id}")
                     }
@@ -237,7 +238,7 @@ fun SwipeableHotnessRow(
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
-                        .clip(CircleShape)
+                        .shadow(8.dp, CircleShape)
                         .background(color)
                         .size(12.dp)
                 )
@@ -295,10 +296,10 @@ fun boardGameSelection(headline: String,
                     .size(100.dp, 150.dp)
                     .testTag("items_1234")
                     .padding(5.dp)
-                    .clip(RoundedCornerShape(5.dp))
                     .clickable {
                         navController.navigate("boardgameinfo/$gameID")
                     }
+                    .shadow( 8.dp, RoundedCornerShape(8.dp) )
             )
             {
                 AsyncImage(
@@ -362,10 +363,10 @@ fun RoundboardGameSelection(headline: String,
                     .size(100.dp, 100.dp)
                     .testTag("items_1234")
                     .padding(5.dp)
-                    .clip(CircleShape)
                     .clickable {
                         navController.navigate("boardgameinfo/$gameID")
                     }
+                    .shadow(8.dp, CircleShape)
             )
             {
                 AsyncImage(
@@ -404,17 +405,18 @@ fun BigPicture(
     val gradientMidpoint = MaterialTheme.colorScheme.surfaceVariant
     val gradientTo = MaterialTheme.colorScheme.background
     Column(
-        modifier = Modifier.drawBehind {
-            drawRect(
-                brush = Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.1f to gradientFrom,
-                        0.5f to gradientMidpoint,
-                        1f to gradientTo),
-                    tileMode = TileMode.Decal
+        modifier = Modifier
+            .drawBehind {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0.1f to gradientFrom,
+                            0.5f to gradientMidpoint,
+                            1f to gradientTo),
+                        tileMode = TileMode.Decal
+                    )
                 )
-            )
-        }
+            }
     ){
         Spacer(modifier = Modifier.height(topBarPadding))
         Box(
@@ -426,6 +428,10 @@ fun BigPicture(
                 .clickable {
                     navController.navigate("boardgameinfo/$gameID")
                 }
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(10.dp)
+                )
         )
         {
             AsyncImage(
@@ -436,7 +442,6 @@ fun BigPicture(
                 modifier = Modifier
                     .fillMaxSize()
                     .testTag("game_picture")
-                    .clip(RoundedCornerShape(10.dp)),
             )
         }
 

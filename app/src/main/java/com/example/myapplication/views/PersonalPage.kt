@@ -40,9 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -74,13 +76,14 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 .fillMaxSize()
                 .drawBehind {
                     drawRect(
-                        Brush.linearGradient(
-                            start = Offset.Zero,
-                            end = Offset.Infinite,
+                        Brush.radialGradient(
+                            center = Offset(this.size.width / 2, 525f),
+                            radius = this.size.width * 1.5f,
                             colorStops = arrayOf(
                                 0f to gradientFrom,
-                                0.75f to gradientTo
-                            )
+                                0.8f to gradientTo
+                            ),
+                            tileMode = TileMode.Decal
                         )
                     )
                 }
@@ -334,7 +337,7 @@ fun Menu(navController: NavHostController){
                         .padding(bottom = 3.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable { navController.navigate("favorite") }
                 ){
@@ -352,7 +355,7 @@ fun Menu(navController: NavHostController){
                         .padding(top = 3.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable { //navcontroller.navigate("ratedGames")
                         }
@@ -379,7 +382,7 @@ fun Menu(navController: NavHostController){
                         .padding(bottom = 3.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable {
                             //navcontroller.navigate("playedGames")
@@ -399,7 +402,7 @@ fun Menu(navController: NavHostController){
                         .padding(top = 3.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable {
                             // navController.navigate("challenges")
@@ -430,7 +433,7 @@ fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostContr
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .shadow(8.dp, RoundedCornerShape(5.dp))
                 .background(Color.DarkGray)
 
         ) {
@@ -473,7 +476,7 @@ fun recentBoardGameSelection(headline: String,
                         .size(100.dp, 150.dp)
                         .testTag("items_1234")
                         .padding(5.dp)
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .clickable {
                             navController.navigate("boardgameinfo/$gameID")
                         }
