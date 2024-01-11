@@ -2,6 +2,7 @@ package com.example.myapplication.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,7 +67,9 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     viewModel.fetchRecentBoardGames()
     viewModel.fetchKeystats()
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
+    val profilepicture: Painter = painterResource(id = R.drawable.profilepicture)
+    val bronze: Painter = painterResource(id = R.drawable.bronze)
+    val gold: Painter = painterResource(id = R.drawable.gold)
 
     MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
         val gradientFrom = MaterialTheme.colorScheme.surface
@@ -96,20 +99,42 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 Spacer(
                     Modifier.height(20.dp)
                 )
-                Box(
-                    modifier = Modifier
-                        .size(175.dp)
-                        .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
-                        .align(Alignment.CenterHorizontally)
+                Box(modifier = Modifier
+                    //.size(300.dp) bronze
+                    .size(250.dp)
+                    .align(Alignment.CenterHorizontally)
                 ) {
-                    Text(
+                    Box(
                         modifier = Modifier
-                            .align(Alignment.Center),
-                        text = "?",
-                        fontSize = 50.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                            .size(130.dp)
+                            .align(Alignment.Center)
+                    ) {
+                        Image(
+                            contentDescription = "profile",
+                            painter = profilepicture,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .fillMaxSize()
+                        )
+                    }
+                    if(false) {
+                        Image(
+                            contentDescription = "bronze",
+                            painter = bronze,
+                            modifier = Modifier
+                                .size(275.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
+                    if(true){
+                        Image(
+                            contentDescription = "gold",
+                            painter = gold,
+                            modifier = Modifier
+                                .size(600.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 KeyStats(viewModel)
