@@ -124,10 +124,10 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                             start = Offset.Zero,
                             end = Offset(this.size.width, this.size.height),
                             colorStops = arrayOf(
-                                0.2f to gradientFrom,
-                                1f to Color.Magenta
+                                0f to gradientFrom,
+                                0.75f to gradientTo
                             ),
-                            tileMode = TileMode.
+                            tileMode = TileMode.Repeated
                         )
                     )
                 }

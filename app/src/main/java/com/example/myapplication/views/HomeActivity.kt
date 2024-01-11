@@ -57,7 +57,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -146,23 +152,44 @@ fun boardgameSelections(
             }
         }
     ) { innerPadding ->
+        val gradientFrom = MaterialTheme.colorScheme.errorContainer
+        val gradientTo = MaterialTheme.colorScheme.background
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-        ){
-            LazyColumn( modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .background(MaterialTheme.colorScheme.background))
-            {
-                item {
-                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
-                    boardGameSelection("test", viewModel, 1, navController)
-                    boardGameSelection("Superhot", viewModel, 2, navController)
-                    boardGameSelection("rpggames", viewModel, 3, navController)
-                    boardGameSelection("dungeon games", viewModel, 4, navController)
-                    boardGameSelection("shooters", viewModel, 5, navController)
+                .drawBehind {
+                    drawRect(
+                        brush = Brush.linearGradient(
+                            start = Offset(this.size.width / 2, 0f),
+                            end = Offset(this.size.width / 2, 400f),
+                            colorStops = arrayOf(
+                                0f to gradientFrom,
+                                1f to gradientTo
+                            ),
+                            tileMode = TileMode.Decal
+                        ),
+                        size = Size(this.size.width,400f)
+                    )
+                }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ){
+                LazyColumn(
+                    modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                ) {
+                    item {
+                        SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                        boardGameSelection("test", viewModel, 1, navController)
+                        boardGameSelection("Superhot", viewModel, 2, navController)
+                        boardGameSelection("rpggames", viewModel, 3, navController)
+                        boardGameSelection("dungeon games", viewModel, 4, navController)
+                        boardGameSelection("shooters", viewModel, 5, navController)
+                    }
                 }
             }
         }
