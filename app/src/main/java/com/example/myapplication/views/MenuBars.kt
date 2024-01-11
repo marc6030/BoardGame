@@ -3,6 +3,7 @@ package com.example.myapplication.views
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +25,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.ui.res.colorResource
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +47,7 @@ fun MenuScreen(navController: NavHostController, actName: String, ourColumn: @Co
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { TopBar(navController, logoPainter, scrollBehavior) { showDialog = true } },
-        bottomBar = { BottomNavigationBar(navController, actName = actName) },
+        bottomBar = {BottomNavigationBar(navController)},
         content = ourColumn
     )
 }
@@ -87,40 +92,53 @@ fun TopBar(navController: NavHostController, logo: Painter, scrollBehavior: TopA
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController, actName: String) {
-    BottomAppBar(
-        containerColor = Color.Black
+fun BottomNavigationBar(navController: NavHostController) {
+    BottomNavigation(
+        backgroundColor = Color.Black,
+        contentColor = Color.White
     ) {
-        BottomNavigation(
-            modifier = Modifier.fillMaxWidth(),
-            backgroundColor = Color.Transparent,
-            elevation = 0.dp
-        ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
             BottomNavigationItem(
-                selected = actName == "Home",
+                icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Home")},
+                label = { Text(text = "Home") },
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.White.copy(0.4f),
+                alwaysShowLabel = true,
+                selected = currentRoute == "home",
                 onClick = {
-                    navController.navigate("home")
-                },
-                icon = {
-                    Icon(imageVector = Icons.Default.Home,
-                        contentDescription = "Home",
-                        tint = Color.Gray)
-                },
+                    navController.navigate("home") {
+                        navController.graph.startDestinationRoute?.let { route ->
+                            popUpTo(route) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
-
-
             BottomNavigationItem(
-                selected = actName == "Personal",
+                icon = { Icon(imageVector = Icons.Default.Person, contentDescription = "personal")},
+                label = { Text(text = "My Page") },
+                selectedContentColor = Color.White,
+                unselectedContentColor = Color.White.copy(0.4f),
+                alwaysShowLabel = true,
+                selected = currentRoute == "personal",
                 onClick = {
-                    navController.navigate("personal")
-                },
-                icon = {
-                    Icon(imageVector = Icons.Default.Person, contentDescription = "Person", tint = Color.White.copy(alpha = 0.7f))
-                },
+                    navController.navigate("personal") {
+                        navController.graph.startDestinationRoute?.let { route ->
+                            popUpTo(route) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
         }
     }
-}
 
 // Placeholder for AlertDialogExample Composable
 @Composable
