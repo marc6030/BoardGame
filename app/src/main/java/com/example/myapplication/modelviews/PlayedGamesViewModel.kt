@@ -58,19 +58,37 @@ class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel, private
             try {
                 var newPlayedCount  : Int
                 var updatedGameItem = playedGamesList.get(playedGamesList.indexOf(boardgame))
-                playedGamesList = playedGamesList.drop(playedGamesList.indexOf(boardgame))
+                val newPlayedGamesList = playedGamesList.drop(playedGamesList.indexOf(boardgame))
                 newPlayedCount = updatedGameItem.playedCount.toInt()-1
                 updatedGameItem.playedCount = newPlayedCount.toString()
                 if(newPlayedCount != 0){
-                    playedGamesList = playedGamesList.plus(updatedGameItem)
+                    playedGamesList = newPlayedGamesList.plus(updatedGameItem)
                     }
+                else {
+                    playedGamesList = newPlayedGamesList
+                }
                 boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "False")
+            } catch (e: Exception) {
+                Log.v("removeDecrement_fault", "RemoveDecrement: $e")
+                // boardGameSearch = null
+            }
+        }
+    }
+    fun addOrIncrementPlayedGames(boardgame : BoardGameItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                var newPlayedCount  : Int
+                var updatedGameItem = playedGamesList.get(playedGamesList.indexOf(boardgame))
+                val newPlayedGamesList = playedGamesList.drop(playedGamesList.indexOf(boardgame))
+                newPlayedCount = updatedGameItem.playedCount.toInt()+1
+                updatedGameItem.playedCount = newPlayedCount.toString()
+                playedGamesList = newPlayedGamesList.plus(updatedGameItem)
+                boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "True")
             } catch (e: Exception) {
                 Log.v("bgsearch_fault", "searchlogs: $e")
                 // boardGameSearch = null
             }
         }
     }
-
 
 }

@@ -85,9 +85,6 @@ import kotlin.math.absoluteValue
 // This is primarily a view. We should probably seperate the logic from the rest
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
-    LaunchedEffect(Unit) {
-        viewModel.fetchBoardGameCategories()
-    }
 
     boardgameSelections(navController, viewModel)
 

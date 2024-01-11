@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,13 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.myapplication.R
 import com.example.myapplication.modelviews.BoardGameInfoActivity
-import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.PlayedGamesViewModel
 
 
@@ -118,15 +119,30 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
                             )
                         }
                         Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = "Minus Icon",
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add Icon",
                             tint = Color.White,
                             modifier = Modifier
                                 .size(32.dp)
                                 .clickable {
+                                    viewModel.addOrIncrementPlayedGames(boardgame)
+                                }
+                        )
+                        Text(text = "/",
+                            fontSize = 30.sp)
+                        Icon(painter = painterResource(id = R.drawable.ic_action_subtract),
+                            contentDescription = "Minus Icon",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(27.dp)
+                                .padding(5.dp,4.dp,5.dp,0.dp)
+                                .clickable {
                                     viewModel.removeOrDecrementPlayedGames(boardgame)
                                 }
                         )
+                        Text(text = boardgame.playedCount,
+                            fontSize = 25.sp,
+                            modifier = Modifier.padding(horizontal = 5.dp))
                         Spacer(Modifier.width(10.dp))
                     }
                 }

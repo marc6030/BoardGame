@@ -90,12 +90,13 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         }
     }
 
-    fun fetchKeystats(){
+    fun fetchKeyStats(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                streak = BoardGameRepository().getNumberOfGamesOrStreak(getUserID(), "streak")
-                nrOfPlayedGames = BoardGameRepository().getNumberOfGamesOrStreak(getUserID(), "played_games")
-                nrOfRatedGames = BoardGameRepository().getNumberOfGamesOrStreak(getUserID(), "rated_games")
+                val user = BoardGameRepository().getNumberOfGamesAndStreak(getUserID())
+                streak = user.get(0).streak
+                nrOfPlayedGames = user.get(0).playedGames
+                nrOfRatedGames = user.get(0).ratedGames
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch recentGames", "$e")

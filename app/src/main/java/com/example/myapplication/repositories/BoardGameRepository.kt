@@ -3,6 +3,7 @@ import android.util.Log
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.models.BoardGameSearch
+import com.example.myapplication.models.User
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -95,11 +96,22 @@ class BoardGameRepository {
         return recentBoardGameItems
     }
 
-     suspend fun getNumberOfGamesOrStreak(UserID : String, category : String) : String{
-        val urlPath = "/users/$UserID/$category/"
+    suspend fun getNumberOfGamesAndStreak(UserID : String) : List<User> {
+        val urlPath = "/users_key_info/$UserID/"
         val jsonResponse = makeApiRequest(urlPath)
-        val jsonObject = JSONObject(jsonResponse)
-         return jsonObject.getString("result")
+        val jsonArray = JSONArray(jsonResponse)
+        val users = mutableListOf<User>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            users.add(
+                User(
+                    streak = jsonObject.getString("streak"),
+                    playedGames = jsonObject.getString("played_games"),
+                    ratedGames = jsonObject.getString("rated_games")
+                )
+            )
+        }
+        return users
     }
 
     suspend fun addBoardGameToRecentList(userID: String, gameID : String){
@@ -171,7 +183,7 @@ class BoardGameRepository {
         makeApiRequest(urlPath) // Assuming this is a POST request
     }
 
-     fun getFavoriteGames(username: String, limit: Int, offset: Int) : List<BoardGameItem> {
+     suspend fun getFavoriteGames(username: String, limit: Int, offset: Int) : List<BoardGameItem> {
         val urlPath = "/favorite-gameboard-all/$username/$limit/$offset/"
         val jsonResponse = makeApiRequest(urlPath)
         val jsonArray = JSONArray(jsonResponse)
@@ -200,7 +212,8 @@ class BoardGameRepository {
                 BoardGameItem(
                     id = jsonObject.getString("id_actual"),
                     name = jsonObject.getString("name"),
-                    imgUrl = jsonObject.getString("image")
+                    imgUrl = jsonObject.getString("image"),
+                    playedCount = jsonObject.getString("played_count")
                 )
             )
         }
@@ -271,7 +284,7 @@ fun main() {
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
     //BoardGameRepository().addOrRemovePlayedGame("static_user", "1", "True")
-    //print(BoardGameRepository().getNumberOfGamesOrStreak("static_user", "played_games"))
+    //BoardGameRepository().getNumberOfGamesOrStreak("static_user")
     // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
     //println(bg)
     //println(bgg)
