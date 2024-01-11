@@ -24,7 +24,7 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
     fun fetchFavoriteBoardGames() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                favoriteBoardGameList = BoardGameRepository().getFavoritesList(limit = 50, offset = 0, getUserID())
+                //favoriteBoardGameList = BoardGameRepository().getFavoritesList(limit = 50, offset = 0, getUserID())
                 Log.v("Fetch Favorites ", "success!")
             } catch (e: Exception) {
                 Log.v("Fetch Favorites failed!: ", "$e")
