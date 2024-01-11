@@ -50,7 +50,7 @@ fun MenuScreen(navController: NavHostController, actName: String, ourColumn: @Co
 fun TopBar(navController: NavHostController, logo: Painter, scrollBehavior: TopAppBarScrollBehavior, onInfoClicked: () -> Unit) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.6f)
+            containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f)
         ),
         title = {
             Icon(

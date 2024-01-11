@@ -67,22 +67,20 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
     val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
 
     MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
-        val gradientFrom = MaterialTheme.colorScheme.onBackground
+        val gradientFrom = MaterialTheme.colorScheme.surface
         val gradientTo = MaterialTheme.colorScheme.background
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .drawBehind {
                     drawRect(
                         Brush.linearGradient(
                             start = Offset.Zero,
-                            end = Offset(this.size.width, this.size.height),
+                            end = Offset.Infinite,
                             colorStops = arrayOf(
                                 0f to gradientFrom,
                                 0.75f to gradientTo
-                            ),
-                            tileMode = TileMode.Repeated
+                            )
                         )
                     )
                 }
@@ -117,11 +115,6 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 Recents(viewModel = viewModel, 1, navController)
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        KeyStats(viewModel)
-        Spacer(modifier = Modifier.height(10.dp))
-        Menu(navController)
-        Recents(viewModel = viewModel, 1, navController)
     })
 }
 
@@ -202,7 +195,8 @@ fun StreakStat(streak : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -255,7 +249,8 @@ fun RatedStat(nrOfRatedGames : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -297,7 +292,7 @@ fun playedGamesStat(nrOfPlayedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 20.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
                     fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
                     else if(nrOfPlayedGames.length == 2) 22.sp
@@ -310,7 +305,8 @@ fun playedGamesStat(nrOfPlayedGames : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -339,7 +335,7 @@ fun Menu(navController: NavHostController){
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(5.dp))
-                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
+                        .background(Color.DarkGray)
                         .clickable { navController.navigate("favorite") }
                 ){
                     Text(
@@ -348,7 +344,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Box(
@@ -367,7 +363,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -395,7 +391,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 Box(
@@ -415,7 +411,7 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -438,7 +434,7 @@ fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostContr
                 .background(Color.DarkGray)
 
         ) {
-            recentBoardGameSelection(headline = "Recents", viewModel =viewModel, navController =navController)
+            recentBoardGameSelection(headline = "Recents", viewModel = viewModel, navController = navController)
         }
     }
 }
@@ -461,7 +457,7 @@ fun recentBoardGameSelection(headline: String,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 10.dp, top = 7.dp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onBackground
         )
         LazyRow(
             modifier = Modifier,
