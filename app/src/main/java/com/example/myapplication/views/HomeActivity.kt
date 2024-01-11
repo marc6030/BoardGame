@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -61,7 +62,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -70,11 +77,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.views.MenuScreen
 import kotlinx.coroutines.delay
@@ -103,21 +112,20 @@ fun boardgameSelections(
         viewModel.fetchBoardGameCategories()
     }
 
-
     MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .background(MaterialTheme.colorScheme.background)
+
             ) {
                 item {
-                    BigPicture(viewModel, navController)
+                    BigPicture(viewModel, navController, innerPadding.calculateTopPadding())
                 }
                 item {
                     boardGameSelection("test", viewModel, 1, navController)
@@ -175,63 +183,68 @@ fun SwipeableHotnessRow(
         }
     }
 
-    HorizontalPager(
-        state = pagerState,
-        modifier = Modifier.height(400.dp),
-        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 20.dp),
-        pageSpacing = 8.dp,
-    ) { page ->
-        val item = items[page]
-        Box(
-            modifier = Modifier
-                .fillMaxSize()// Set a custom width for each item
-                .clip(RoundedCornerShape(30.dp))
-                .clickable {
-                    navController.navigate("boardgameinfo/${item.id}")
-                }
-                .graphicsLayer {
-                    val pageOffset =
-                        ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
-
-                    val transformation =
-                        lerp(
-                            start = 0.7f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
-                    alpha = transformation
-                    scaleY = transformation
-                }
-        )  {
-            AsyncImage(
-                model = item.imgUrl,
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds,
-                //alignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxHeight()
-            )
-        }
-    }
-
-    Row(
-        Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .padding(bottom = 10.dp, top = 10.dp),
-        horizontalArrangement = Arrangement.Center
+    Column(
     ) {
-        repeat(pagerState.pageCount) { iteration ->
-            val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .height(400.dp),
+            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 20.dp),
+            pageSpacing = 8.dp,
+        ) { page ->
+            val item = items[page]
             Box(
                 modifier = Modifier
-                    .padding(2.dp)
-                    .clip(CircleShape)
-                    .background(color)
-                    .size(12.dp)
-            )
+                    .fillMaxSize()// Set a custom width for each item
+                    .clip(RoundedCornerShape(30.dp))
+                    .clickable {
+                        navController.navigate("boardgameinfo/${item.id}")
+                    }
+                    .graphicsLayer {
+                        val pageOffset =
+                            ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
+
+                        val transformation =
+                            lerp(
+                                start = 0.7f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+                        alpha = transformation
+                        scaleY = transformation
+                    }
+            )  {
+                AsyncImage(
+                    model = item.imgUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    //alignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                )
+            }
+        }
+
+        Row(
+            Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            repeat(pagerState.pageCount) { iteration ->
+                val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                        .size(12.dp)
+                )
+            }
         }
     }
+
 }
 
 
@@ -378,7 +391,8 @@ fun RoundboardGameSelection(headline: String,
 @Composable
 fun BigPicture(
     viewModel: BoardDataViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    topBarPadding: Dp
 ){
     val item = viewModel.bigPictureGame
     Log.v("MyTest", "${viewModel.bigPictureGame}")
@@ -386,26 +400,45 @@ fun BigPicture(
 
     val gameName: String = item.name
     val gameID: String = item.id
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 20.dp, vertical = 10.dp)
-            .fillMaxWidth()
-            .height(500.dp)
-            .testTag("items_1234")
-            .clickable {
-                navController.navigate("boardgameinfo/$gameID")
-            }
-    )
-    {
-        AsyncImage(
-            model = item.imageURL,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            alignment = Alignment.Center,
+    val gradientFrom = MaterialTheme.colorScheme.surface
+    val gradientMidpoint = MaterialTheme.colorScheme.surfaceVariant
+    val gradientTo = MaterialTheme.colorScheme.background
+    Column(
+        modifier = Modifier.drawBehind {
+            drawRect(
+                brush = Brush.verticalGradient(
+                    colorStops = arrayOf(
+                        0.1f to gradientFrom,
+                        0.5f to gradientMidpoint,
+                        1f to gradientTo),
+                    tileMode = TileMode.Decal
+                )
+            )
+        }
+    ){
+        Spacer(modifier = Modifier.height(topBarPadding))
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .testTag("game_picture")
-                .clip(RoundedCornerShape(10.dp))
+                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .fillMaxWidth()
+                .height(500.dp)
+                .testTag("items_1234")
+                .clickable {
+                    navController.navigate("boardgameinfo/$gameID")
+                }
         )
+        {
+            AsyncImage(
+                model = item.imageURL,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("game_picture")
+                    .clip(RoundedCornerShape(10.dp)),
+            )
+        }
+
     }
 }
