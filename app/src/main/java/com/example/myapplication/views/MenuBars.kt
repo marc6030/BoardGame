@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -96,7 +97,8 @@ fun TopBar(navController: NavHostController, logo: Painter, scrollBehavior: TopA
 fun BottomNavigationBar(navController: NavHostController) {
     BottomNavigation(
         backgroundColor = Color.Black,
-        contentColor = Color.White
+        contentColor = Color.White,
+        modifier = Modifier.navigationBarsPadding()
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
