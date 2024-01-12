@@ -32,6 +32,8 @@ data class BoardGameItem (
 
     var playedCount: String = "0",
 
-    var rating: String = ""
+    var rating: String = "",
+
+    var category: List<String> = emptyList()
 
 )

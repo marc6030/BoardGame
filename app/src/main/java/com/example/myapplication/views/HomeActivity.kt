@@ -357,14 +357,14 @@ fun RoundboardGameSelection(headline: String,
 
         items(currentRow) { item ->
             val gameName: String = item.name
-            val gameID: String = item.id
+            val category: List<String> = item.category
             Box(
                 modifier = Modifier
                     .size(100.dp, 100.dp)
                     .testTag("items_1234")
                     .padding(5.dp)
                     .clickable {
-                        navController.navigate("boardgameinfo/$gameID")
+                        navController.navigate("category/$category")
                     }
                     .shadow(8.dp, CircleShape)
             )
@@ -426,7 +426,7 @@ fun BigPicture(
                 .height(500.dp)
                 .testTag("items_1234")
                 .clickable {
-                    navController.navigate("boardgameinfo/$gameID")
+                    navController.navigate("category/$gameID")
                 }
                 .shadow(
                     elevation = 8.dp,

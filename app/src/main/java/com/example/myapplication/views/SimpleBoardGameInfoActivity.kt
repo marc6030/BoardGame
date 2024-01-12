@@ -915,7 +915,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                         if (boardGameInfoActivity.snackbarChallengeVisible) {
                             coroutineScope.launch {
                                 val result = snackbarHostState.showSnackbar(
-                                    message = "Congratulation on playing this game! Added to Challenges",
+                                    message = "Congratulation on playing this game! Added to Played Games",
                                     actionLabel = "UNDO",
                                     duration = SnackbarDuration.Short,
                                 )
