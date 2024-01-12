@@ -29,9 +29,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,6 +84,9 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
                     .padding(12.dp),
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
+                style = TextStyle(
+                    shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+                ),
                 color = MaterialTheme.colorScheme.onBackground
             )
             LazyColumn(

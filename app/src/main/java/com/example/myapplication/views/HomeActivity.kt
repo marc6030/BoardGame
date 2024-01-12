@@ -69,6 +69,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -77,6 +78,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -126,7 +128,7 @@ fun boardgameSelections(
                     BigPicture(viewModel, navController, innerPadding.calculateTopPadding())
                 }
                 item {
-                    boardGameSelection("test", viewModel, 1, navController)
+                    boardGameSelection("Popular", viewModel, 1, navController)
                 }
                 item {
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
@@ -277,7 +279,16 @@ fun boardGameSelection(headline: String,
         }
     }
 
-    Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = MaterialTheme.colorScheme.onBackground)
+    Text(
+        text = headline,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(start = 10.dp, top = 7.dp),
+        color = MaterialTheme.colorScheme.onBackground,
+        style = TextStyle(
+            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+        )
+    )
     LazyRow(
         modifier = Modifier,
         state = scrollState
@@ -296,7 +307,7 @@ fun boardGameSelection(headline: String,
                     .clickable {
                         navController.navigate("boardgameinfo/$gameID")
                     }
-                    .shadow( 8.dp, RoundedCornerShape(8.dp) )
+                    .shadow(8.dp, RoundedCornerShape(8.dp))
             )
             {
                 AsyncImage(
@@ -344,7 +355,16 @@ fun RoundboardGameSelection(headline: String,
         }
     }
 
-    Text(text = headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 10.dp, top = 7.dp), color = MaterialTheme.colorScheme.onBackground)
+    Text(
+        text = headline,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(start = 10.dp, top = 7.dp),
+        color = MaterialTheme.colorScheme.onBackground,
+        style = TextStyle(
+            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+        )
+    )
     LazyRow(
         modifier = Modifier,
         state = scrollState
@@ -380,6 +400,9 @@ fun RoundboardGameSelection(headline: String,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 30.sp,
                     fontWeight = FontWeight.SemiBold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                    ),
                     modifier = Modifier.align(Alignment.Center))
             }
         }

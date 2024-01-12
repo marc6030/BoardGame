@@ -34,12 +34,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -198,8 +200,11 @@ fun StreakStat(streak : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 4.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+                    ),
                     fontSize = if(streak.length==1 ||streak.length == 0) 30.sp
                     else if(streak.length == 2) 25.sp
                     else if(streak.length == 3) 19.sp
@@ -212,7 +217,10 @@ fun StreakStat(streak : String){
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -252,8 +260,11 @@ fun RatedStat(nrOfRatedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 12.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, blurRadius = 8f)
+                    ),
                     fontSize = if(nrOfRatedGames.length==1 ||nrOfRatedGames.length == 0) 29.sp
                     else if(nrOfRatedGames.length == 2) 24.sp
                     else if(nrOfRatedGames.length == 3) 19.sp
@@ -266,7 +277,10 @@ fun RatedStat(nrOfRatedGames : String){
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -310,6 +324,9 @@ fun playedGamesStat(nrOfPlayedGames : String){
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, blurRadius = 8f)
+                    ),
                     fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
                     else if(nrOfPlayedGames.length == 2) 22.sp
                     else if(nrOfPlayedGames.length == 3) 15.sp
@@ -322,7 +339,10 @@ fun playedGamesStat(nrOfPlayedGames : String){
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -360,7 +380,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
                 Box(
@@ -379,7 +402,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
             }
@@ -406,7 +432,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
                 Box(
@@ -425,7 +454,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
             }
@@ -471,7 +503,10 @@ fun recentBoardGameSelection(headline: String,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 10.dp, top = 7.dp),
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+            )
         )
         LazyRow(
             modifier = Modifier.fillMaxHeight(),

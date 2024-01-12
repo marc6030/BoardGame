@@ -36,11 +36,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -98,7 +102,10 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                 .padding(12.dp),
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+            )
         )
         LazyColumn(
             modifier = Modifier
@@ -131,6 +138,9 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                         Text(
                             text = shortTitel(boardgame.name),
                             color = MaterialTheme.colorScheme.onBackground,
+                            style = TextStyle(
+                                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                            )
                         )
                     }
                     Icon(
