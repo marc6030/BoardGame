@@ -138,6 +138,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                             modifier = Modifier
                                 .size(600.dp)
                                 .align(Alignment.Center)
+                                .padding()
                         )
                     }
                 }
