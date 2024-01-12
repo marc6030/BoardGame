@@ -19,7 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,8 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -66,40 +71,44 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
     }
     viewModel.fetchPlayedBoardGames()
 
-    LaunchedEffect(viewModel.playedGamesList){
+    LaunchedEffect(viewModel.playedGamesCheck){
         viewModel.fetchPlayedBoardGames()
     }
 
-    MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
-        Column(
+
+    val gradientFrom = MaterialTheme.colorScheme.surface
+    val gradientTo = MaterialTheme.colorScheme.background
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .drawBehind {
+                drawRect(
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(0f to gradientFrom, 1f to gradientTo),
+                        tileMode = TileMode.Decal
+                    )
+                )
+            }
+    ) {
+        Spacer(Modifier.height(40.dp))
+        Text(
+            text = "Played Games",
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .fillMaxWidth()
+                .padding(12.dp),
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
-            Text(
-                text = "Played Games",
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Bold,
-                style = TextStyle(
-                    shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
-                ),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
                 items(viewModel.playedGamesList) { boardgame ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
                             .clickable {
                                 navController.navigate("boardgameinfo/${boardgame.id}")
                             }
@@ -135,7 +144,8 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
                                 }
                         )
                         Text(text = "/",
-                            fontSize = 30.sp)
+                            fontSize = 30.sp,
+                            color = MaterialTheme.colorScheme.onBackground)
                         Icon(painter = painterResource(id = R.drawable.ic_action_subtract),
                             contentDescription = "Minus Icon",
                             tint = Color.White,
@@ -148,13 +158,22 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
                         )
                         Text(text = boardgame.playedCount,
                             fontSize = 25.sp,
-                            modifier = Modifier.padding(horizontal = 5.dp))
+                            modifier = Modifier.padding(horizontal = 5.dp),
+                            color = MaterialTheme.colorScheme.onBackground)
                         Spacer(Modifier.width(10.dp))
                     }
                 }
             }
         }
-    })
+    IconButton(
+        onClick = { navController.popBackStack() }
+    ){
+        Icon(
+            imageVector = Icons.Filled.KeyboardArrowLeft,
+            contentDescription = "back arrow",
+            tint = MaterialTheme.colorScheme.onBackground
+        )
+    }
 }
 fun shortTitel(name: String): String{
     val index = name.indexOf(":")

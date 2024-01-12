@@ -10,11 +10,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGameItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private var boardGameInfoActivity: BoardGameInfoActivity) : ViewModel() {
 
 
     var favoriteBoardGameList by mutableStateOf<List<BoardGameItem>>(emptyList())
+    var favoriteBoardGameListCheck by mutableStateOf(0)
 
     var offset = 0
     private var limit = 10
@@ -59,6 +61,7 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 favoriteBoardGameList = favoriteBoardGameList.drop(favoriteBoardGameList.indexOf(boardgame))
+                favoriteBoardGameListCheck++
                 BoardGameRepository().toggleFavoriteGame(getUserID(), boardgame.id)
             } catch (e: Exception) {
                 Log.v("bgsearch_fault", "searchlogs: $e")

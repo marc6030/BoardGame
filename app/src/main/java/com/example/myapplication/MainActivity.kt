@@ -25,6 +25,7 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 import com.example.myapplication.modelviews.PlayedGamesViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
+import com.example.myapplication.views.CategoryActivity
 import com.example.myapplication.views.NoInternetScreen
 import com.example.myapplication.views.PersonalActivity
 import com.example.myapplication.views.PlayedGamesActivity
@@ -181,6 +182,43 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             }) {
             FavoriteActivity(navController, favoriteViewModel, boardGameInfoActivity)
+        }
+        composable(
+            route = "category/{category}",
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            }) {
+                navBackStackEntry ->
+            val category = navBackStackEntry.arguments?.getString("category")!!
+            CategoryActivity(
+                navController = navController,
+                viewModel = boardDataViewModel,
+                boardGameInfoActivity = boardGameInfoActivity ,
+                category = category,
+                row = 1
+                //SHOULD BE MODIFIED TO WORK PROPERLY
+            )
         }
         composable(
             route = "challenge",

@@ -67,6 +67,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
     viewModel.fetchKeyStats()
     val profilepicture: Painter = painterResource(id = R.drawable.profilepicture)
     val bronze: Painter = painterResource(id = R.drawable.bronze)
+    val silver: Painter = painterResource(id = R.drawable.silver)
     val gold: Painter = painterResource(id = R.drawable.gold)
 
     MenuScreen(navController = navController, informationtext = "Test", ourColumn = { innerPadding ->
@@ -94,9 +95,6 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                     .fillMaxSize()
                     .padding(innerPadding)
             ){
-                Spacer(
-                    Modifier.height(20.dp)
-                )
                 Box(modifier = Modifier
                     //.size(300.dp) bronze
                     .size(250.dp)
@@ -104,7 +102,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(130.dp)
+                            .size(160.dp)
                             .align(Alignment.Center)
                     ) {
                         Image(
@@ -120,7 +118,16 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                             contentDescription = "bronze",
                             painter = bronze,
                             modifier = Modifier
-                                .size(275.dp)
+                                .size(600.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
+                    if(false){
+                        Image(
+                            contentDescription = "silver",
+                            painter = silver,
+                            modifier = Modifier
+                                .size(600.dp)
                                 .align(Alignment.Center)
                         )
                     }
@@ -134,7 +141,6 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(20.dp))
                 KeyStats(viewModel)
                 Spacer(modifier = Modifier.height(10.dp))
                 Menu(navController)
