@@ -89,7 +89,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
     }
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "personal"
 
     ) {
         composable("nointernet") {

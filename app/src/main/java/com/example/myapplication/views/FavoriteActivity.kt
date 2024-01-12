@@ -75,7 +75,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
     }
     viewModel.fetchFavoriteBoardGames()
 
-    LaunchedEffect(viewModel.favoriteBoardGameListCheck){
+    LaunchedEffect(viewModel.favoriteCheck){
         viewModel.fetchFavoriteBoardGames()
     }
 

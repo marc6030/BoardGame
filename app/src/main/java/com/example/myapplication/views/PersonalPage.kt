@@ -102,7 +102,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(160.dp)
+                            .size(140.dp)
                             .align(Alignment.Center)
                     ) {
                         Image(
@@ -113,13 +113,14 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                                 .fillMaxSize()
                         )
                     }
-                    if(false) {
+                    if(true) {
                         Image(
                             contentDescription = "bronze",
                             painter = bronze,
                             modifier = Modifier
-                                .size(600.dp)
+                                .fillMaxSize(0.98f)
                                 .align(Alignment.Center)
+                                .padding(bottom = 1.dp)
                         )
                     }
                     if(false){
@@ -127,18 +128,19 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                             contentDescription = "silver",
                             painter = silver,
                             modifier = Modifier
-                                .size(600.dp)
+                                .fillMaxSize(0.85f)
                                 .align(Alignment.Center)
+                                .padding(bottom = 2.dp)
                         )
                     }
-                    if(true){
+                    if(false){
                         Image(
                             contentDescription = "gold",
                             painter = gold,
                             modifier = Modifier
-                                .size(600.dp)
+                                .fillMaxSize()
                                 .align(Alignment.Center)
-                                .padding()
+                                .padding(end = 15.dp)
                         )
                     }
                 }
