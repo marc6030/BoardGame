@@ -1,9 +1,24 @@
 package com.example.myapplication
 
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
@@ -20,6 +35,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -62,6 +78,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
@@ -73,6 +90,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -295,7 +313,11 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             Image(
                                                 painter = painterResource(id = R.drawable.elderly),
                                                 contentDescription = null,
-                                                colorFilter = ColorFilter.tint(Color.White)
+                                                colorFilter = ColorFilter.tint(Color.White),
+                                                modifier = Modifier.shakeAndOffsetClickable(
+                                                    onClick = { /* your click logic */ },
+                                                    offsetX = 700.dp
+                                                )
                                             )
                                             Text(
                                                 text = "${boardGame.age}+",
@@ -355,7 +377,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     text = boardGame.ratingBGG,
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier
-                                        .fillMaxWidth(0.292f)
+                                        .fillMaxWidth(0.280f)
+                                        .fillMaxHeight(0.03f)
                                         .align(Alignment.Bottom),
                                     textAlign = TextAlign.Center,
                                     fontWeight = FontWeight.Bold,
@@ -698,22 +721,18 @@ fun favoriteButton(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth(0.852f)
-            .fillMaxHeight(0.75f)
+            .fillMaxWidth(0.86f)
+            .fillMaxHeight(0.73f)
     ) {
         Icon(imageVector = if (boardGameInfoActivity.boardGameData.liked == "True") Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "favoriteButton",
             tint = Color.White,
             modifier = Modifier
-                .size(40.dp)
+                .size(45.dp)
                 .background(Color.Transparent, CircleShape)
                 .align(Alignment.BottomEnd)
-                .clickable {
-                    if (boardGameInfoActivity.boardGameData.liked == "False") {
-                        triggerConfetti = true
-                    } else if (boardGameInfoActivity.boardGameData.liked == "True") {
-                        triggerConfetti = false
-                    }
+                .bounceClickable {
+                    triggerConfetti = true
                     boardGameInfoActivity.toggleFavorite(boardGameInfoActivity.boardGameData.id)
                     boardGameInfoActivity.snackbarFavoriteVisible =
                         !boardGameInfoActivity.snackbarFavoriteVisible
@@ -729,6 +748,7 @@ fun favoriteButton(
                                 duration = SnackbarDuration.Short,
                             )
                             if (result == SnackbarResult.ActionPerformed) {
+                                triggerConfetti = true
                                 boardGameInfoActivity.toggleFavorite(boardGameInfoActivity.boardGameData.id)
                             }
                             boardGameInfoActivity.snackbarFavoriteVisible =
@@ -737,10 +757,21 @@ fun favoriteButton(
                     }
                 }
         )
-        if (triggerConfetti) {
+
+        DisposableEffect(triggerConfetti) {
+            if (triggerConfetti && boardGameInfoActivity.boardGameData.liked == "True") {
+                coroutineScope.launch {
+                    delay(2000)
+                    triggerConfetti = false
+                }
+            }
+            onDispose {
+            }
+        }
+        if (triggerConfetti && boardGameInfoActivity.boardGameData.liked == "True") {
             ParticleSystem(
-                18.dp,
-                15.dp,
+                23.dp,
+                20.dp,
                 200,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -789,9 +820,7 @@ fun ParticleSystem(
 
     // List of particles
     val particles: MutableList<Particle> = mutableListOf()
-    // For-loop that creates each individual particle and adds it to particles
     for (i in 1..size) {
-        // Colors that particle can have
         val colors = listOf(
             Color(255, 0, 0, 255),
             Color(0, 255, 0, 255),
@@ -800,10 +829,9 @@ fun ParticleSystem(
             Color(255, 235, 59, 255)
         )
 
-        // Adding the particle to particles
         particles.add(
             Particle(
-                Offset(posX.toFloat(), posY.toFloat()),
+                Offset(posX, posY),
                 Offset(1F, 1F),
                 Offset(0F, 0F),
                 colors[Random.nextInt(colors.size)],
@@ -813,12 +841,10 @@ fun ParticleSystem(
         )
     }
 
-    // Add all particles to a mutable state of particles
     val mutableParticles = remember { mutableStateListOf<Particle>() }
     mutableParticles.addAll(particles)
 
-    var counter =
-        0 // Counts how many iterations each particle has been updated
+    var counter = 0
 
     // Updates each particle pos, vel, acc, size and alpha
     LaunchedEffect(Unit) {
@@ -854,7 +880,7 @@ fun ParticleSystem(
 
             }
 
-            delay(16L) // Delay before next iteration
+            delay(16L)
             counter += 1
 
             if (counter > 200) {
@@ -948,3 +974,112 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
         }
     }
 }
+
+fun Modifier.bounceClickable(
+    minScale: Float = 0.5f,
+    onAnimationFinished: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+) = composed {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) minScale else 1f,
+        label = ""
+    ) {
+        if(isPressed) {
+            isPressed = false
+            onAnimationFinished?.invoke()
+        }
+    }
+
+    this
+        .graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        }
+        .clickable {
+            isPressed = true
+            onClick?.invoke()
+        }
+}
+
+
+@Composable
+fun Modifier.shakeAndOffsetClickable(
+    onClick: () -> Unit,
+    offsetX: Dp = 0.dp,
+    offsetY: Dp = 0.dp
+) = composed {
+    var isPressed by remember { mutableStateOf(false) }
+
+    val rotationOffset by animateFloatAsState(
+        targetValue = if (isPressed) 10f else 0f,
+        animationSpec = keyframes {
+            durationMillis = 3000
+            0.0f at 0
+            15.0f at 150
+            -15.0f at 300
+            15.0f at 450
+            -15.0f at 600
+            15.0f at 750
+            0.0f at 900
+            15.0f at 1050
+            -15.0f at 1200
+            15.0f at 1350
+            -15.0f at 1500
+            15.0f at 1650
+            -15.0f at 1800
+            15.0f at 1950
+            -15.0f at 2100
+            15.0f at 2250
+            -15.0f at 2400
+            15.0f at 2550
+            0.0f at 3000
+        }
+    )
+
+    val offsetXState by animateDpAsState(
+        targetValue = if (isPressed) offsetX else 0.dp,
+        animationSpec = keyframes {
+            durationMillis = 3000
+            0.dp at 0
+            offsetX at 3000
+        }
+    )
+
+    val offsetYState by animateDpAsState(
+        targetValue = if (isPressed) offsetY else 0.dp,
+        animationSpec = tween(300)
+    )
+
+    var changeSize = animateFloatAsState(
+        targetValue = if (!isPressed) 1f else 0f,
+        animationSpec = keyframes {
+            durationMillis = 4000
+            1.0f at 0
+            1.0f at 2999
+            0.0f at 3000
+            1.0f at 4000
+        }
+    ).value
+
+    DisposableEffect(isPressed) {
+        onDispose {
+            isPressed = false
+        }
+    }
+
+    this
+        .graphicsLayer(
+            scaleX = changeSize,
+            scaleY = changeSize,
+            rotationZ = rotationOffset,
+            translationX = offsetXState.value,
+            translationY = offsetYState.value
+        )
+        .clickable {
+            isPressed = true
+        }
+}
+
+
+

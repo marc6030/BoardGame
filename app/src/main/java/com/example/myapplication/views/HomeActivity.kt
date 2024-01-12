@@ -110,7 +110,14 @@ fun boardgameSelections(
     viewModel.fetchBoardGameCategories()
 
 
-    MenuScreen(navController = navController, actName = "Home", ourColumn = { innerPadding ->
+    MenuScreen(navController = navController, informationtext = "Is an app developed in Kotlin for Android. Its a platform for " +
+            "board game enthusiasts. It features functionalities for exploring " +
+            "various board games, providing users with detailed information about " +
+            "each game. Users can browse different categories of board games, view " +
+            "specific details, and possibly interact with some aspects related to " +
+            "board gaming. The app's design caters to those interested in discovering " +
+            "and learning more about board games, enhancing their gaming experience " +
+            "with accessible information and user-friendly navigation.", ourColumn = { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -445,7 +452,7 @@ fun BigPicture(
                 .height(500.dp)
                 .testTag("items_1234")
                 .clickable {
-                    navController.navigate("category/$gameID")
+                    navController.navigate("boardgameinfo/$gameID")
                 }
                 .shadow(
                     elevation = 8.dp,
