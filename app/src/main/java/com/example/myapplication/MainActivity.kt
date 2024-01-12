@@ -89,7 +89,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
     }
     NavHost(
         navController = navController,
-        startDestination = "personal"
+        startDestination = "home"
 
     ) {
         composable("nointernet") {
@@ -219,6 +219,34 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 row = 1
                 //SHOULD BE MODIFIED TO WORK PROPERLY
             )
+        }
+        composable(
+            route = "challenge",
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            }) {
+            ChallengeActivity(navController, boardDataViewModel, boardGameInfoActivity)
         }
         composable(
             route = "playedGames",

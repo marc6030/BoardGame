@@ -73,10 +73,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -106,6 +108,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var selectedTabIndex by remember { mutableStateOf(0) }
     var showYouTubePlayer by remember { mutableStateOf(false) }
 
+
     boardGameInfoActivity.fetchBoardGameData(gameID)
     boardGameInfoActivity.addToRecentBoardGames(gameID)
 
@@ -117,7 +120,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     val boardGame =
         boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
-    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center, fontSize = 50.sp)
+    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center, fontSize = 50.sp, shadow = Shadow(color = Color.Black, blurRadius = 6f))
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
 
@@ -190,7 +193,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             readyToDraw = true
                                         }
                                     },
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
                                 )
                                 Box(
                                     modifier = Modifier
@@ -334,11 +337,11 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     contentDescription = "contentDescription",
                                     modifier = Modifier
                                         .size(45.dp)
-                                        .background(Color.DarkGray, CircleShape)
+                                        .background(MaterialTheme.colorScheme.background, CircleShape)
                                         .align(Alignment.BottomStart)
                                         .clickable { boardGameInfoActivity.openRatingPopUp = !boardGameInfoActivity.openRatingPopUp
                                         },
-                                    tint = Color.DarkGray
+                                    tint = MaterialTheme.colorScheme.background
                                 )
                             }
                             Row(
@@ -404,7 +407,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     modifier = Modifier
                                         .size(25.dp)
                                         .align(Alignment.BottomStart)
-                                        .background(MaterialTheme.colorScheme.background, CircleShape)
+                                        .background(Color.DarkGray, CircleShape)
                                         .clickable {
                                             boardGameInfoActivity.openRatingPopUp =
                                                 !boardGameInfoActivity.openRatingPopUp
@@ -457,7 +460,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             "Description",
                                             "General Info"
                                         ),
-                                        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground)
                                     ) {
                                         selectedTabIndex = it;
                                     }
@@ -756,7 +758,7 @@ fun favoriteButton(
             ) { data ->
                 Snackbar(
                     snackbarData = data,
-                    actionColor = Color.LightGray, // Change the color of the "UNDO" text
+                    actionColor = MaterialTheme.colorScheme.background, // Change the color of the "UNDO" text
                     containerColor = Color.Gray, // Change the background color of the Snackbar
                     contentColor = Color.White
                 )// Change the color of the text in the Snackbar
@@ -909,7 +911,6 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                     .background(MaterialTheme.colorScheme.background, CircleShape)
                     .align(Alignment.BottomEnd)
                     .clickable {
-                        boardGameInfoActivity.addOrRemovePlayedGames(boardGameInfoActivity.currentGameID, "True")
                         boardGameInfoActivity.snackbarChallengeVisible =
                             !boardGameInfoActivity.snackbarChallengeVisible
                         if (boardGameInfoActivity.snackbarChallengeVisible) {
@@ -920,7 +921,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                                     duration = SnackbarDuration.Short,
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
-                                    boardGameInfoActivity.addOrRemovePlayedGames(gameID = boardGameInfoActivity.currentGameID, increment = "False")
+                                    //boardGameInfoActivity.(REMOVEFROMCHALLENGE)
                                 }
                                 boardGameInfoActivity.snackbarChallengeVisible =
                                     false

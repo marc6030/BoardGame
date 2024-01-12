@@ -22,9 +22,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,12 +42,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -143,6 +153,20 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
 
 @Composable
 fun KeyStats(viewModel: BoardDataViewModel){
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        Dialog(
+            showDialog = showDialog,
+            onDismissRequest = { showDialog = false },
+            text = "A Daily Logon Streak is a fun and rewarding feature we've introduced to enhance your experience with our app! Here's how it works:\n" +
+                    "\n" +
+                    "1. Log In Daily: Each day you log into our app, your streak goes up by one. It's that simple!\n" +
+                    "\n" +
+                    "2. Keep the Streak Alive: Make sure to log in every day to keep your streak going. If you miss a day, the streak resets to zero, so try to log in regularly."
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -160,6 +184,7 @@ fun KeyStats(viewModel: BoardDataViewModel){
             modifier = Modifier
                 .weight(0.33f)
                 .height(70.dp)
+                .clickable { showDialog = true }
         ) {
             StreakStat(viewModel.streak)
         }
@@ -204,8 +229,11 @@ fun StreakStat(streak : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 4.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+                    ),
                     fontSize = if(streak.length==1 ||streak.length == 0) 30.sp
                     else if(streak.length == 2) 25.sp
                     else if(streak.length == 3) 19.sp
@@ -218,7 +246,10 @@ fun StreakStat(streak : String){
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -258,8 +289,11 @@ fun RatedStat(nrOfRatedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 12.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, blurRadius = 8f)
+                    ),
                     fontSize = if(nrOfRatedGames.length==1 ||nrOfRatedGames.length == 0) 29.sp
                     else if(nrOfRatedGames.length == 2) 24.sp
                     else if(nrOfRatedGames.length == 3) 19.sp
@@ -272,7 +306,10 @@ fun RatedStat(nrOfRatedGames : String){
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -314,8 +351,11 @@ fun playedGamesStat(nrOfPlayedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 20.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, blurRadius = 8f)
+                    ),
                     fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
                     else if(nrOfPlayedGames.length == 2) 22.sp
                     else if(nrOfPlayedGames.length == 3) 15.sp
@@ -328,7 +368,10 @@ fun playedGamesStat(nrOfPlayedGames : String){
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -366,7 +409,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
                 Box(
@@ -376,8 +422,7 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
-                        .clickable {
-                            navController.navigate("ratedGames")
+                        .clickable { navController.navigate("ratedGames")
                         }
                 ){
                     Text(
@@ -386,7 +431,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
             }
@@ -413,7 +461,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
                 Box(
@@ -423,8 +474,7 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
-                        .clickable {
-                            // navController.navigate("challenges")
+                        .clickable { navController.navigate("challenge")
                         }
                 ){
                     Text(
@@ -433,7 +483,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
             }
@@ -441,6 +494,39 @@ fun Menu(navController: NavHostController){
     }
 }
 
+@Composable
+fun Dialog(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit,
+    text: String
+) {
+    if (showDialog) {
+        AlertDialog( modifier = Modifier
+            .background(MaterialTheme.colorScheme.background) ,
+            icon = {
+                androidx.compose.material.Icon(Icons.Filled.Info, contentDescription = "Info Icon", tint = MaterialTheme.colorScheme.onBackground)
+            },
+            title = {
+                Text(text = "BoardGame Bandits", color = MaterialTheme.colorScheme.onBackground)
+            },
+            text = {
+                Text(text = "$text", color = MaterialTheme.colorScheme.onBackground)
+            },
+            onDismissRequest = {
+                onDismissRequest()
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("Close", color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+        )
+    }
+}
 @Composable
 fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostController) {
     Column(
@@ -479,7 +565,10 @@ fun recentBoardGameSelection(headline: String,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 10.dp, top = 7.dp),
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+            )
         )
         LazyRow(
             modifier = Modifier.fillMaxHeight(),

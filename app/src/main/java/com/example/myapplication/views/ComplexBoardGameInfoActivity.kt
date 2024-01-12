@@ -38,7 +38,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -76,27 +79,28 @@ import kotlin.random.Random
 
 @Composable
 fun tabView(
-    modifier: Modifier = Modifier,
     texts: List<String>,
     onTabSelected: (selectedIndex: Int) -> Unit
 ) {
     var selectedTabIndex by remember {
         mutableStateOf(0)
     }
-    val inactiveColor = Color(0xFF777777)
     TabRow(
         selectedTabIndex = selectedTabIndex,
-        modifier = Modifier.background(Color.Black.copy(alpha = 0.2f))
+        modifier = Modifier.background(Color.Black.copy(alpha = 0.2f)),
+        containerColor = Color.White,
+        contentColor = Color.White,
     ) {
         texts.forEachIndexed { index, item ->
             Tab(
                 selected = selectedTabIndex == index,
                 selectedContentColor = Color.White,
                 unselectedContentColor = Color.Gray,
+                modifier = Modifier.background(MaterialTheme.colorScheme.background),
                 onClick = {
                     selectedTabIndex = index
                     onTabSelected(index)
-                }
+                },
             ) {
                 Text(
                     text = item,
@@ -118,7 +122,7 @@ fun description(boardGame: BoardGame) {
             .padding(10.dp)
     ) {
         item {
-            Box {
+            Box() {
                 Text(
                     text = boardGame.description,
                     style = MaterialTheme.typography.bodyLarge,
