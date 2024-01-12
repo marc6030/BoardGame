@@ -183,6 +183,34 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             FavoriteActivity(navController, favoriteViewModel, boardGameInfoActivity)
         }
         composable(
+            route = "challenge",
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                    animationSpec = tween(transitionDuration)
+                )
+            }) {
+            ChallengeActivity(navController, boardDataViewModel, boardGameInfoActivity)
+        }
+        composable(
             route = "playedGames",
             enterTransition = {
                 slideIntoContainer(
