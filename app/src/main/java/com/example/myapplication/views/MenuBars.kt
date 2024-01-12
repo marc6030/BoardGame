@@ -57,14 +57,14 @@ fun MenuScreen(navController: NavHostController, ourColumn: @Composable (Padding
 @Composable
 fun TopBar(navController: NavHostController, logo: Painter, scrollBehavior: TopAppBarScrollBehavior, onInfoClicked: () -> Unit) {
     CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f)
         ),
         title = {
             Icon(
                 modifier = Modifier
                     .size(80.dp)
-                    .padding(0.dp, 10.dp, 0.dp, 0.dp),
+                    .padding(0.dp, 10.dp, 0.dp, 10.dp),
                 painter = logo,
                 contentDescription = "Logo",
                 tint = MaterialTheme.colorScheme.onBackground
