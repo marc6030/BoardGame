@@ -9,11 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGameItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel, private var boardGameInfoActivity: BoardGameInfoActivity) : ViewModel() {
 
     var playedGamesList by mutableStateOf<List<BoardGameItem>>(emptyList())
+    var playedGamesCheck by mutableStateOf(0)
 
     var offset = 0
     private var limit = 10
@@ -56,37 +59,24 @@ class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel, private
     fun removeOrDecrementPlayedGames(boardgame : BoardGameItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var newPlayedCount  : Int
-                var updatedGameItem = playedGamesList.get(playedGamesList.indexOf(boardgame))
-                val newPlayedGamesList = playedGamesList.drop(playedGamesList.indexOf(boardgame))
-                newPlayedCount = updatedGameItem.playedCount.toInt()-1
-                updatedGameItem.playedCount = newPlayedCount.toString()
-                if(newPlayedCount != 0){
-                    playedGamesList = newPlayedGamesList.plus(updatedGameItem)
-                    }
-                else {
-                    playedGamesList = newPlayedGamesList
-                }
                 boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "False")
+                withContext(Dispatchers.Main) {
+                    playedGamesCheck++
+                }
             } catch (e: Exception) {
                 Log.v("removeDecrement_fault", "RemoveDecrement: $e")
-                // boardGameSearch = null
             }
         }
     }
     fun addOrIncrementPlayedGames(boardgame : BoardGameItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var newPlayedCount  : Int
-                var updatedGameItem = playedGamesList.get(playedGamesList.indexOf(boardgame))
-                val newPlayedGamesList = playedGamesList.drop(playedGamesList.indexOf(boardgame))
-                newPlayedCount = updatedGameItem.playedCount.toInt()+1
-                updatedGameItem.playedCount = newPlayedCount.toString()
-                playedGamesList = newPlayedGamesList.plus(updatedGameItem)
                 boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "True")
+                withContext(Dispatchers.Main) {
+                    playedGamesCheck++
+                }
             } catch (e: Exception) {
-                Log.v("bgsearch_fault", "searchlogs: $e")
-                // boardGameSearch = null
+                Log.v("addIncrement_fault", "AddIncrement: $e")
             }
         }
     }

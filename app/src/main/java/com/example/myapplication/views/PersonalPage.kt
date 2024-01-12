@@ -198,7 +198,7 @@ fun StreakStat(streak : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 4.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.background,
                     fontWeight = FontWeight.Bold,
                     fontSize = if(streak.length==1 ||streak.length == 0) 30.sp
                     else if(streak.length == 2) 25.sp
@@ -252,7 +252,7 @@ fun RatedStat(nrOfRatedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 12.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.background,
                     fontWeight = FontWeight.Bold,
                     fontSize = if(nrOfRatedGames.length==1 ||nrOfRatedGames.length == 0) 29.sp
                     else if(nrOfRatedGames.length == 2) 24.sp
@@ -308,7 +308,7 @@ fun playedGamesStat(nrOfPlayedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 20.dp),
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.background,
                     fontWeight = FontWeight.Bold,
                     fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
                     else if(nrOfPlayedGames.length == 2) 22.sp

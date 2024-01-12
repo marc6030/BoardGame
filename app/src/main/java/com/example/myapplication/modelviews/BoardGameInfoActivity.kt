@@ -18,16 +18,12 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     //var boardGameList by mutableStateOf<BoardGameItems?>(null)
 
     var boardGameData by mutableStateOf(BoardGame())
-    var boardGameList by mutableStateOf<BoardGameItems?>(null)
-    var isAtive by mutableStateOf(false)
 
     var openRatingPopUp by mutableStateOf(false)
     var openAddPopUp by mutableStateOf(false)
     var snackbarFavoriteVisible by mutableStateOf(false)
     var snackbarChallengeVisible by mutableStateOf(false)
 
-
-    private var db = FirebaseFirestore.getInstance()
     var youtubeID by mutableStateOf<String>("")
 
     var currentGameID = ""

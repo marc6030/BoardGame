@@ -22,6 +22,11 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     var boardGamesRow5 by mutableStateOf<List<BoardGameItem>>(emptyList())
     var bigPictureGame by mutableStateOf(BoardGame())
 
+    var categoryColumn by mutableStateOf<List<BoardGameItem>>(emptyList())
+
+    var loadCheck by mutableStateOf(0)
+
+
     var boardGamesRowRecent by mutableStateOf<List<BoardGameItem>>(emptyList())
 
     var streak by mutableStateOf("0")
@@ -42,6 +47,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     var offsetRow4 = 0
     var offsetRow5 = 0
 
+    var offsetColumnCategory = 0
 
 
     private var limit = 10
@@ -50,6 +56,19 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
 
     fun setIsLoading(setme : Boolean) {
         sharedViewModel.isLoading = setme
+    }
+
+    fun fetchBoardGameCategory(category : String) {
+        offsetColumnCategory = 0
+        Log.v("tada", "tada")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                categoryColumn =
+                    BoardGameRepository().getBoardGameList(limit = limit, offset = 0, category)
+            } catch (e: Exception) {
+                Log.v("Cant fetch GameCategories", "$e")
+            }
+        }
     }
 
     fun fetchBoardGameCategories() {
@@ -63,13 +82,13 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         Log.v("tada", "tada")
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                bigPictureGame = BoardGameRepository().getBoardGame("316554")
                 boardGamesRow0 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow0)
                 boardGamesRow1 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow1)
                 boardGamesRow2 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow2)
                 boardGamesRow3 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow3)
                 boardGamesRow4 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow4)
                 boardGamesRow5 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow5)
-                bigPictureGame = BoardGameRepository().getBoardGame("316554")
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
@@ -108,7 +127,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
 
     fun fetchAdditionalBoardGameCategories(row: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-
             try {
                 if (row == 0) {
                     offsetRow0 += limit

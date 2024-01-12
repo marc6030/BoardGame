@@ -106,7 +106,9 @@ fun boardgameSelections(
     viewModel: BoardDataViewModel
 ) {
 
-    LaunchedEffect(Unit) {
+    viewModel.loadCheck++
+
+    LaunchedEffect(viewModel.loadCheck) {
         viewModel.fetchBoardGameCategories()
     }
 
@@ -157,8 +159,9 @@ fun boardgameSelections(
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
     navController: NavHostController,
-    autoScrollDuration: Long = 3000L
-) {
+    autoScrollDuration: Long = 3000L)
+{
+
     val pagerState = rememberPagerState(
         initialPage = items.size/2,
         initialPageOffsetFraction = 0f
@@ -296,7 +299,7 @@ fun boardGameSelection(headline: String,
                     .clickable {
                         navController.navigate("boardgameinfo/$gameID")
                     }
-                    .shadow( 8.dp, RoundedCornerShape(8.dp) )
+                    .shadow(8.dp, RoundedCornerShape(8.dp))
             )
             {
                 AsyncImage(

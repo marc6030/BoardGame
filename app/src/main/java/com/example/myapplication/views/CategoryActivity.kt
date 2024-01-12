@@ -1,7 +1,6 @@
-package com.example.myapplication
+package com.example.myapplication.views
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,11 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,26 +29,28 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.FavoriteViewModel
-import com.example.myapplication.views.MenuScreen
 
 
 @Composable
-fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
+fun CategoryActivity(navController: NavHostController,
+                     viewModel: BoardDataViewModel,
+                     boardGameInfoActivity: BoardGameInfoActivity,
+                     category : String,
+                     row : Int) {
 
     val scrollState = rememberLazyListState()
 
@@ -66,13 +64,12 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalFavoriteBoardGames()
+            viewModel.fetchAdditionalBoardGameCategories(row)
         }
     }
-    viewModel.fetchFavoriteBoardGames()
 
-    LaunchedEffect(viewModel.favoriteBoardGameListCheck){
-        viewModel.fetchFavoriteBoardGames()
+    LaunchedEffect(Unit){
+        viewModel.fetchBoardGameCategory(category)
     }
 
 
@@ -92,7 +89,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
     ) {
         Spacer(Modifier.height(40.dp))
         Text(
-            text = "My Games",
+            text = category,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp),
@@ -105,7 +102,7 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            items(viewModel.favoriteBoardGameList) { boardgame ->
+            items(viewModel.categoryColumn) { boardgame ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -133,16 +130,6 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                             color = MaterialTheme.colorScheme.onBackground,
                         )
                     }
-                    Icon(
-                        imageVector = Icons.Outlined.Favorite,
-                        contentDescription = "Favorite Icon",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clickable {
-                                viewModel.removeFavorite(boardgame)
-                            }
-                    )
                     Spacer(Modifier.width(10.dp))
                 }
             }
@@ -159,11 +146,3 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
     }
 }
 
-fun shortTitel(name: String): String{
-    val index = name.indexOf(":")
-    return if (index != -1) {
-        name.substring(0, index)
-    } else {
-        name
-    }
-}
