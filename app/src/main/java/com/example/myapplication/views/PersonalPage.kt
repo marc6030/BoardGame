@@ -70,7 +70,18 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
     val silver: Painter = painterResource(id = R.drawable.silver)
     val gold: Painter = painterResource(id = R.drawable.gold)
 
-    MenuScreen(navController = navController, informationtext = "Test", ourColumn = { innerPadding ->
+    MenuScreen(navController = navController, informationtext = "Welcome to Your Personal Page!\n" +
+            "\n" +
+            "Your Personal Page is your own private space in our app where you can express yourself," +
+            "manage your activities, and keep track of your progress. Here's what you can do here:" +
+           "\n\n1. View Your Activity: All your recent activities, from your posts to your interactions," +
+            "are displayed here. It's a great way to look back on what you've achieved and who you've " +
+            "connected with. \n\n 2. Manage Your Settings: Your Personal Page is also where you can adjust" +
+            "your settings. Whether it's privacy preferences or notification controls, this is the place to " +
+            "make the app work best for you. Track Your Progress: If our app involves goals, tasks, or challenges," +
+            "your Personal Page will show your progress. Celebrate your achievements and plan your next steps, all " +
+            " from this convenient dashboard.",
+        ourColumn = { innerPadding ->
         val gradientFrom = MaterialTheme.colorScheme.surface
         val gradientTo = MaterialTheme.colorScheme.background
         Column(
