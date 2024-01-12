@@ -100,26 +100,26 @@ fun BottomNavigationBar(navController: NavHostController) {
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-            BottomNavigationItem(
-                icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Home")},
-                label = { Text(text = "Home") },
-                selectedContentColor = Color.White,
-                unselectedContentColor = Color.White.copy(0.4f),
-                alwaysShowLabel = true,
-                selected = currentRoute == "home",
-                onClick = {
-                    navController.navigate("home") {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
-                            }
+        BottomNavigationItem(
+            icon = { Icon(imageVector = Icons.Default.Home, contentDescription = "Home")},
+            label = { Text(text = "Home") },
+            selectedContentColor = Color.White,
+            unselectedContentColor = Color.White.copy(0.4f),
+            alwaysShowLabel = true,
+            selected = currentRoute == "home",
+            onClick = {
+                navController.navigate("home") {
+                    navController.graph.startDestinationRoute?.let { route ->
+                        popUpTo(route) {
+                            saveState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-            )
-            BottomNavigationItem(
+            }
+        )
+        BottomNavigationItem(
                 icon = { Icon(imageVector = Icons.Default.Person, contentDescription = "personal")},
                 label = { Text(text = "My Page") },
                 selectedContentColor = Color.White,
@@ -135,11 +135,11 @@ fun BottomNavigationBar(navController: NavHostController) {
                         }
                         launchSingleTop = true
                         restoreState = true
-                    }
                 }
-            )
-        }
+            }
+        )
     }
+}
 
 // Placeholder for AlertDialogExample Composable
 @Composable
@@ -149,14 +149,14 @@ fun DialogBox(
     infotext: String
 ) {
     if (showDialog) {
-        AlertDialog( modifier = Modifier
-            .background(MaterialTheme.colorScheme.background) ,
+        AlertDialog(
             icon = {
                 Icon(Icons.Filled.Info, contentDescription = "Info Icon", tint = MaterialTheme.colorScheme.onBackground)
             },
             title = {
                 Text(text = "BoardGame Bandits", color = MaterialTheme.colorScheme.onBackground)
             },
+            containerColor = MaterialTheme.colorScheme.background,
             text = {
                 Text(text = "$infotext", color = MaterialTheme.colorScheme.onBackground)
             },

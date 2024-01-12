@@ -1,18 +1,30 @@
 package com.example.myapplication
 
 
+import android.os.Build
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,6 +53,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
     val viewModel: SharedViewModel by viewModels()
 
+
+
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +67,11 @@ class MainActivity : ComponentActivity() {
         val playedGamesViewModel = PlayedGamesViewModel(sharedViewModel = viewModel,
             boardGameInfoActivity = boardGameInfoActivity
         )
+
+        val window: Window = this@MainActivity.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = Color.Black.toArgb()
 
         setContent {
             navController = rememberNavController()
@@ -77,7 +96,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                  boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, playedGamesViewModel: PlayedGamesViewModel, account: GoogleSignInAccount?, navController: NavHostController,
                  boardGameInfoActivity: BoardGameInfoActivity) {
 
-    val transitionDuration = 2000 // ms
+    val transitionDuration = 1000 // ms
     val context = LocalContext.current
     LaunchedEffect(true){
         while(true){
@@ -120,8 +139,8 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                     animationSpec = tween(transitionDuration)
                 )
-            })
-        {
+            }
+        ) {
             HomeActivity(navController, boardDataViewModel)
         }
         composable(
@@ -129,7 +148,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
+                    animationSpec = tween(transitionDuration),
                 )
             },
             exitTransition = {
@@ -152,8 +171,6 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             }) {
 
             searchActivity(navController, boardSearchViewModel)
-
-
         }
         composable(
             route = "favorite",
