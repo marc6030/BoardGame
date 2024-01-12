@@ -416,8 +416,7 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
-                        .clickable {
-                            // navController.navigate("challenges")
+                        .clickable { navController.navigate("challenge")
                         }
                 ){
                     Text(
