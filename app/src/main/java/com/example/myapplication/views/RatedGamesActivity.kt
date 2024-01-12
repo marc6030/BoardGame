@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -114,12 +115,15 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
                             Text(
                                 text = shortTitel(boardgame.name),
                                 color = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier.padding(end = 1.dp)
                             )
                         }
                         Text(text = boardgame.rating + "/10",
                             fontSize = 22.sp,
                             modifier = Modifier
                                 .padding(5.dp))
+                        Icon(imageVector = Icons.Filled.Star, contentDescription = "star",
+                            modifier = Modifier.size(30.dp))
                         Spacer(Modifier.width(10.dp))
                     }
                 }
