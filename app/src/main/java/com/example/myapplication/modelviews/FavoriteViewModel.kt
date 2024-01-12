@@ -16,8 +16,8 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
 
 
     var favoriteBoardGameList by mutableStateOf<List<BoardGameItem>>(emptyList())
-
     var favoriteCheck by mutableStateOf(0)
+
     var offset = 0
     private var limit = 10
     private fun getUserID(): String {
@@ -60,15 +60,15 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
     fun removeFavorite(boardgame : BoardGameItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                favoriteBoardGameList = favoriteBoardGameList.filter{ it != boardgame}
                 BoardGameRepository().toggleFavoriteGame(getUserID(), boardgame.id)
-                withContext(Dispatchers.Main) {
-                    favoriteCheck++
-                }
             } catch (e: Exception) {
                 Log.v("bgsearch_fault", "searchlogs: $e")
                 // boardGameSearch = null
             }
         }
     }
+
+
 
 }

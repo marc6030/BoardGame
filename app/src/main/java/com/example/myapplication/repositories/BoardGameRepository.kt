@@ -107,7 +107,8 @@ class BoardGameRepository {
                 User(
                     streak = jsonObject.getString("streak"),
                     playedGames = jsonObject.getString("played_games"),
-                    ratedGames = jsonObject.getString("rated_games")
+                    ratedGames = jsonObject.getString("rated_games"),
+                    likedGames = jsonObject.getString("liked_games")
                 )
             )
         }
@@ -188,6 +189,11 @@ class BoardGameRepository {
         val jsonResponse = makeApiRequest(urlPath)
         val jsonArray = JSONArray(jsonResponse)
         val favoriteBoardGames = mutableListOf<BoardGameItem>()
+
+         if (jsonArray.length() == 0) {
+             return favoriteBoardGames;
+         }
+
         for (i in 0 until jsonArray.length()) {
             val jsonObject = jsonArray.getJSONObject(i)
             favoriteBoardGames.add(

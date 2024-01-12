@@ -5,5 +5,7 @@ data class User (
 
     var playedGames: String = "",
 
-    var ratedGames: String = ""
+    var ratedGames: String = "",
+
+    var likedGames: String = ""
 )

@@ -148,7 +148,7 @@ fun DialogBox(
 ) {
     if (showDialog) {
         AlertDialog( modifier = Modifier
-            .background(MaterialTheme.colorScheme.background) ,
+            .background(Color.Transparent) ,
             icon = {
                 Icon(Icons.Filled.Info, contentDescription = "Info Icon", tint = MaterialTheme.colorScheme.onBackground)
             },

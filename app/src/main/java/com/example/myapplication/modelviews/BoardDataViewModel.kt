@@ -32,6 +32,13 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     var streak by mutableStateOf("0")
     var nrOfPlayedGames by mutableStateOf("0")
     var nrOfRatedGames by mutableStateOf("0")
+    var nrOfLikedGames by mutableStateOf("0")
+
+
+    var bronzeRank by mutableStateOf(false)
+    var silverRank by mutableStateOf(false)
+    var goldRank by mutableStateOf(false)
+
 
     val categoryRow0 = null
     val categoryRow1 = "fighting"
@@ -116,9 +123,10 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 streak = user.get(0).streak
                 nrOfPlayedGames = user.get(0).playedGames
                 nrOfRatedGames = user.get(0).ratedGames
+                nrOfLikedGames = user.get(0).likedGames
                 Log.v("tada", "tada")
             } catch (e: Exception) {
-                Log.v("Cant fetch recentGames", "$e")
+                Log.v("Cant fetch keystats", "$e")
             }
         }
     }

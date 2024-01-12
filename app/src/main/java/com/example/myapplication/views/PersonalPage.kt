@@ -69,6 +69,16 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
     val bronze: Painter = painterResource(id = R.drawable.bronze)
     val silver: Painter = painterResource(id = R.drawable.silver)
     val gold: Painter = painterResource(id = R.drawable.gold)
+    var showDialog by remember { mutableStateOf(false) }
+
+    rankDecider(viewModel = viewModel)
+
+    if (showDialog) {
+        RankInfo(
+            showDialog = showDialog,
+            onDismissRequest = { showDialog = false },
+        )
+    }
 
     MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
         val gradientFrom = MaterialTheme.colorScheme.surface
@@ -99,6 +109,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                     //.size(300.dp) bronze
                     .size(250.dp)
                     .align(Alignment.CenterHorizontally)
+                    .clickable {showDialog = true}
                 ) {
                     Box(
                         modifier = Modifier
@@ -113,7 +124,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                                 .fillMaxSize()
                         )
                     }
-                    if(true) {
+                    if(viewModel.bronzeRank && !viewModel.silverRank && !viewModel.goldRank) {
                         Image(
                             contentDescription = "bronze",
                             painter = bronze,
@@ -123,7 +134,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                                 .padding(bottom = 1.dp)
                         )
                     }
-                    if(false){
+                    if(viewModel.silverRank && !viewModel.goldRank){
                         Image(
                             contentDescription = "silver",
                             painter = silver,
@@ -133,7 +144,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                                 .padding(bottom = 2.dp)
                         )
                     }
-                    if(false){
+                    if(viewModel.goldRank){
                         Image(
                             contentDescription = "gold",
                             painter = gold,
@@ -425,7 +436,8 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
-                        .clickable { navController.navigate("ratedGames")
+                        .clickable {
+                            navController.navigate("ratedGames")
                         }
                 ){
                     Text(
@@ -477,7 +489,8 @@ fun Menu(navController: NavHostController){
                         .fillMaxWidth()
                         .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
-                        .clickable { navController.navigate("challenge")
+                        .clickable {
+                            navController.navigate("challenge")
                         }
                 ){
                     Text(
@@ -605,5 +618,71 @@ fun recentBoardGameSelection(headline: String,
                 }
             }
         }
+    }
+}
+
+
+fun rankDecider(viewModel: BoardDataViewModel){
+    if(viewModel.nrOfRatedGames.toInt() > 99
+        || viewModel.nrOfPlayedGames.toInt() > 99
+        || viewModel.nrOfLikedGames.toInt() > 99
+        || viewModel.streak.toInt() >99){
+        viewModel.bronzeRank = true
+        if(viewModel.nrOfRatedGames.toInt() > 249 && viewModel.nrOfPlayedGames.toInt() > 249
+            || viewModel.nrOfPlayedGames.toInt() > 249 && viewModel.nrOfLikedGames.toInt() > 249
+            || viewModel.nrOfLikedGames.toInt() > 249 && viewModel.nrOfRatedGames.toInt() > 249
+            || viewModel.streak.toInt() >249 && viewModel.nrOfRatedGames.toInt() > 249
+            || viewModel.streak.toInt() >249 && viewModel.nrOfPlayedGames.toInt() > 249
+            || viewModel.streak.toInt() >249 && viewModel.nrOfLikedGames.toInt() > 249 
+            ){
+            viewModel.silverRank = true
+            if(viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499
+                || viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.streak.toInt() >499
+                || viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499 &&  viewModel.streak.toInt() >499
+                || viewModel.streak.toInt() >499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499){
+                viewModel.goldRank = true
+            }
+        }
+    }
+}
+
+@Composable
+fun RankInfo(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog( modifier = Modifier
+            .background(Color.Transparent),
+            icon = {
+                androidx.compose.material.Icon(
+                    Icons.Filled.Info,
+                    contentDescription = "Info Icon",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            title = {
+                Text(text = "Ranking System", color = MaterialTheme.colorScheme.onBackground)
+            },
+            text = {
+                Text(text = "You can obtain 3 different ranks: Bronze, Silver and Gold\n\n" +
+                    "To obtain the Bronze rank you need to complete 1 Bronze challenge.\n\n" +
+                    "To obtain the Silver rank you need to complete 2 Silver challenges.\n\n" +
+                    "To obtain the Gold rank you need to complete 3 different challenges.\n\n" +
+                    "See the different challenges under the 'Challenges' page", color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
+            },
+            onDismissRequest = {
+                onDismissRequest()
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("Close", color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+        )
     }
 }

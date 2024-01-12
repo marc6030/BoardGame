@@ -2,9 +2,6 @@ package com.example.myapplication
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,49 +14,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.BoardGameInfoActivity
-import com.example.myapplication.modelviews.FavoriteViewModel
-import com.example.myapplication.views.MenuScreen
 
 
 @Composable
@@ -103,18 +81,41 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
 
         ) {
             item {
-                achievement(navController, viewModel, "Liked Games!", 30)
+                achievement(navController, viewModel, "Liked Games! - Bronze ", viewModel.nrOfLikedGames.toInt(), 100f)
             }
             item {
-                achievement(navController, viewModel, "Played Games!", 60)
+                achievement(navController, viewModel, "Liked Games! - Silver", viewModel.nrOfLikedGames.toInt(), 250f)
             }
             item {
-                achievement(navController, viewModel, "Logon Streak!", 7)
+                achievement(navController, viewModel, "Liked Games! - Gold", viewModel.nrOfLikedGames.toInt(), 500f)
             }
             item {
-                achievement(navController, viewModel, "Rated Games!", 26)
+                achievement(navController, viewModel, "Played Games! - Bronze", viewModel.nrOfPlayedGames.toInt(), 100f)
             }
-
+            item {
+                achievement(navController, viewModel, "Played Games! - Silver", viewModel.nrOfPlayedGames.toInt(), 250f)
+            }
+            item {
+                achievement(navController, viewModel, "Played Games! - Gold", viewModel.nrOfPlayedGames.toInt(), 500f)
+            }
+            item {
+                achievement(navController, viewModel, "Logon Streak! - Bronze", viewModel.streak.toInt(), 100f)
+            }
+            item {
+                achievement(navController, viewModel, "Logon Streak! - Silver", viewModel.streak.toInt(), 250f)
+            }
+            item {
+                achievement(navController, viewModel, "Logon Streak! - Gold", viewModel.streak.toInt(), 500f)
+            }
+            item {
+                achievement(navController, viewModel, "Rated Games! - Bronze", viewModel.nrOfRatedGames.toInt(), 100f)
+            }
+            item {
+                achievement(navController, viewModel, "Rated Games! - Silver", viewModel.nrOfRatedGames.toInt(), 250f)
+            }
+            item {
+                achievement(navController, viewModel, "Rated Games! - Gold", viewModel.nrOfRatedGames.toInt(), 500f)
+            }
         }
 
         }
@@ -130,10 +131,12 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
 }
 
 @Composable
-fun achievement(navController: NavHostController, viewModel: BoardDataViewModel, Headline: String, Completion: Int){
+fun achievement(navController: NavHostController, viewModel: BoardDataViewModel, Headline: String, Completion: Int, Bar: Float){
     //val item = viewModel.bigPictureGame
-    val item: Painter = painterResource(id = R.drawable.banditachievement)
-    val progress = Completion / 100f
+    val bronze: Painter = painterResource(id = R.drawable.banditachievement)
+    val progress = Completion / Bar
+    var percent = (progress * 100).toInt()
+
 
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -149,7 +152,7 @@ fun achievement(navController: NavHostController, viewModel: BoardDataViewModel,
                     .size(125.dp)
             ) {
                 Image(
-                    painter = item,
+                    painter = bronze,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -161,7 +164,7 @@ fun achievement(navController: NavHostController, viewModel: BoardDataViewModel,
 
             // Progress Indicator and Text
             Column {
-                Text(text = Headline, fontSize = 20.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier
+                Text(text = Headline, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier
                     .padding(4.dp)
                     .align(Alignment.CenterHorizontally), color = MaterialTheme.colorScheme.onBackground)
                 LinearProgressIndicator(
@@ -172,7 +175,7 @@ fun achievement(navController: NavHostController, viewModel: BoardDataViewModel,
                     color = MaterialTheme.colorScheme.onBackground,
                     trackColor = MaterialTheme.colorScheme.background
                 )
-                Text(text = "$Completion/100 ($Completion%)", fontSize = 15.sp, fontWeight = FontWeight.Normal, modifier = Modifier
+                Text(text = "$Completion/${Bar.toInt()} (${percent}%)", fontSize = 15.sp, fontWeight = FontWeight.Normal, modifier = Modifier
                     .padding(4.dp)
                     .align(Alignment.CenterHorizontally), color = MaterialTheme.colorScheme.onBackground)
             }

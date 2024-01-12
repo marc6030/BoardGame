@@ -73,11 +73,12 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             viewModel.fetchAdditionalFavoriteBoardGames()
         }
     }
-    viewModel.fetchFavoriteBoardGames()
 
-    LaunchedEffect(viewModel.favoriteCheck){
+    LaunchedEffect(Unit) {
         viewModel.fetchFavoriteBoardGames()
     }
+
+
 
 
     val gradientFrom = MaterialTheme.colorScheme.surface

@@ -911,6 +911,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                     .background(MaterialTheme.colorScheme.background, CircleShape)
                     .align(Alignment.BottomEnd)
                     .clickable {
+                        boardGameInfoActivity.addOrRemovePlayedGames(boardGameInfoActivity.currentGameID, "True")
                         boardGameInfoActivity.snackbarChallengeVisible =
                             !boardGameInfoActivity.snackbarChallengeVisible
                         if (boardGameInfoActivity.snackbarChallengeVisible) {
@@ -921,7 +922,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                                     duration = SnackbarDuration.Short,
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
-                                    //boardGameInfoActivity.(REMOVEFROMCHALLENGE)
+                                    boardGameInfoActivity.addOrRemovePlayedGames(boardGameInfoActivity.currentGameID, "False")
                                 }
                                 boardGameInfoActivity.snackbarChallengeVisible =
                                     false
