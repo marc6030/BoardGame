@@ -32,7 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuScreen(navController: NavHostController, actName: String, ourColumn: @Composable (PaddingValues) -> Unit) {
+fun MenuScreen(navController: NavHostController, ourColumn: @Composable (PaddingValues) -> Unit, informationtext: String) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var showDialog by remember { mutableStateOf(false) }
     val logoPainter: Painter = painterResource(id = R.drawable.newbanditlogo)
@@ -41,6 +41,7 @@ fun MenuScreen(navController: NavHostController, actName: String, ourColumn: @Co
         DialogBox(
             showDialog = showDialog,
             onDismissRequest = { showDialog = false },
+            infotext = informationtext
         )
     }
 
@@ -144,7 +145,8 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Composable
 fun DialogBox(
     showDialog: Boolean,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    infotext: String
 ) {
     if (showDialog) {
         AlertDialog( modifier = Modifier
@@ -156,14 +158,7 @@ fun DialogBox(
                 Text(text = "BoardGame Bandits", color = MaterialTheme.colorScheme.onBackground)
             },
             text = {
-                Text(text = "Is an app developed in Kotlin for Android. Its a platform for " +
-                        "board game enthusiasts. It features functionalities for exploring " +
-                        "various board games, providing users with detailed information about " +
-                        "each game. Users can browse different categories of board games, view " +
-                        "specific details, and possibly interact with some aspects related to " +
-                        "board gaming. The app's design caters to those interested in discovering " +
-                        "and learning more about board games, enhancing their gaming experience " +
-                        "with accessible information and user-friendly navigation.", color = MaterialTheme.colorScheme.onBackground)
+                Text(text = "$infotext", color = MaterialTheme.colorScheme.onBackground)
             },
             onDismissRequest = {
                 onDismissRequest()

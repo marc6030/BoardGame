@@ -69,7 +69,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
     val bronze: Painter = painterResource(id = R.drawable.bronze)
     val gold: Painter = painterResource(id = R.drawable.gold)
 
-    MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
+    MenuScreen(navController = navController, informationtext = "Test", ourColumn = { innerPadding ->
         val gradientFrom = MaterialTheme.colorScheme.surface
         val gradientTo = MaterialTheme.colorScheme.background
         Column(
