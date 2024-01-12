@@ -452,7 +452,7 @@ fun BigPicture(
                 .height(500.dp)
                 .testTag("items_1234")
                 .clickable {
-                    navController.navigate("category/$gameID")
+                    navController.navigate("boardgameinfo/$gameID")
                 }
                 .shadow(
                     elevation = 8.dp,
