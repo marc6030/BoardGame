@@ -164,7 +164,8 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
                     }
                 }
             }
-        }
+        Spacer(modifier = Modifier.height(20.dp))
+    }
     IconButton(
         onClick = { navController.popBackStack() }
     ){

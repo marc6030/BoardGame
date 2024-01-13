@@ -87,7 +87,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 categoryColumn =
                     BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category)
             } catch (e: Exception) {
-                Log.v("Cant fetch GameCategories", "$e")
+                Log.v("Cant fetch GameCategory", "$e")
             }
         }
     }
@@ -99,7 +99,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 categoryColumn +=
                     BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category)
             } catch (e: Exception) {
-                Log.v("Cant fetch GameCategories", "$e")
+                Log.v("Cant fetch additional GAMECATEGORY", "$e")
             }
         }
     }

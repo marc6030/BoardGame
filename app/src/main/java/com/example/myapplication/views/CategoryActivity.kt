@@ -1,6 +1,7 @@
 package com.example.myapplication.views
 
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,7 +57,7 @@ fun CategoryActivity(navController: NavHostController,
         derivedStateOf {
             val layoutInfo = scrollState.layoutInfo
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount -2
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount -1
         }
     }
 
@@ -132,6 +133,7 @@ fun CategoryActivity(navController: NavHostController,
                 }
             }
         }
+        Spacer(modifier = Modifier.height(20.dp))
     }
     IconButton(
         onClick = { navController.popBackStack() }

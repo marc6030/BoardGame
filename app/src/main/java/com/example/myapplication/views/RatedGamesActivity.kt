@@ -139,7 +139,8 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
                     }
                 }
             }
-        }
+        Spacer(modifier = Modifier.height(20.dp))
+    }
     IconButton(
         onClick = { navController.popBackStack() }
     ){

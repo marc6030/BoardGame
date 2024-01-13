@@ -154,11 +154,12 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                                 viewModel.removeFavorite(boardgame)
                             }
                     )
-                    Spacer(Modifier.width(10.dp))
                 }
             }
         }
+        Spacer(modifier = Modifier.height(20.dp))
     }
+    Spacer(modifier = Modifier.height(20.dp))
     IconButton(
         onClick = { navController.popBackStack() }
     ){
