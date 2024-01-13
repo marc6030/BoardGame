@@ -145,7 +145,6 @@ fun achievement(Headline: String, Completion: Int, Bar: Float) {
     val progress = Completion / Bar
     var percent = (progress * 100).toInt()
 
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -203,7 +202,3 @@ fun achievement(Headline: String, Completion: Int, Bar: Float) {
         }
     }
 }
-
-
-
-

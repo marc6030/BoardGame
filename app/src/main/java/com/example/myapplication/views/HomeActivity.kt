@@ -135,7 +135,7 @@ fun boardgameSelections(
                     BigPicture(viewModel, navController, innerPadding.calculateTopPadding())
                 }
                 item {
-                    boardGameSelection("Popular", viewModel, 1, navController)
+                    boardGameSelection("Fighting", viewModel, 1, navController)
                 }
                 item {
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
@@ -144,19 +144,19 @@ fun boardgameSelections(
                     RoundboardGameSelection("Categories", viewModel, navController)
                 }
                 item {
-                    boardGameSelection("Superhot", viewModel, 2, navController)
+                    boardGameSelection("Economic", viewModel, 2, navController)
                 }
                 item {
-                    boardGameSelection("rpggames", viewModel, 3, navController)
+                    boardGameSelection("Card game", viewModel, 3, navController)
                 }
                 item {
-                    boardGameSelection("dungeon games", viewModel, 4, navController)
+                    boardGameSelection("Fantasy", viewModel, 4, navController)
                 }
                 item {
-                    boardGameSelection("shooters", viewModel, 5, navController)
+                    boardGameSelection("Racing", viewModel, 5, navController)
                 }
-
             }
+            Spacer(modifier = Modifier.height(80.dp))
         }
     })
 }
@@ -341,7 +341,6 @@ fun RoundboardGameSelection(headline: String,
 
     val currentRow = viewModel.categories
 
-
     Text(
         text = headline,
         fontSize = 20.sp,
@@ -384,7 +383,7 @@ fun RoundboardGameSelection(headline: String,
                 )
                 Text(item,
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 18.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     style = TextStyle(
                         shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
