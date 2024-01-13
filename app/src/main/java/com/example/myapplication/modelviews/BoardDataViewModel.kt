@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
+import com.example.myapplication.models.Categories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
 
     var categoryColumn by mutableStateOf<List<BoardGameItem>>(emptyList())
 
-    var loadCheck by mutableStateOf(0)
+    var categories by mutableStateOf(Categories(emptyList()))
 
 
     var boardGamesRowRecent by mutableStateOf<List<BoardGameItem>>(emptyList())
@@ -38,7 +39,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     var bronzeRank by mutableStateOf(false)
     var silverRank by mutableStateOf(false)
     var goldRank by mutableStateOf(false)
-
+    var platRank by mutableStateOf(false)
 
     val categoryRow0 = null
     val categoryRow1 = "fighting"
@@ -65,13 +66,38 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         sharedViewModel.isLoading = setme
     }
 
+    fun getAllCategories() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val categoriesAll: Categories = BoardGameRepository().getAllCategories()
+                categories = categoriesAll
+
+            } catch (e: Exception) {
+                Log.v("Couldn't fetch all categories", "searchlogs: ${categories}")
+                // boardGameSearch = null
+            }
+        }
+    }
+
     fun fetchBoardGameCategory(category : String) {
         offsetColumnCategory = 0
         Log.v("tada", "tada")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 categoryColumn =
-                    BoardGameRepository().getBoardGameList(limit = limit, offset = 0, category)
+                    BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category)
+            } catch (e: Exception) {
+                Log.v("Cant fetch GameCategories", "$e")
+            }
+        }
+    }
+    fun fetchAdditionalBoardGameCategory(category : String) {
+        offsetColumnCategory += limit
+        Log.v("tada", "tada")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                categoryColumn +=
+                    BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category)
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
             }
@@ -130,6 +156,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
             }
         }
     }
+
 
 
 

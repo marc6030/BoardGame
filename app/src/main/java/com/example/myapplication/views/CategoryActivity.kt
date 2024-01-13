@@ -48,9 +48,7 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 @Composable
 fun CategoryActivity(navController: NavHostController,
                      viewModel: BoardDataViewModel,
-                     boardGameInfoActivity: BoardGameInfoActivity,
-                     category : String,
-                     row : Int) {
+                     category : String) {
 
     val scrollState = rememberLazyListState()
 
@@ -58,13 +56,13 @@ fun CategoryActivity(navController: NavHostController,
         derivedStateOf {
             val layoutInfo = scrollState.layoutInfo
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount -2
         }
     }
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalBoardGameCategories(row)
+            viewModel.fetchAdditionalBoardGameCategory(category)
         }
     }
 

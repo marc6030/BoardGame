@@ -69,6 +69,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
     val bronze: Painter = painterResource(id = R.drawable.bronze)
     val silver: Painter = painterResource(id = R.drawable.silver)
     val gold: Painter = painterResource(id = R.drawable.gold)
+    val plat: Painter = painterResource(id = R.drawable.plat)
     var showDialog by remember { mutableStateOf(false) }
 
     rankDecider(viewModel = viewModel)
@@ -82,97 +83,119 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
 
     MenuScreen(navController = navController, informationtext = "Welcome to Your Personal Page!\n" +
             "\n" +
-            "Your Personal Page is your own private space in our app where you can express yourself," +
-            "manage your activities, and keep track of your progress. Here's what you can do here:" +
-           "\n\n1. View Your Activity: All your recent activities, from your posts to your interactions," +
-            "are displayed here. It's a great way to look back on what you've achieved and who you've " +
-            "connected with. \n\n 2. Manage Your Settings: Your Personal Page is also where you can adjust" +
-            "your settings. Whether it's privacy preferences or notification controls, this is the place to " +
-            "make the app work best for you. Track Your Progress: If our app involves goals, tasks, or challenges," +
-            "your Personal Page will show your progress. Celebrate your achievements and plan your next steps, all " +
-            " from this convenient dashboard.",
+            "Your Personal Page is your own private space in our app where you can keep track of your progress. Here's what you can do here:" +
+            "\n\n1. View Your Activity: All your recent visited board games" +
+            "are displayed here.\n\n 2. Track Your Progress: Our app involves challenges, which can be completed by rating, playing, adding games to My Games and loggin into the app every day!" +
+            "Your Personal Page will show your progress. Celebrate your achievements and plan your next steps, all " +
+            " from this convenient dashboard.\n\n" +
+            "You can also go up in rank, click the profile picture to find out how!",
         ourColumn = { innerPadding ->
-        val gradientFrom = MaterialTheme.colorScheme.surface
-        val gradientTo = MaterialTheme.colorScheme.background
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .drawBehind {
-                    drawRect(
-                        Brush.radialGradient(
-                            center = Offset(this.size.width / 2, 525f),
-                            radius = this.size.width * 1.5f,
-                            colorStops = arrayOf(
-                                0f to gradientFrom,
-                                0.8f to gradientTo
-                            ),
-                            tileMode = TileMode.Decal
-                        )
-                    )
-                }
-        ) {
+            val gradientFrom = MaterialTheme.colorScheme.surface
+            val gradientTo = MaterialTheme.colorScheme.background
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-            ){
-                Box(modifier = Modifier
-                    //.size(300.dp) bronze
-                    .size(250.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .clickable {showDialog = true}
+                    .drawBehind {
+                        drawRect(
+                            Brush.radialGradient(
+                                center = Offset(this.size.width / 2, 525f),
+                                radius = this.size.width * 1.5f,
+                                colorStops = arrayOf(
+                                    0f to gradientFrom,
+                                    0.8f to gradientTo
+                                ),
+                                tileMode = TileMode.Decal
+                            )
+                        )
+                    }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(140.dp)
-                            .align(Alignment.Center)
+                    Box(modifier = Modifier
+                        //.size(300.dp) bronze
+                        .size(250.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable { showDialog = true }
+                    ) {
+                        Box(
+                            modifier = if (viewModel.platRank) Modifier
+                                .size(115.dp)
+                                .align(Alignment.Center) else Modifier
+                                .size(140.dp)
+                                .align(Alignment.Center)
+                        ) {
+                            Image(
+                                contentDescription = "profile",
+                                painter = profilepicture,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .fillMaxSize()
+                            )
+                        }
+                        if (viewModel.bronzeRank && !viewModel.silverRank && !viewModel.goldRank && !viewModel.platRank) {
+                            Image(
+                                contentDescription = "bronze",
+                                painter = bronze,
+                                modifier = Modifier
+                                    .fillMaxSize(0.98f)
+                                    .align(Alignment.Center)
+                                    .padding(bottom = 1.dp)
+                            )
+                        }
+                        if (viewModel.silverRank && !viewModel.goldRank && !viewModel.platRank) {
+                            Image(
+                                contentDescription = "silver",
+                                painter = silver,
+                                modifier = Modifier
+                                    .fillMaxSize(0.85f)
+                                    .align(Alignment.Center)
+                                    .padding(bottom = 2.dp)
+                            )
+                        }
+                        if (viewModel.goldRank && !viewModel.platRank) {
+                            Image(
+                                contentDescription = "gold",
+                                painter = gold,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .align(Alignment.Center)
+                                    .padding(end = 15.dp)
+                            )
+                        }
+                    }
+                    KeyStats(viewModel)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Menu(navController)
+                    Recents(viewModel = viewModel, 1, navController)
+                }
+            }
+            if (viewModel.platRank) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    Box(modifier = Modifier
+                        //.size(300.dp) bronze
+                        .fillMaxHeight(0.33f)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable { showDialog = true }
                     ) {
                         Image(
-                            contentDescription = "profile",
-                            painter = profilepicture,
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .fillMaxSize()
-                        )
-                    }
-                    if(viewModel.bronzeRank && !viewModel.silverRank && !viewModel.goldRank) {
-                        Image(
-                            contentDescription = "bronze",
-                            painter = bronze,
-                            modifier = Modifier
-                                .fillMaxSize(0.98f)
-                                .align(Alignment.Center)
-                                .padding(bottom = 1.dp)
-                        )
-                    }
-                    if(viewModel.silverRank && !viewModel.goldRank){
-                        Image(
-                            contentDescription = "silver",
-                            painter = silver,
-                            modifier = Modifier
-                                .fillMaxSize(0.85f)
-                                .align(Alignment.Center)
-                                .padding(bottom = 2.dp)
-                        )
-                    }
-                    if(viewModel.goldRank){
-                        Image(
-                            contentDescription = "gold",
-                            painter = gold,
+                            contentDescription = "plat",
+                            painter = plat,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .align(Alignment.Center)
-                                .padding(end = 15.dp)
                         )
                     }
                 }
-                KeyStats(viewModel)
-                Spacer(modifier = Modifier.height(10.dp))
-                Menu(navController)
-                Recents(viewModel = viewModel, 1, navController)
             }
         }
-    })
+    )
 }
 
 
@@ -528,8 +551,7 @@ fun Dialog(
     text: String
 ) {
     if (showDialog) {
-        AlertDialog( modifier = Modifier
-            .background(MaterialTheme.colorScheme.background) ,
+        AlertDialog(
             icon = {
                 androidx.compose.material.Icon(Icons.Filled.Info, contentDescription = "Info Icon", tint = MaterialTheme.colorScheme.onBackground)
             },
@@ -652,6 +674,10 @@ fun rankDecider(viewModel: BoardDataViewModel){
                 || viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499 &&  viewModel.streak.toInt() >499
                 || viewModel.streak.toInt() >499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499){
                 viewModel.goldRank = true
+                if(viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499
+                    && viewModel.nrOfLikedGames.toInt() > 499 && viewModel.streak.toInt() >499){
+                    viewModel.platRank = true
+                }
             }
         }
     }
@@ -663,9 +689,7 @@ fun RankInfo(
     onDismissRequest: () -> Unit
 ) {
     if (showDialog) {
-        AlertDialog( modifier = Modifier
-            .background(Color.Transparent),
-            icon = {
+        AlertDialog(icon = {
                 androidx.compose.material.Icon(
                     Icons.Filled.Info,
                     contentDescription = "Info Icon",
@@ -676,12 +700,14 @@ fun RankInfo(
                 Text(text = "Ranking System", color = MaterialTheme.colorScheme.onBackground)
             },
             text = {
-                Text(text = "You can obtain 3 different ranks: Bronze, Silver and Gold\n\n" +
+                Text(text = "You can obtain 5 different ranks: Unranked Bronze, Silver, Gold and Platinum\n\n" +
                     "To obtain the Bronze rank you need to complete 1 Bronze challenge.\n\n" +
                     "To obtain the Silver rank you need to complete 2 Silver challenges.\n\n" +
-                    "To obtain the Gold rank you need to complete 3 different challenges.\n\n" +
+                    "To obtain the Gold rank you need to complete 3 Gold challenges.\n\n" +
+                    "To obtain the Platinum rank you need to complete all challenges.\n\n" +
                     "See the different challenges under the 'Challenges' page", color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
             },
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = {
                 onDismissRequest()
             },

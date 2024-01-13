@@ -3,6 +3,7 @@ import android.util.Log
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.models.BoardGameSearch
+import com.example.myapplication.models.Categories
 import com.example.myapplication.models.User
 import org.json.JSONArray
 import org.json.JSONObject
@@ -253,6 +254,21 @@ class BoardGameRepository {
     suspend fun toggleRatingGame(username: String, id: String, rating: String) {
         val urlPath = "/ratingstoggle/$id/$username/$rating/"
         makeApiRequest(urlPath) // Assuming this is a POST request
+    }
+
+    suspend fun getAllCategories(): Categories {
+        val urlPath = "/boardGameCategories/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonObject = JSONObject(jsonResponse)
+        val jsonCategoriesArray = jsonObject.getJSONArray("categories")
+        val categoriesList = mutableListOf<String>()
+
+        for (i in 0 until jsonCategoriesArray.length()) {
+            val category = jsonCategoriesArray.getString(i)
+            categoriesList.add(category)
+        }
+
+        return Categories(categoriesList)
     }
 
     private fun convertHtmlToStructuredText(html: String): String {

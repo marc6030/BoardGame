@@ -81,40 +81,40 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
 
         ) {
             item {
-                achievement(navController, viewModel, "Liked Games! - Bronze ", viewModel.nrOfLikedGames.toInt(), 100f)
+                achievement("Liked Games! - Bronze ", viewModel.nrOfLikedGames.toInt(), 100f)
             }
             item {
-                achievement(navController, viewModel, "Liked Games! - Silver", viewModel.nrOfLikedGames.toInt(), 250f)
+                achievement("Liked Games! - Silver", viewModel.nrOfLikedGames.toInt(), 250f)
             }
             item {
-                achievement(navController, viewModel, "Liked Games! - Gold", viewModel.nrOfLikedGames.toInt(), 500f)
+                achievement("Liked Games! - Gold", viewModel.nrOfLikedGames.toInt(), 500f)
             }
             item {
-                achievement(navController, viewModel, "Played Games! - Bronze", viewModel.nrOfPlayedGames.toInt(), 100f)
+                achievement("Played Games! - Bronze", viewModel.nrOfPlayedGames.toInt(), 100f)
             }
             item {
-                achievement(navController, viewModel, "Played Games! - Silver", viewModel.nrOfPlayedGames.toInt(), 250f)
+                achievement("Played Games! - Silver", viewModel.nrOfPlayedGames.toInt(), 250f)
             }
             item {
-                achievement(navController, viewModel, "Played Games! - Gold", viewModel.nrOfPlayedGames.toInt(), 500f)
+                achievement("Played Games! - Gold", viewModel.nrOfPlayedGames.toInt(), 500f)
             }
             item {
-                achievement(navController, viewModel, "Logon Streak! - Bronze", viewModel.streak.toInt(), 100f)
+                achievement("Logon Streak! - Bronze", viewModel.streak.toInt(), 100f)
             }
             item {
-                achievement(navController, viewModel, "Logon Streak! - Silver", viewModel.streak.toInt(), 250f)
+                achievement("Logon Streak! - Silver", viewModel.streak.toInt(), 250f)
             }
             item {
-                achievement(navController, viewModel, "Logon Streak! - Gold", viewModel.streak.toInt(), 500f)
+                achievement("Logon Streak! - Gold", viewModel.streak.toInt(), 500f)
             }
             item {
-                achievement(navController, viewModel, "Rated Games! - Bronze", viewModel.nrOfRatedGames.toInt(), 100f)
+                achievement("Rated Games! - Bronze", viewModel.nrOfRatedGames.toInt(), 100f)
             }
             item {
-                achievement(navController, viewModel, "Rated Games! - Silver", viewModel.nrOfRatedGames.toInt(), 250f)
+                achievement("Rated Games! - Silver", viewModel.nrOfRatedGames.toInt(), 250f)
             }
             item {
-                achievement(navController, viewModel, "Rated Games! - Gold", viewModel.nrOfRatedGames.toInt(), 500f)
+                achievement("Rated Games! - Gold", viewModel.nrOfRatedGames.toInt(), 500f)
             }
         }
 
@@ -131,16 +131,25 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
 }
 
 @Composable
-fun achievement(navController: NavHostController, viewModel: BoardDataViewModel, Headline: String, Completion: Int, Bar: Float){
+fun achievement(Headline: String, Completion: Int, Bar: Float) {
     //val item = viewModel.bigPictureGame
-    val bronze: Painter = painterResource(id = R.drawable.banditachievement)
+    val achievement: Painter
+    if (Bar == 100f) {
+        achievement = painterResource(id = R.drawable.bronzeachiev)
+    } else if (Bar == 250f) {
+        achievement = painterResource(id = R.drawable.silverachiev)
+    } else {
+        achievement = painterResource(id = R.drawable.goldachiev)
+    }
+
     val progress = Completion / Bar
     var percent = (progress * 100).toInt()
 
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(100.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -152,9 +161,9 @@ fun achievement(navController: NavHostController, viewModel: BoardDataViewModel,
                     .size(125.dp)
             ) {
                 Image(
-                    painter = bronze,
+                    painter = achievement,
                     contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -164,9 +173,15 @@ fun achievement(navController: NavHostController, viewModel: BoardDataViewModel,
 
             // Progress Indicator and Text
             Column {
-                Text(text = Headline, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.CenterHorizontally), color = MaterialTheme.colorScheme.onBackground)
+                Text(
+                    text = Headline,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 LinearProgressIndicator(
                     progress = progress,
                     modifier = Modifier
@@ -175,12 +190,20 @@ fun achievement(navController: NavHostController, viewModel: BoardDataViewModel,
                     color = MaterialTheme.colorScheme.onBackground,
                     trackColor = MaterialTheme.colorScheme.background
                 )
-                Text(text = "$Completion/${Bar.toInt()} (${percent}%)", fontSize = 15.sp, fontWeight = FontWeight.Normal, modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.CenterHorizontally), color = MaterialTheme.colorScheme.onBackground)
+                Text(
+                    text = "$Completion/${Bar.toInt()} (${percent}%)",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
     }
 }
+
+
 
 

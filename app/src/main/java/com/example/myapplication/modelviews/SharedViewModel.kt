@@ -12,8 +12,6 @@ class SharedViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
 
 
-
-
     fun getUserID(): String {
         val userID: String = "static_user"
         Log.v("UserID is: ", userID)

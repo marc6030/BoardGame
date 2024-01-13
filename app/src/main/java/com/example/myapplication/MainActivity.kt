@@ -136,10 +136,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             CategoryActivity(
                 navController = navController,
                 viewModel = boardDataViewModel,
-                boardGameInfoActivity = boardGameInfoActivity ,
-                category = category,
-                row = 1
-                //SHOULD BE MODIFIED TO WORK PROPERLY
+                category = category
             )
         }
         composable(

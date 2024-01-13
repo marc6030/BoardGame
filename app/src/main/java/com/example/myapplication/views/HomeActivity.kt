@@ -80,6 +80,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -108,6 +109,7 @@ fun boardgameSelections(
 ) {
 
     viewModel.fetchBoardGameCategories()
+    viewModel.getAllCategories()
 
 
     MenuScreen(navController = navController, informationtext = "Is an app developed in Kotlin for Android. Its a platform for " +
@@ -139,7 +141,7 @@ fun boardgameSelections(
                     SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
                 }
                 item {
-                    RoundboardGameSelection("Categories", viewModel, 1, navController)
+                    RoundboardGameSelection("Categories", viewModel, navController)
                 }
                 item {
                     boardGameSelection("Superhot", viewModel, 2, navController)
@@ -333,33 +335,12 @@ fun boardGameSelection(headline: String,
 @Composable
 fun RoundboardGameSelection(headline: String,
                        viewModel: BoardDataViewModel,
-                       row: Int,
                        navController: NavHostController,
 ){
     val scrollState = rememberLazyListState()
 
-    val currentRow = when (row) {
-        1 -> viewModel.boardGamesRow1
-        2 -> viewModel.boardGamesRow2
-        3 -> viewModel.boardGamesRow3
-        4 -> viewModel.boardGamesRow4
-        5 -> viewModel.boardGamesRow5
-        else -> emptyList() // Handle default case or invalid row
-    }
+    val currentRow = viewModel.categories
 
-    val shouldLoadMore = remember {
-        derivedStateOf {
-            val layoutInfo = scrollState.layoutInfo
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalBoardGameCategories(row)
-        }
-    }
 
     Text(
         text = headline,
@@ -378,38 +359,38 @@ fun RoundboardGameSelection(headline: String,
     )
     {
 
-        items(currentRow) { item ->
-            val gameName: String = item.name
-            val category: List<String> = item.category
+        items(currentRow.categories) { item ->
+            item
             Box(
                 modifier = Modifier
                     .size(100.dp, 100.dp)
                     .testTag("items_1234")
                     .padding(5.dp)
                     .clickable {
-                        navController.navigate("category/$category")
+                        navController.navigate("category/$item")
                     }
                     .shadow(8.dp, CircleShape)
             )
             {
                 AsyncImage(
-                    model = item.imgUrl,
+                    model = R.drawable.banditlogo,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
                         .testTag("game_picture")
-                        .blur(3.dp)
+                        .blur(10.dp)
                 )
-                Text("RPG",
+                Text(item,
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 30.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     style = TextStyle(
                         shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
                     ),
-                    modifier = Modifier.align(Alignment.Center))
+                    modifier = Modifier.align(Alignment.Center),
+                    textAlign = TextAlign.Center)
             }
         }
     }
