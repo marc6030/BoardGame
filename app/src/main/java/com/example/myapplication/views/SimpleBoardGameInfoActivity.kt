@@ -142,8 +142,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
 
-    boardGameInfoActivity.fetchYoutubeID(boardGame.name)
-
 
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
@@ -245,6 +243,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         )
                                     }
                                     if (showYouTubePlayer) {
+                                        val temp = boardGame.name.replace(" ", "")
+                                        Log.v("Boevs2", "${boardGame.name.replace(" ", "")}")
+                                        boardGameInfoActivity.fetchYoutubeID(temp)
                                         YoutubePlayer(youtubeVideoId = boardGameInfoActivity.youtubeID, lifecycleOwner = LocalLifecycleOwner.current)
 
                                         // Close Button

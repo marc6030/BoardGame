@@ -82,7 +82,8 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     fun fetchYoutubeID(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val youtubeID_ = BoardGameRepository().searchYoutube(id + " board game")
+                val youtubeID_ = BoardGameRepository().searchYoutube(id + "boardgame")
+                Log.v("Youtube Boardgame: ", "$youtubeID_")
 
                 withContext(Dispatchers.Main) {
                     youtubeID = youtubeID_
