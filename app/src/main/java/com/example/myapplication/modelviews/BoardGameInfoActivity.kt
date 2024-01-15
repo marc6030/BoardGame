@@ -28,6 +28,8 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
 
     var currentGameID = ""
 
+    var averageRating by mutableStateOf(0.0)
+
     private fun getUserID() : String {
         return sharedViewModel.getUserID()
     }
@@ -107,8 +109,22 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
                     boardGameData = updatedGame
                 }
                 BoardGameRepository().toggleRatingGame(getUserID(), boardGameData.id, newRating)
+                withContext(Dispatchers.Main){
+                    fetchAverageRating(currentGameID)
+                }
             } catch (e: Exception) {
                 Log.v("RatingUpdate", "RatingErrorUpdateMessage: $e")
+            }
+        }
+    }
+
+    fun fetchAverageRating(gameID : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                averageRating = BoardGameRepository().fetchAverageBbRating(gameID)
+            }
+            catch (e : Exception){
+                Log.v("Cant fetch rating", "$e")
             }
         }
     }

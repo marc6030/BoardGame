@@ -16,8 +16,6 @@ class RatingsViewModel(private var sharedViewModel: SharedViewModel) : ViewModel
 
     var ratedGamesList by mutableStateOf<List<BoardGameItem>>(emptyList())
 
-    var averageRating by mutableStateOf(0.0)
-
     var offset = 0
     private var limit = 10
 
@@ -55,17 +53,6 @@ class RatingsViewModel(private var sharedViewModel: SharedViewModel) : ViewModel
                     "fetchAdditionalRatedBoardGame",
                     "Can't fetch additional rated boardGames"
                 )
-            }
-        }
-    }
-
-    fun fetchAverageRating(gameID : String){
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                averageRating = BoardGameRepository().fetchAverageBbRating(gameID)
-            }
-            catch (e : Exception){
-                Log.v("Cant fetch rating", "$e")
             }
         }
     }

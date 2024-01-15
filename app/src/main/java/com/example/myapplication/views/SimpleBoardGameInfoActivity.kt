@@ -95,6 +95,7 @@ import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.views.YoutubePlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.math.RoundingMode
 import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -112,7 +113,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     boardGameInfoActivity.fetchBoardGameData(gameID)
     boardGameInfoActivity.addToRecentBoardGames(gameID)
-
+    boardGameInfoActivity.fetchAverageRating(gameID)
 
 
     val colorMatrixDark = ColorMatrix().apply {
@@ -214,7 +215,11 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             .align(Alignment.Center)
                                             .size(80.dp)
                                             .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                                            .background(
+                                                MaterialTheme.colorScheme.background.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            )
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.PlayArrow,
@@ -343,9 +348,14 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     contentDescription = "contentDescription",
                                     modifier = Modifier
                                         .size(45.dp)
-                                        .background(MaterialTheme.colorScheme.background, CircleShape)
+                                        .background(
+                                            MaterialTheme.colorScheme.background,
+                                            CircleShape
+                                        )
                                         .align(Alignment.BottomStart)
-                                        .clickable { boardGameInfoActivity.openRatingPopUp = !boardGameInfoActivity.openRatingPopUp
+                                        .clickable {
+                                            boardGameInfoActivity.openRatingPopUp =
+                                                !boardGameInfoActivity.openRatingPopUp
                                         },
                                     tint = MaterialTheme.colorScheme.background
                                 )
@@ -560,10 +570,9 @@ fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: R
 
 @Composable
 fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel) {
-    val averageRating = boardGameInfoActivity.boardGameData.user_rating // Placeholder, real coming
     Column {
         starDisplay(boardGameInfoActivity.boardGameData.ratingBGG, "BGG rating")
-        starDisplay(viewModel.averageRating.toString()
+        starDisplay(boardGameInfoActivity.averageRating.toString()
             ,
             text = "BoardBandit Average Rating"
         )
@@ -578,7 +587,7 @@ fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsVi
 
 @Composable
 fun starDisplay(stars: String, text: String) {
-    val numOfStars: Double = stars.toDouble()
+    val numOfStars: Double = stars.toBigDecimal().setScale(1, RoundingMode.CEILING).toDouble()
     Column {
         Box {
             Text(text + ": $numOfStars / 10")
@@ -646,7 +655,6 @@ fun ratingDisplay(
                                 boardGameInfoActivity.updateRating(
                                     i.toString()
                                 )
-                                viewModel.fetchAverageRating(boardGameInfoActivity.currentGameID)
                             }
                     )
                 }
@@ -883,7 +891,10 @@ fun addPlayedGamesButton(boardGameInfoActivity: BoardGameInfoActivity) {
                     .background(MaterialTheme.colorScheme.background, CircleShape)
                     .align(Alignment.BottomEnd)
                     .clickable {
-                        boardGameInfoActivity.addOrRemovePlayedGames(boardGameInfoActivity.currentGameID, "True")
+                        boardGameInfoActivity.addOrRemovePlayedGames(
+                            boardGameInfoActivity.currentGameID,
+                            "True"
+                        )
                         boardGameInfoActivity.snackbarChallengeVisible =
                             !boardGameInfoActivity.snackbarChallengeVisible
                         if (boardGameInfoActivity.snackbarChallengeVisible) {
@@ -894,7 +905,10 @@ fun addPlayedGamesButton(boardGameInfoActivity: BoardGameInfoActivity) {
                                     duration = SnackbarDuration.Short,
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
-                                    boardGameInfoActivity.addOrRemovePlayedGames(boardGameInfoActivity.currentGameID, "False")
+                                    boardGameInfoActivity.addOrRemovePlayedGames(
+                                        boardGameInfoActivity.currentGameID,
+                                        "False"
+                                    )
                                 }
                                 boardGameInfoActivity.snackbarChallengeVisible =
                                     false
@@ -1027,6 +1041,5 @@ fun Modifier.shakeAndOffsetClickable(
             isPressed = true
         }
 }
-
 
 
