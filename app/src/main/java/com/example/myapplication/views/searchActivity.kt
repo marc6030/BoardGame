@@ -45,13 +45,20 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -119,15 +126,13 @@ fun PopUpOptions(boardSearchViewModel: BoardSearchViewModel, showPopup: MutableS
         alignment = Alignment.Center,
         properties = PopupProperties()
     ) {
-
         Box(
             Modifier
                 .size(maxWidth, maxHeight)
                 .padding(top = 5.dp)
-                .background(Color.DarkGray.copy(alpha = 0.65f), RoundedCornerShape(10.dp))
+                .background(Color.Transparent)
 
         ) {
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -141,7 +146,7 @@ fun PopUpOptions(boardSearchViewModel: BoardSearchViewModel, showPopup: MutableS
                                     .wrapContentSize()
                                     .padding(top = 5.dp)
                                     .background(color = if (!boardSearchViewModel.categories[category]!!) Color.Gray else Color.DarkGray, RoundedCornerShape(25.dp))
-                                    .border(2.dp, Color.Black, RoundedCornerShape(25.dp))
+                                    .shadow(8.dp, RoundedCornerShape(20.dp))
                                     .clickable {
                                         boardSearchViewModel.categories[category] = !boardSearchViewModel.categories[category]!!
                                     }
@@ -229,7 +234,7 @@ fun Options(showPopup: MutableState<Boolean>, boardSearchViewModel: BoardSearchV
 
 
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun searchActivity(navController: NavHostController, boardSearchViewModel: BoardSearchViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
     val input = boardSearchViewModel.input
@@ -238,7 +243,7 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
     val searchBarHeight = 46.dp
     val showPopup = remember { mutableStateOf(false) }
     val expandedStates = remember { mutableStateMapOf<Int, Boolean>() }
-
+    val controller = LocalSoftwareKeyboardController.current
 
     val shouldLoadMore = remember {
         derivedStateOf {
@@ -258,37 +263,50 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
             boardSearchViewModel.fetchAdditionalSearchResults()
         }
     }
-    LaunchedEffect(Unit){
-        boardSearchViewModel.getAllCategories()
+    LaunchedEffect(Unit) {
+        do {
+            boardSearchViewModel.getAllCategories()
+            delay(500)
+        }while(boardSearchViewModel.categories.isEmpty())
     }
-
-
 
     if (showPopup.value){
         PopUpOptions(boardSearchViewModel, showPopup)
+        boardSearchViewModel.input = ""
+        controller?.hide()
     }
+    val gradientFrom = MaterialTheme.colorScheme.surface
+    val gradientTo = MaterialTheme.colorScheme.background
 
     Scaffold(
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
+                .padding(it)
+                .drawBehind {
+            drawRect(
+                    Brush.verticalGradient(
+                            colorStops = arrayOf(0f to gradientFrom, 1f to gradientTo),
+                            tileMode = TileMode.Decal
+                    )
+            )
+        }
             ) {
-            Spacer(modifier = Modifier.height(4.dp))
-
+            Spacer(modifier = Modifier.height(25.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth(0.99f)
-                    .background(color = Color.Gray, shape = RoundedCornerShape(25.dp))
+                    .shadow(8.dp, RoundedCornerShape(25.dp))
+                    .background(Color.DarkGray)
                     .height(searchBarHeight)
                     .align(Alignment.CenterHorizontally),
+
 
             ) {
 
                 goBack(navController)
-
                 BasicTextField(
                     value = input,
                     onValueChange = { boardSearchViewModel.input = it },
@@ -297,9 +315,10 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
                     textStyle = TextStyle(
                         fontSize = 22.sp,
                         fontWeight = FontWeight(600),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onBackground
                     ),
-                    singleLine = true
+                    singleLine = true,
                 )
 
                 Options(showPopup, boardSearchViewModel)
@@ -314,7 +333,6 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
                 modifier = Modifier
                     .fillMaxWidth(0.99f)
                     .align(Alignment.CenterHorizontally)
-                    .background(color = Color.DarkGray)
                     .padding(),
                     state = scrollState
             ) {
@@ -345,7 +363,7 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(100.dp)
-                                    .clip(RoundedCornerShape(20.dp)),
+                                    .shadow(8.dp, RoundedCornerShape(20.dp)),
                                 contentScale = ContentScale.FillBounds
                             )
                         }

@@ -4,7 +4,6 @@ import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.models.BoardGameSearch
 import com.example.myapplication.models.Categories
-import com.example.myapplication.models.Categories
 import com.example.myapplication.models.User
 import org.json.JSONArray
 import org.json.JSONObject
