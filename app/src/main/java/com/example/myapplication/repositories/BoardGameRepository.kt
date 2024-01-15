@@ -55,11 +55,11 @@ class BoardGameRepository {
         return videoId
     }
 
-    suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
+    suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null, username: String): List<BoardGameItem> {
         val urlPath = if (category != null) {
-            "/boardgameitems/$category/$limit/$offset/"
+            "/boardgameitems/$category/$limit/$offset/$username/"
         } else {
-            "/boardgameitems/none/$limit/$offset/"
+            "/boardgameitems/none/$limit/$offset/$username/"
         }
         val jsonResponse = makeApiRequest(urlPath)
         val jsonArray = JSONArray(jsonResponse)
