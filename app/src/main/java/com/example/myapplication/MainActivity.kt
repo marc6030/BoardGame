@@ -1,18 +1,31 @@
 package com.example.myapplication
 
 
+import android.os.Build
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,10 +35,14 @@ import com.example.myapplication.modelviews.BoardDataViewModel
 import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.BoardSearchViewModel
 import com.example.myapplication.modelviews.FavoriteViewModel
+import com.example.myapplication.modelviews.PlayedGamesViewModel
 import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.modelviews.SharedViewModel
+import com.example.myapplication.views.CategoryActivity
 import com.example.myapplication.views.NoInternetScreen
 import com.example.myapplication.views.PersonalActivity
+import com.example.myapplication.views.PlayedGamesActivity
+import com.example.myapplication.views.RatedGamesActivity
 import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -46,12 +63,22 @@ class MainActivity : ComponentActivity() {
         val boardSearchViewModel = BoardSearchViewModel(viewModel)
         val boardGameInfoActivity = BoardGameInfoActivity(viewModel)
         val favoriteViewModel = FavoriteViewModel(viewModel, boardGameInfoActivity)
+        val playedGamesViewModel = PlayedGamesViewModel(sharedViewModel = viewModel,
+            boardGameInfoActivity = boardGameInfoActivity
+        )
+
+        window.apply {
+            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            statusBarColor = android.graphics.Color.TRANSPARENT
+        }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             navController = rememberNavController()
             AppTheme(useDarkTheme = true) {
                 boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
-                    viewModel, account, navController, boardGameInfoActivity)
+                    viewModel, playedGamesViewModel, account, navController, boardGameInfoActivity)
             }
         }
     }
@@ -67,10 +94,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel,
-                 boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, account: GoogleSignInAccount?, navController: NavHostController,
+                 boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, playedGamesViewModel: PlayedGamesViewModel, account: GoogleSignInAccount?, navController: NavHostController,
                  boardGameInfoActivity: BoardGameInfoActivity) {
 
-    val transitionDuration = 2000 // ms
+    val transitionDuration = 1000 // ms
     val context = LocalContext.current
     LaunchedEffect(true){
         while(true){
@@ -82,99 +109,48 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
     }
     NavHost(
         navController = navController,
-        startDestination = "search"
+        startDestination = "home"
 
     ) {
         composable("nointernet") {
             NoInternetScreen(navController)
         }
         composable(
-            route = "home",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            })
+            route = "home")
         {
             HomeActivity(navController, boardDataViewModel)
         }
         composable(
-            route = "search",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            }) {
-
+            route = "search") {
             searchActivity(navController, boardSearchViewModel, boardGameInfoActivity)
 
 
         }
         composable(
-            route = "favorite",
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                    animationSpec = tween(transitionDuration)
-                )
-            }) {
+            route = "favorite") {
             FavoriteActivity(navController, favoriteViewModel, boardGameInfoActivity)
+        }
+        composable(
+            route = "category/{category}") {
+                navBackStackEntry ->
+            val category = navBackStackEntry.arguments?.getString("category")!!
+            CategoryActivity(
+                navController = navController,
+                viewModel = boardDataViewModel,
+                category = category
+            )
+        }
+        composable(
+            route = "challenge") {
+            ChallengeActivity(navController, boardDataViewModel, boardGameInfoActivity)
+        }
+        composable(
+            route = "playedGames") {
+            PlayedGamesActivity(navController, playedGamesViewModel, boardGameInfoActivity)
+        }
+        composable(
+            route = "ratedGames") {
+            RatedGamesActivity(navController, ratingsViewModel, boardGameInfoActivity)
         }
         composable(
             route = "personal"
@@ -183,28 +159,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         }
 
         composable(
-            route = "boardgameinfo/{gameID}",
-            enterTransition = {
-                scaleIn(
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            exitTransition = {
-                scaleOut(
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popEnterTransition = {
-                scaleIn(
-                    animationSpec = tween(transitionDuration)
-                )
-            },
-            popExitTransition = {
-                scaleOut(
-                    animationSpec = tween(transitionDuration)
-                )
-            }
-        )
+            route = "boardgameinfo/{gameID}")
         {navBackStackEntry ->
             val gameID = navBackStackEntry.arguments?.getString("gameID")!!
             SimpleBoardGameInfoActivity(

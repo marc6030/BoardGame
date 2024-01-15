@@ -4,6 +4,8 @@ import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.models.BoardGameSearch
 import com.example.myapplication.models.Categories
+import com.example.myapplication.models.Categories
+import com.example.myapplication.models.User
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -16,7 +18,7 @@ import java.net.URL
 
 class BoardGameRepository {
 
-    private val baseUrl = "http://192.168.50.82:5050" // Replace with your Flask API URL
+    private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
     private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyCUsP8-FIzZFeCNKk4yVgVUiY6pYAsl5SQ&q="
 
     private fun makeApiRequest(urlPath: String): String {
@@ -54,11 +56,11 @@ class BoardGameRepository {
         return videoId
     }
 
-    suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null): List<BoardGameItem> {
+    suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null, username: String): List<BoardGameItem> {
         val urlPath = if (category != null) {
-            "/boardgameitems/$category/$limit/$offset/"
+            "/boardgameitems/$category/$limit/$offset/$username/"
         } else {
-            "/boardgameitems/none/$limit/$offset/"
+            "/boardgameitems/none/$limit/$offset/$username/"
         }
         val jsonResponse = makeApiRequest(urlPath)
         val jsonArray = JSONArray(jsonResponse)
@@ -96,11 +98,23 @@ class BoardGameRepository {
         return recentBoardGameItems
     }
 
-     suspend fun getNumberOfGamesOrStreak(UserID : String, category : String) : String{
-        val urlPath = "/users/$UserID/$category/"
+    suspend fun getNumberOfGamesAndStreak(UserID : String) : List<User> {
+        val urlPath = "/users_key_info/$UserID/"
         val jsonResponse = makeApiRequest(urlPath)
-        val jsonObject = JSONObject(jsonResponse)
-         return jsonObject.getString("result")
+        val jsonArray = JSONArray(jsonResponse)
+        val users = mutableListOf<User>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            users.add(
+                User(
+                    streak = jsonObject.getString("streak"),
+                    playedGames = jsonObject.getString("played_games"),
+                    ratedGames = jsonObject.getString("rated_games"),
+                    likedGames = jsonObject.getString("liked_games")
+                )
+            )
+        }
+        return users
     }
 
     suspend fun addBoardGameToRecentList(userID: String, gameID : String){
@@ -164,20 +178,6 @@ class BoardGameRepository {
         return boardGameSearchItems
     }
 
-    suspend fun getAllCategories(): Categories {
-        val urlPath = "/boardGameCategories/"
-        val jsonResponse = makeApiRequest(urlPath)
-        val jsonObject = JSONObject(jsonResponse)
-        val jsonCategoriesArray = jsonObject.getJSONArray("categories")
-        val categoriesList = mutableListOf<String>()
-
-        for (i in 0 until jsonCategoriesArray.length()) {
-            val category = jsonCategoriesArray.getString(i)
-            categoriesList.add(category)
-        }
-
-        return Categories(categoriesList)
-    }
 
     suspend fun getBoardGame(id: String): BoardGame {
 
@@ -208,9 +208,25 @@ class BoardGameRepository {
             overallRank = jsonObject.optString("overall_rank", "???"),
             categoryRank = jsonObject.optString("category_rank", "???"),
             liked = jsonObject.optString("is_liked", "False"),
-            user_rating = jsonObject.optString("user_rating", "0"),
-            // picture = jsonObject.optByteArray("image_data") // Uncomment if needed
-        )
+            user_rating = jsonObject.optString("user_rating", "0"))
+    }
+    suspend fun fetchAverageBbRating(id : String): Double {
+        val urlPath = "/getbbratings/$id/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val bbRatings = mutableListOf<String>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            bbRatings.add(jsonObject.getString("liked"))
+        }
+        var averageRating = 0.0
+        for (rating: String in bbRatings) {
+            averageRating += rating.toFloat()
+        }
+        if(averageRating != 0.0){
+            averageRating /= bbRatings.size
+        }
+        return averageRating
     }
     suspend fun convertJsonArrayToList(jsonArray: JSONArray): List<String> {
         val list = mutableListOf<String>()
@@ -224,9 +240,90 @@ class BoardGameRepository {
         makeApiRequest(urlPath) // Assuming this is a POST request
     }
 
+     suspend fun getFavoriteGames(username: String, limit: Int, offset: Int) : List<BoardGameItem> {
+        val urlPath = "/favorite-gameboard-all/$username/$limit/$offset/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val favoriteBoardGames = mutableListOf<BoardGameItem>()
+
+         if (jsonArray.length() == 0) {
+             return favoriteBoardGames;
+         }
+
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            favoriteBoardGames.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image")
+                )
+            )
+        }
+        return favoriteBoardGames
+    }
+
+    suspend fun getPlayedGames(username: String, limit: Int, offset: Int): List<BoardGameItem>{
+        val urlPath = "/get_user_played/$username/$limit/$offset/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val playedBoardGames = mutableListOf<BoardGameItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            playedBoardGames.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                    playedCount = jsonObject.getString("played_count")
+                )
+            )
+        }
+        return playedBoardGames
+    }
+
+    suspend fun getRatedGames(UserID: String, limit : Int, offset: Int): List<BoardGameItem>{
+        val urlPath = "/get_user_ratings/$UserID/$limit/$offset/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val ratedBoardGames = mutableListOf<BoardGameItem>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            ratedBoardGames.add(
+                BoardGameItem(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                    rating = jsonObject.getString("liked")
+                )
+            )
+        }
+        return ratedBoardGames
+    }
+
+    suspend fun addOrRemovePlayedGame(UserID: String, gameID: String, increment : String){
+        val urlPath = "/update_played_games/$UserID/$gameID/$increment/"
+        print(makeApiRequest(urlPath))
+    }
+
     suspend fun toggleRatingGame(username: String, id: String, rating: String) {
         val urlPath = "/ratingstoggle/$id/$username/$rating/"
         makeApiRequest(urlPath) // Assuming this is a POST request
+    }
+
+    suspend fun getAllCategories(): Categories {
+        val urlPath = "/boardGameCategories/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonObject = JSONObject(jsonResponse)
+        val jsonCategoriesArray = jsonObject.getJSONArray("categories")
+        val categoriesList = mutableListOf<String>()
+
+        for (i in 0 until jsonCategoriesArray.length()) {
+            val category = jsonCategoriesArray.getString(i)
+            categoriesList.add(category)
+        }
+
+        return Categories(categoriesList)
     }
 
     private fun convertHtmlToStructuredText(html: String): String {
@@ -253,7 +350,6 @@ class BoardGameRepository {
         }
         return sb.toString().trim()
     }
-
 
 }
 

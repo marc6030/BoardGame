@@ -2,6 +2,7 @@ package com.example.myapplication.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,27 +24,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -58,45 +64,157 @@ import com.example.myapplication.modelviews.BoardDataViewModel
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     viewModel.fetchRecentBoardGames()
-    viewModel.fetchKeystats()
-    val logo: Painter = painterResource(id = R.drawable.newbanditlogo)
+    viewModel.fetchKeyStats()
+    val profilepicture: Painter = painterResource(id = R.drawable.profilepicture)
+    val bronze: Painter = painterResource(id = R.drawable.bronze)
+    val silver: Painter = painterResource(id = R.drawable.silver)
+    val gold: Painter = painterResource(id = R.drawable.gold)
+    val plat: Painter = painterResource(id = R.drawable.plat)
+    var showDialog by remember { mutableStateOf(false) }
 
-    MenuScreen(navController = navController, actName = "personal", ourColumn = { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.background)
-        ){
-        Spacer(
-            Modifier.height(20.dp)
+    rankDecider(viewModel = viewModel)
+
+    if (showDialog) {
+        RankInfo(
+            showDialog = showDialog,
+            onDismissRequest = { showDialog = false },
         )
-        Box(
-            modifier = Modifier
-                .size(175.dp)
-                .background(MaterialTheme.colorScheme.surface, shape = CircleShape)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.Center),
-                text = "?",
-                fontSize = 50.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        KeyStats(viewModel)
-        Spacer(modifier = Modifier.height(10.dp))
-        Menu(navController)
-        Recents(viewModel = viewModel, 1, navController)
     }
-    })
+
+    MenuScreen(navController = navController, informationtext = "Welcome to Your Personal Page!\n" +
+            "\n" +
+            "Your Personal Page is your own private space in our app where you can keep track of your progress. Here's what you can do here:" +
+            "\n\n1. View Your Activity: All your recent visited board games" +
+            "are displayed here.\n\n 2. Track Your Progress: Our app involves challenges, which can be completed by rating, playing, adding games to My Games and loggin into the app every day!" +
+            "Your Personal Page will show your progress. Celebrate your achievements and plan your next steps, all " +
+            " from this convenient dashboard.\n\n" +
+            "You can also go up in rank, click the profile picture to find out how!",
+        ourColumn = { innerPadding ->
+            val gradientFrom = MaterialTheme.colorScheme.surface
+            val gradientTo = MaterialTheme.colorScheme.background
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawBehind {
+                        drawRect(
+                            Brush.radialGradient(
+                                center = Offset(this.size.width / 2, 525f),
+                                radius = this.size.width * 1.5f,
+                                colorStops = arrayOf(
+                                    0f to gradientFrom,
+                                    0.8f to gradientTo
+                                ),
+                                tileMode = TileMode.Decal
+                            )
+                        )
+                    }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    Box(modifier = Modifier
+                        //.size(300.dp) bronze
+                        .size(250.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable { showDialog = true }
+                    ) {
+                        Box(
+                            modifier = if (viewModel.platRank) Modifier
+                                .size(115.dp)
+                                .align(Alignment.Center) else Modifier
+                                .size(140.dp)
+                                .align(Alignment.Center)
+                        ) {
+                            Image(
+                                contentDescription = "profile",
+                                painter = profilepicture,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .fillMaxSize()
+                            )
+                        }
+                        if (viewModel.bronzeRank && !viewModel.silverRank && !viewModel.goldRank && !viewModel.platRank) {
+                            Image(
+                                contentDescription = "bronze",
+                                painter = bronze,
+                                modifier = Modifier
+                                    .fillMaxSize(0.98f)
+                                    .align(Alignment.Center)
+                                    .padding(bottom = 1.dp)
+                            )
+                        }
+                        if (viewModel.silverRank && !viewModel.goldRank && !viewModel.platRank) {
+                            Image(
+                                contentDescription = "silver",
+                                painter = silver,
+                                modifier = Modifier
+                                    .fillMaxSize(0.85f)
+                                    .align(Alignment.Center)
+                                    .padding(bottom = 2.dp)
+                            )
+                        }
+                        if (viewModel.goldRank && !viewModel.platRank) {
+                            Image(
+                                contentDescription = "gold",
+                                painter = gold,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .align(Alignment.Center)
+                                    .padding(end = 15.dp)
+                            )
+                        }
+                    }
+                    KeyStats(viewModel)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Menu(navController)
+                    Recents(viewModel = viewModel, 1, navController)
+                }
+            }
+            if (viewModel.platRank) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    Box(modifier = Modifier
+                        //.size(300.dp) bronze
+                        .fillMaxHeight(0.33f)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable { showDialog = true }
+                    ) {
+                        Image(
+                            contentDescription = "plat",
+                            painter = plat,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center)
+                        )
+                    }
+                }
+            }
+        }
+    )
 }
+
 
 @Composable
 fun KeyStats(viewModel: BoardDataViewModel){
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        Dialog(
+            showDialog = showDialog,
+            onDismissRequest = { showDialog = false },
+            text = "A Daily Logon Streak is a fun and rewarding feature we've introduced to enhance your experience with our app! Here's how it works:\n" +
+                    "\n" +
+                    "1. Log In Daily: Each day you log into our app, your streak goes up by one. It's that simple!\n" +
+                    "\n" +
+                    "2. Keep the Streak Alive: Make sure to log in every day to keep your streak going. If you miss a day, the streak resets to zero, so try to log in regularly."
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -114,6 +232,7 @@ fun KeyStats(viewModel: BoardDataViewModel){
             modifier = Modifier
                 .weight(0.33f)
                 .height(70.dp)
+                .clickable { showDialog = true }
         ) {
             StreakStat(viewModel.streak)
         }
@@ -158,8 +277,11 @@ fun StreakStat(streak : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 4.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+                    ),
                     fontSize = if(streak.length==1 ||streak.length == 0) 30.sp
                     else if(streak.length == 2) 25.sp
                     else if(streak.length == 3) 19.sp
@@ -171,7 +293,11 @@ fun StreakStat(streak : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -193,7 +319,7 @@ fun RatedStat(nrOfRatedGames : String){
                 .fillMaxHeight()
                 .align(Alignment.BottomCenter)) {
                 Text(
-                    text = if(nrOfRatedGames.length == 0) "0" else nrOfRatedGames,
+                    text = nrOfRatedGames,
                     modifier = if(nrOfRatedGames.length < 2) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
@@ -211,8 +337,11 @@ fun RatedStat(nrOfRatedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 12.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, blurRadius = 8f)
+                    ),
                     fontSize = if(nrOfRatedGames.length==1 ||nrOfRatedGames.length == 0) 29.sp
                     else if(nrOfRatedGames.length == 2) 24.sp
                     else if(nrOfRatedGames.length == 3) 19.sp
@@ -224,7 +353,11 @@ fun RatedStat(nrOfRatedGames : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -248,7 +381,7 @@ fun playedGamesStat(nrOfPlayedGames : String){
                 .fillMaxHeight()
                 .align(Alignment.BottomCenter)) {
                 Text(
-                    text = if(nrOfPlayedGames.length == 0) "0" else nrOfPlayedGames,
+                    text = nrOfPlayedGames,
                     modifier = if(nrOfPlayedGames.length < 2) Modifier
                         .fillMaxWidth(0.3f)
                         .align(Alignment.BottomCenter)
@@ -266,8 +399,11 @@ fun playedGamesStat(nrOfPlayedGames : String){
                         .align(Alignment.BottomCenter)
                         .padding(0.dp, 0.dp, 0.dp, 20.dp),
                     textAlign = TextAlign.Center,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        shadow = Shadow(color = Color.Black, blurRadius = 8f)
+                    ),
                     fontSize = if(nrOfPlayedGames.length==1 || nrOfPlayedGames.length == 0) 25.sp
                     else if(nrOfPlayedGames.length == 2) 22.sp
                     else if(nrOfPlayedGames.length == 3) 15.sp
@@ -279,7 +415,11 @@ fun playedGamesStat(nrOfPlayedGames : String){
                 .align(Alignment.CenterHorizontally)
                 .weight(0.3f),
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 8f)
+            ),
         )
     }
 }
@@ -307,8 +447,8 @@ fun Menu(navController: NavHostController){
                         .padding(bottom = 3.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
-                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
+                        .background(Color.DarkGray)
                         .clickable { navController.navigate("favorite") }
                 ){
                     Text(
@@ -317,7 +457,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
                 Box(
@@ -325,9 +468,10 @@ fun Menu(navController: NavHostController){
                         .padding(top = 3.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
-                        .clickable { //navcontroller.navigate("ratedGames")
+                        .clickable {
+                            navController.navigate("ratedGames")
                         }
                 ){
                     Text(
@@ -336,7 +480,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
             }
@@ -346,16 +493,15 @@ fun Menu(navController: NavHostController){
                     .fillMaxWidth()
                     .padding(start = 7.dp)
             ){
-
                 Box(
                     modifier = Modifier
                         .padding(bottom = 3.dp)
                         .fillMaxHeight(0.5f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable {
-                            //navcontroller.navigate("playedGames")
+                            navController.navigate("playedGames")
                         }
                 ){
                     Text(
@@ -364,7 +510,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
                 Box(
@@ -372,10 +521,10 @@ fun Menu(navController: NavHostController){
                         .padding(top = 3.dp)
                         .fillMaxHeight(1f)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .background(Color.DarkGray)
                         .clickable {
-                            // navController.navigate("challenges")
+                            navController.navigate("challenge")
                         }
                 ){
                     Text(
@@ -384,7 +533,10 @@ fun Menu(navController: NavHostController){
                             .align(Alignment.Center),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.LightGray
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = TextStyle(
+                            shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                        )
                     )
                 }
             }
@@ -392,6 +544,39 @@ fun Menu(navController: NavHostController){
     }
 }
 
+@Composable
+fun Dialog(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit,
+    text: String
+) {
+    if (showDialog) {
+        AlertDialog(
+            icon = {
+                androidx.compose.material.Icon(Icons.Filled.Info, contentDescription = "Info Icon", tint = MaterialTheme.colorScheme.onBackground)
+            },
+            title = {
+                Text(text = "BoardGame Bandits", color = MaterialTheme.colorScheme.onBackground)
+            },
+            text = {
+                Text(text = "$text", color = MaterialTheme.colorScheme.onBackground)
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = {
+                onDismissRequest()
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("Close", color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+        )
+    }
+}
 @Composable
 fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostController) {
     Column(
@@ -403,11 +588,11 @@ fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostContr
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .shadow(8.dp, RoundedCornerShape(5.dp))
                 .background(Color.DarkGray)
 
         ) {
-            recentBoardGameSelection(headline = "Recents", viewModel =viewModel, navController =navController)
+            recentBoardGameSelection(headline = "Recents", viewModel = viewModel, navController = navController)
         }
     }
 }
@@ -430,10 +615,13 @@ fun recentBoardGameSelection(headline: String,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = 10.dp, top = 7.dp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onBackground,
+            style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+            )
         )
         LazyRow(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxHeight(),
             state = scrollState
 
         )
@@ -446,7 +634,7 @@ fun recentBoardGameSelection(headline: String,
                         .size(100.dp, 150.dp)
                         .testTag("items_1234")
                         .padding(5.dp)
-                        .clip(RoundedCornerShape(5.dp))
+                        .shadow(8.dp, RoundedCornerShape(5.dp))
                         .clickable {
                             navController.navigate("boardgameinfo/$gameID")
                         }
@@ -464,5 +652,75 @@ fun recentBoardGameSelection(headline: String,
                 }
             }
         }
+    }
+}
+
+
+fun rankDecider(viewModel: BoardDataViewModel){
+    if(viewModel.nrOfRatedGames.toInt() > 99
+        || viewModel.nrOfPlayedGames.toInt() > 99
+        || viewModel.nrOfLikedGames.toInt() > 99
+        || viewModel.streak.toInt() >99){
+        viewModel.bronzeRank = true
+        if(viewModel.nrOfRatedGames.toInt() > 249 && viewModel.nrOfPlayedGames.toInt() > 249
+            || viewModel.nrOfPlayedGames.toInt() > 249 && viewModel.nrOfLikedGames.toInt() > 249
+            || viewModel.nrOfLikedGames.toInt() > 249 && viewModel.nrOfRatedGames.toInt() > 249
+            || viewModel.streak.toInt() >249 && viewModel.nrOfRatedGames.toInt() > 249
+            || viewModel.streak.toInt() >249 && viewModel.nrOfPlayedGames.toInt() > 249
+            || viewModel.streak.toInt() >249 && viewModel.nrOfLikedGames.toInt() > 249 
+            ){
+            viewModel.silverRank = true
+            if(viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499
+                || viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.streak.toInt() >499
+                || viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499 &&  viewModel.streak.toInt() >499
+                || viewModel.streak.toInt() >499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499){
+                viewModel.goldRank = true
+                if(viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499
+                    && viewModel.nrOfLikedGames.toInt() > 499 && viewModel.streak.toInt() >499){
+                    viewModel.platRank = true
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RankInfo(
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(icon = {
+                androidx.compose.material.Icon(
+                    Icons.Filled.Info,
+                    contentDescription = "Info Icon",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            title = {
+                Text(text = "Ranking System", color = MaterialTheme.colorScheme.onBackground)
+            },
+            text = {
+                Text(text = "You can obtain 5 different ranks: Unranked Bronze, Silver, Gold and Platinum\n\n" +
+                    "To obtain the Bronze rank you need to complete 1 Bronze challenge.\n\n" +
+                    "To obtain the Silver rank you need to complete 2 Silver challenges.\n\n" +
+                    "To obtain the Gold rank you need to complete 3 Gold challenges.\n\n" +
+                    "To obtain the Platinum rank you need to complete all challenges.\n\n" +
+                    "See the different challenges under the 'Challenges' page", color = MaterialTheme.colorScheme.onBackground, textAlign = TextAlign.Center)
+            },
+            containerColor = MaterialTheme.colorScheme.background,
+            onDismissRequest = {
+                onDismissRequest()
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDismissRequest()
+                    }
+                ) {
+                    Text("Close", color = MaterialTheme.colorScheme.onBackground)
+                }
+            }
+        )
     }
 }

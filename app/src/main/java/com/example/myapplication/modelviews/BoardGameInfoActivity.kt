@@ -18,19 +18,17 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     //var boardGameList by mutableStateOf<BoardGameItems?>(null)
 
     var boardGameData by mutableStateOf(BoardGame())
-    var boardGameList by mutableStateOf<BoardGameItems?>(null)
-    var isAtive by mutableStateOf(false)
 
     var openRatingPopUp by mutableStateOf(false)
     var openAddPopUp by mutableStateOf(false)
     var snackbarFavoriteVisible by mutableStateOf(false)
     var snackbarChallengeVisible by mutableStateOf(false)
 
-
-    private var db = FirebaseFirestore.getInstance()
     var youtubeID by mutableStateOf<String>("")
 
     var currentGameID = ""
+
+    var averageRating by mutableStateOf(0.0)
 
     private fun getUserID() : String {
         return sharedViewModel.getUserID()
@@ -52,7 +50,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
                 // boardGameSearch = null
             }
         }
-
     }
 
     fun addToRecentBoardGames(boardGameId : String){
@@ -87,7 +84,8 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     fun fetchYoutubeID(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val youtubeID_ = BoardGameRepository().searchYoutube(id + " board game")
+                val youtubeID_ = BoardGameRepository().searchYoutube(id + "boardgame")
+                Log.v("Youtube Boardgame: ", "$youtubeID_")
 
                 withContext(Dispatchers.Main) {
                     youtubeID = youtubeID_
@@ -101,20 +99,44 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     }
 
     fun updateRating(newRating: String) {
-        if (boardGameData.user_rating == newRating){
-            val updatedGame = boardGameData.copy(user_rating = "0")
-            boardGameData = updatedGame
-        } else {
-            val updatedGame = boardGameData.copy(user_rating = newRating)
-            boardGameData = updatedGame
-        }
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                if (boardGameData.user_rating == newRating){
+                    val updatedGame = boardGameData.copy(user_rating = "0")
+                    boardGameData = updatedGame
+                } else {
+                    val updatedGame = boardGameData.copy(user_rating = newRating)
+                    boardGameData = updatedGame
+                }
                 BoardGameRepository().toggleRatingGame(getUserID(), boardGameData.id, newRating)
+                withContext(Dispatchers.Main){
+                    fetchAverageRating(currentGameID)
+                }
             } catch (e: Exception) {
-                Log.v("bgsearch_fault", "searchlogs: $e")
-                // boardGameSearch = null
+                Log.v("RatingUpdate", "RatingErrorUpdateMessage: $e")
+            }
+        }
+    }
+
+    fun fetchAverageRating(gameID : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                averageRating = BoardGameRepository().fetchAverageBbRating(gameID)
+            }
+            catch (e : Exception){
+                Log.v("Cant fetch rating", "$e")
+            }
+        }
+    }
+
+    fun addOrRemovePlayedGames(gameID : String, increment : String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                BoardGameRepository().addOrRemovePlayedGame(getUserID(), gameID, increment)
+                Log.v("update Played Games ", "success!")
+            }
+            catch (e : Exception){
+                Log.v("update Played games failed!: ", "$e")
             }
         }
     }

@@ -21,7 +21,7 @@ data class BoardGame(
     var userRating: String = "",
 
     @field:Element(name = "averageRatingBB", required = false)
-    var averageRatingBB: Int = 0,
+    var averageRatingBB: List<String> = emptyList(),
 
     @field:Element(name = "id", required = false)
     var id: String = "",
@@ -84,15 +84,9 @@ data class BoardGame(
 
     var user_rating: String = "0",
 
-    ) {
-    fun shortTitel(): String{
-        val index = name.indexOf(":")
-        return if (index != -1) {
-            name.substring(0, index)
-        } else {
-            name
-        }
-    }
+    var played_count: String = "0"
+
+) {
 
     // debugging
     override fun toString(): String {

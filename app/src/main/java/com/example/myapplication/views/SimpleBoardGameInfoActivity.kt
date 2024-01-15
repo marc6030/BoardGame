@@ -4,6 +4,10 @@ package com.example.myapplication
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
@@ -15,14 +19,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -34,13 +35,12 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,20 +61,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -90,6 +95,7 @@ import com.example.myapplication.modelviews.RatingsViewModel
 import com.example.myapplication.views.YoutubePlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.math.RoundingMode
 import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -107,7 +113,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     boardGameInfoActivity.fetchBoardGameData(gameID)
     boardGameInfoActivity.addToRecentBoardGames(gameID)
-
+    boardGameInfoActivity.fetchAverageRating(gameID)
 
 
     val colorMatrixDark = ColorMatrix().apply {
@@ -116,11 +122,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     val boardGame =
         boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
-    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center, fontSize = 50.sp)
+    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center, fontSize = 50.sp, shadow = Shadow(color = Color.Black, blurRadius = 6f))
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
-
-    boardGameInfoActivity.fetchYoutubeID(boardGame.name)
 
 
 
@@ -179,7 +183,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .drawWithContent {
                                             if (readyToDraw) drawContent()
                                         },
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onBackground,
                                     overflow = TextOverflow.Clip,
                                     onTextLayout = { textLayoutResult ->
                                         if (textLayoutResult.didOverflowHeight) {
@@ -189,7 +193,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             readyToDraw = true
                                         }
                                     },
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
                                 )
                                 Box(
                                     modifier = Modifier
@@ -203,13 +207,19 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         alignment = Alignment.Center,
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .clip(CircleShape)
+                                            .shadow(8.dp, CircleShape)
                                     )
                                     IconButton(
                                         onClick = { showYouTubePlayer = true },
                                         modifier = Modifier
                                             .align(Alignment.Center)
                                             .size(80.dp)
+                                            .clip(CircleShape)
+                                            .background(
+                                                MaterialTheme.colorScheme.background.copy(
+                                                    alpha = 0.5f
+                                                )
+                                            )
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.PlayArrow,
@@ -221,6 +231,9 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         )
                                     }
                                     if (showYouTubePlayer) {
+                                        val temp = boardGame.name.replace(" ", "")
+                                        Log.v("Boevs2", "${boardGame.name.replace(" ", "")}")
+                                        boardGameInfoActivity.fetchYoutubeID(temp)
                                         YoutubePlayer(youtubeVideoId = boardGameInfoActivity.youtubeID, lifecycleOwner = LocalLifecycleOwner.current)
 
                                         // Close Button
@@ -289,7 +302,11 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             Image(
                                                 painter = painterResource(id = R.drawable.elderly),
                                                 contentDescription = null,
-                                                colorFilter = ColorFilter.tint(Color.White)
+                                                colorFilter = ColorFilter.tint(Color.White),
+                                                modifier = Modifier.shakeAndOffsetClickable(
+                                                    onClick = { /* your click logic */ },
+                                                    offsetX = 700.dp
+                                                )
                                             )
                                             Text(
                                                 text = "${boardGame.age}+",
@@ -331,11 +348,16 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     contentDescription = "contentDescription",
                                     modifier = Modifier
                                         .size(45.dp)
-                                        .background(Color.DarkGray, CircleShape)
+                                        .background(
+                                            MaterialTheme.colorScheme.background,
+                                            CircleShape
+                                        )
                                         .align(Alignment.BottomStart)
-                                        .clickable { boardGameInfoActivity.openRatingPopUp = !boardGameInfoActivity.openRatingPopUp
+                                        .clickable {
+                                            boardGameInfoActivity.openRatingPopUp =
+                                                !boardGameInfoActivity.openRatingPopUp
                                         },
-                                    tint = Color.DarkGray
+                                    tint = MaterialTheme.colorScheme.background
                                 )
                             }
                             Row(
@@ -349,7 +371,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     text = boardGame.ratingBGG,
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier
-                                        .fillMaxWidth(0.292f)
+                                        .fillMaxWidth(0.280f)
+                                        .fillMaxHeight(0.03f)
                                         .align(Alignment.Bottom),
                                     textAlign = TextAlign.Center,
                                     fontWeight = FontWeight.Bold,
@@ -377,14 +400,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     contentDescription = "contentDescription",
                                     modifier = Modifier
                                         .size(60.dp)
-                                        .background(Color.DarkGray, CircleShape)
+                                        .shadow(8.dp, CircleShape)
+                                        .background(MaterialTheme.colorScheme.background)
                                         .align(Alignment.BottomCenter)
                                         .clickable {
                                             coroutineScope.launch {
                                                 pagerState.animateScrollToPage(1)
                                             }
                                         },
-                                    tint = Color.White,
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                 )
                             }
                             Box(
@@ -400,12 +424,12 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                     modifier = Modifier
                                         .size(25.dp)
                                         .align(Alignment.BottomStart)
-                                        .background(Color.Gray, CircleShape)
+                                        .background(Color.DarkGray, CircleShape)
                                         .clickable {
                                             boardGameInfoActivity.openRatingPopUp =
                                                 !boardGameInfoActivity.openRatingPopUp
                                         },
-                                    tint = Color.White
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -426,7 +450,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                         ) {
                             PopupAddDialog()
                         }*/
-                        AddToChallengeButton(boardGameInfoActivity = boardGameInfoActivity)
+                        addPlayedGamesButton(boardGameInfoActivity = boardGameInfoActivity)
                         favoriteButton(boardGameInfoActivity = boardGameInfoActivity)
                     }
                 }
@@ -453,7 +477,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             "Description",
                                             "General Info"
                                         ),
-                                        modifier = Modifier.background(Color.White)
                                     ) {
                                         selectedTabIndex = it;
                                     }
@@ -489,7 +512,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                                 pagerState.animateScrollToPage(0)
                                             }
                                         },
-                                    tint = Color.White,
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                 )
                             }
                         }
@@ -498,24 +521,15 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             }
         }
     )
-    Button(
-        onClick = {
-            navController.popBackStack()
-        },
-        modifier = Modifier
-            .width(60.dp)
-            .height(60.dp)
-            .padding(8.dp),
-        colors = ButtonDefaults.buttonColors(Color.Transparent)
-    ) {
+    IconButton(
+        onClick = { navController.popBackStack() }
+    ){
+        Icon(
+            imageVector = Icons.Filled.KeyboardArrowLeft,
+            contentDescription = "back arrow",
+            tint = MaterialTheme.colorScheme.onBackground
+        )
     }
-    Image(
-        painter = painterResource(id = R.drawable.ic_action_back),
-        contentDescription = null,
-        modifier = Modifier
-            .padding(18.dp)
-    )
-
 }
 
 @Composable
@@ -537,7 +551,7 @@ fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: R
                     Modifier
                         .size(350.dp, 220.dp)
                         .padding(top = 5.dp)
-                        .background(Color.DarkGray, RoundedCornerShape(10.dp))
+                        .background(MaterialTheme.colorScheme.background, RoundedCornerShape(10.dp))
                 ) {
                     Column(
                         modifier = Modifier
@@ -554,52 +568,12 @@ fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: R
 }
 
 
-
-
-@Composable
-fun PopupAddDialog() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.5f)
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box {
-            Popup(
-                alignment = Alignment.Center,
-                properties = PopupProperties()
-            ) {
-                Box(
-                    Modifier
-                        .size(450.dp, 300.dp)
-                        .padding(top = 5.dp)
-                        .background(
-                            Color.DarkGray,
-                            RoundedCornerShape(10.dp)
-                        )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                    }
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel) {
-    val averageRating = boardGameInfoActivity.boardGameData.user_rating // Placeholder, real coming
     Column {
         starDisplay(boardGameInfoActivity.boardGameData.ratingBGG, "BGG rating")
-        starDisplay(
-            averageRating,
+        starDisplay(boardGameInfoActivity.averageRating.toString()
+            ,
             text = "BoardBandit Average Rating"
         )
         ratingDisplay(
@@ -613,7 +587,7 @@ fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsVi
 
 @Composable
 fun starDisplay(stars: String, text: String) {
-    val numOfStars: Double = stars.toDouble()
+    val numOfStars: Double = stars.toBigDecimal().setScale(1, RoundingMode.CEILING).toDouble()
     Column {
         Box {
             Text(text + ": $numOfStars / 10")
@@ -629,7 +603,7 @@ fun starDisplay(stars: String, text: String) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Favorite Icon",
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .size(34.dp)
 
@@ -682,7 +656,6 @@ fun ratingDisplay(
                                     i.toString()
                                 )
                             }
-                        // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
                     )
                 }
             }
@@ -701,22 +674,18 @@ fun favoriteButton(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth(0.852f)
-            .fillMaxHeight(0.75f)
+            .fillMaxWidth(0.86f)
+            .fillMaxHeight(0.73f)
     ) {
         Icon(imageVector = if (boardGameInfoActivity.boardGameData.liked == "True") Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "favoriteButton",
             tint = Color.White,
             modifier = Modifier
-                .size(40.dp)
+                .size(45.dp)
                 .background(Color.Transparent, CircleShape)
                 .align(Alignment.BottomEnd)
-                .clickable {
-                    if (boardGameInfoActivity.boardGameData.liked == "False") {
-                        triggerConfetti = true
-                    } else if (boardGameInfoActivity.boardGameData.liked == "True") {
-                        triggerConfetti = false
-                    }
+                .bounceClickable {
+                    triggerConfetti = true
                     boardGameInfoActivity.toggleFavorite(boardGameInfoActivity.boardGameData.id)
                     boardGameInfoActivity.snackbarFavoriteVisible =
                         !boardGameInfoActivity.snackbarFavoriteVisible
@@ -732,6 +701,7 @@ fun favoriteButton(
                                 duration = SnackbarDuration.Short,
                             )
                             if (result == SnackbarResult.ActionPerformed) {
+                                triggerConfetti = true
                                 boardGameInfoActivity.toggleFavorite(boardGameInfoActivity.boardGameData.id)
                             }
                             boardGameInfoActivity.snackbarFavoriteVisible =
@@ -740,10 +710,21 @@ fun favoriteButton(
                     }
                 }
         )
-        if (triggerConfetti) {
+
+        DisposableEffect(triggerConfetti) {
+            if (triggerConfetti && boardGameInfoActivity.boardGameData.liked == "True") {
+                coroutineScope.launch {
+                    delay(2000)
+                    triggerConfetti = false
+                }
+            }
+            onDispose {
+            }
+        }
+        if (triggerConfetti && boardGameInfoActivity.boardGameData.liked == "True") {
             ParticleSystem(
-                18.dp,
-                15.dp,
+                23.dp,
+                20.dp,
                 200,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -758,10 +739,11 @@ fun favoriteButton(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp)
             ) { data ->
                 Snackbar(
                     snackbarData = data,
-                    actionColor = Color.LightGray, // Change the color of the "UNDO" text
+                    actionColor = MaterialTheme.colorScheme.background, // Change the color of the "UNDO" text
                     containerColor = Color.Gray, // Change the background color of the Snackbar
                     contentColor = Color.White
                 )// Change the color of the text in the Snackbar
@@ -792,9 +774,7 @@ fun ParticleSystem(
 
     // List of particles
     val particles: MutableList<Particle> = mutableListOf()
-    // For-loop that creates each individual particle and adds it to particles
     for (i in 1..size) {
-        // Colors that particle can have
         val colors = listOf(
             Color(255, 0, 0, 255),
             Color(0, 255, 0, 255),
@@ -803,10 +783,9 @@ fun ParticleSystem(
             Color(255, 235, 59, 255)
         )
 
-        // Adding the particle to particles
         particles.add(
             Particle(
-                Offset(posX.toFloat(), posY.toFloat()),
+                Offset(posX, posY),
                 Offset(1F, 1F),
                 Offset(0F, 0F),
                 colors[Random.nextInt(colors.size)],
@@ -816,12 +795,10 @@ fun ParticleSystem(
         )
     }
 
-    // Add all particles to a mutable state of particles
     val mutableParticles = remember { mutableStateListOf<Particle>() }
     mutableParticles.addAll(particles)
 
-    var counter =
-        0 // Counts how many iterations each particle has been updated
+    var counter = 0
 
     // Updates each particle pos, vel, acc, size and alpha
     LaunchedEffect(Unit) {
@@ -857,7 +834,7 @@ fun ParticleSystem(
 
             }
 
-            delay(16L) // Delay before next iteration
+            delay(16L)
             counter += 1
 
             if (counter > 200) {
@@ -895,7 +872,7 @@ fun ParticleSystem(
 }
 
 @Composable
-fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
+fun addPlayedGamesButton(boardGameInfoActivity: BoardGameInfoActivity) {
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     Box(modifier = Modifier.fillMaxSize()) {
@@ -911,20 +888,27 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                 contentDescription = "contentDescription",
                 modifier = Modifier
                     .size(45.dp)
-                    .background(Color.DarkGray, CircleShape)
+                    .background(MaterialTheme.colorScheme.background, CircleShape)
                     .align(Alignment.BottomEnd)
                     .clickable {
+                        boardGameInfoActivity.addOrRemovePlayedGames(
+                            boardGameInfoActivity.currentGameID,
+                            "True"
+                        )
                         boardGameInfoActivity.snackbarChallengeVisible =
                             !boardGameInfoActivity.snackbarChallengeVisible
                         if (boardGameInfoActivity.snackbarChallengeVisible) {
                             coroutineScope.launch {
                                 val result = snackbarHostState.showSnackbar(
-                                    message = "Congratulation on playing this game! Added to Challenges",
+                                    message = "Congratulation on playing this game! Added to Played Games",
                                     actionLabel = "UNDO",
                                     duration = SnackbarDuration.Short,
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
-                                    //boardGameInfoActivity.(REMOVEFROMCHALLENGE)
+                                    boardGameInfoActivity.addOrRemovePlayedGames(
+                                        boardGameInfoActivity.currentGameID,
+                                        "False"
+                                    )
                                 }
                                 boardGameInfoActivity.snackbarChallengeVisible =
                                     false
@@ -939,6 +923,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp)
             ) { data ->
                 Snackbar(
                     snackbarData = data,
@@ -950,3 +935,111 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
         }
     }
 }
+
+fun Modifier.bounceClickable(
+    minScale: Float = 0.5f,
+    onAnimationFinished: (() -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+) = composed {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) minScale else 1f,
+        label = ""
+    ) {
+        if(isPressed) {
+            isPressed = false
+            onAnimationFinished?.invoke()
+        }
+    }
+
+    this
+        .graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        }
+        .clickable {
+            isPressed = true
+            onClick?.invoke()
+        }
+}
+
+
+@Composable
+fun Modifier.shakeAndOffsetClickable(
+    onClick: () -> Unit,
+    offsetX: Dp = 0.dp,
+    offsetY: Dp = 0.dp
+) = composed {
+    var isPressed by remember { mutableStateOf(false) }
+
+    val rotationOffset by animateFloatAsState(
+        targetValue = if (isPressed) 10f else 0f,
+        animationSpec = keyframes {
+            durationMillis = 3000
+            0.0f at 0
+            15.0f at 150
+            -15.0f at 300
+            15.0f at 450
+            -15.0f at 600
+            15.0f at 750
+            0.0f at 900
+            15.0f at 1050
+            -15.0f at 1200
+            15.0f at 1350
+            -15.0f at 1500
+            15.0f at 1650
+            -15.0f at 1800
+            15.0f at 1950
+            -15.0f at 2100
+            15.0f at 2250
+            -15.0f at 2400
+            15.0f at 2550
+            0.0f at 3000
+        }
+    )
+
+    val offsetXState by animateDpAsState(
+        targetValue = if (isPressed) offsetX else 0.dp,
+        animationSpec = keyframes {
+            durationMillis = 3000
+            0.dp at 0
+            offsetX at 3000
+        }
+    )
+
+    val offsetYState by animateDpAsState(
+        targetValue = if (isPressed) offsetY else 0.dp,
+        animationSpec = tween(300)
+    )
+
+    var changeSize = animateFloatAsState(
+        targetValue = if (!isPressed) 1f else 0f,
+        animationSpec = keyframes {
+            durationMillis = 4000
+            1.0f at 0
+            1.0f at 2999
+            0.0f at 3000
+            1.0f at 4000
+        }
+    ).value
+
+    DisposableEffect(isPressed) {
+        onDispose {
+            isPressed = false
+        }
+    }
+
+    this
+        .graphicsLayer(
+            scaleX = changeSize,
+            scaleY = changeSize,
+            rotationZ = rotationOffset,
+            translationX = offsetXState.value,
+            translationY = offsetYState.value
+        )
+        .clickable {
+            isPressed = true
+        }
+}
+
+
