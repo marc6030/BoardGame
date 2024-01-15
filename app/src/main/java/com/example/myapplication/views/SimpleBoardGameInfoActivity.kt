@@ -443,13 +443,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                 viewModel = ratingsViewModel
                             )
                         }
-                        /*AnimatedVisibility(
-                            visible = boardGameInfoActivity.openAddPopUp,
-                            enter = slideInVertically(),
-                            exit = slideOutVertically()
-                        ) {
-                            PopupAddDialog()
-                        }*/
                         addPlayedGamesButton(boardGameInfoActivity = boardGameInfoActivity)
                         favoriteButton(boardGameInfoActivity = boardGameInfoActivity)
                     }
@@ -522,12 +515,13 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         }
     )
     IconButton(
-        onClick = { navController.popBackStack() }
+        onClick = { navController.popBackStack() },
     ){
         Icon(
             imageVector = Icons.Filled.KeyboardArrowLeft,
             contentDescription = "back arrow",
-            tint = MaterialTheme.colorScheme.onBackground
+            tint = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.size(100.dp)
         )
     }
 }
@@ -589,8 +583,8 @@ fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsVi
 fun starDisplay(stars: String, text: String) {
     val numOfStars: Double = stars.toBigDecimal().setScale(1, RoundingMode.CEILING).toDouble()
     Column {
-        Box {
-            Text(text + ": $numOfStars / 10")
+        Box (modifier = Modifier.padding(2.dp)){
+            Text(text + ": $numOfStars / 10", color = Color.White)
         }
         Box(
             modifier = Modifier
@@ -635,13 +629,17 @@ fun ratingDisplay(
     val numOfStars = boardGameInfoActivity.boardGameData.user_rating.toDouble()
 
     Column {
-        Box {
-            Text(text + ": $numOfStars / 10 - Rate by tapping a Star")
+        Box (modifier = Modifier.padding(2.dp)){
+            Text(text + ": $numOfStars / 10 - Rate by tapping a Star", color = Color.White)
         }
         Box(
             modifier = Modifier
                 .padding(2.dp)
                 .wrapContentWidth(Alignment.Start)
+                .background(
+                    color = Color.Gray,
+                    shape = RoundedCornerShape(10.dp)
+                )
         ) {
             Row() {
                 for (i in 1..10) {
