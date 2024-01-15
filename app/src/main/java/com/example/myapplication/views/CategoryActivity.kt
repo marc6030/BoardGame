@@ -57,7 +57,7 @@ fun CategoryActivity(navController: NavHostController,
         derivedStateOf {
             val layoutInfo = scrollState.layoutInfo
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount -1
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
         }
     }
 
@@ -99,7 +99,8 @@ fun CategoryActivity(navController: NavHostController,
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1f),
+            state = scrollState
         ) {
             items(viewModel.categoryColumn) { boardgame ->
                 Row(

@@ -169,9 +169,25 @@ class BoardGameRepository {
             overallRank = jsonObject.optString("overall_rank", "???"),
             categoryRank = jsonObject.optString("category_rank", "???"),
             liked = jsonObject.optString("is_liked", "False"),
-            user_rating = jsonObject.optString("user_rating", "0"),
-            // picture = jsonObject.optByteArray("image_data") // Uncomment if needed
-        )
+            user_rating = jsonObject.optString("user_rating", "0"))
+    }
+    suspend fun fetchAverageBbRating(id : String): Double {
+        val urlPath = "/getbbratings/$id/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val bbRatings = mutableListOf<String>()
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            bbRatings.add(jsonObject.getString("liked"))
+        }
+        var averageRating = 0.0
+        for (rating: String in bbRatings) {
+            averageRating += rating.toFloat()
+        }
+        if(averageRating != 0.0){
+            averageRating /= bbRatings.size
+        }
+        return averageRating
     }
     suspend fun convertJsonArrayToList(jsonArray: JSONArray): List<String> {
         val list = mutableListOf<String>()

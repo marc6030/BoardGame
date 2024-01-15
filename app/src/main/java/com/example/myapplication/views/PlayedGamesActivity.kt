@@ -103,7 +103,8 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1f),
+            state = scrollState
         ) {
                 items(viewModel.playedGamesList) { boardgame ->
                     Row(

@@ -1,23 +1,12 @@
 package com.example.myapplication
 
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -30,15 +19,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -56,8 +41,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -457,7 +440,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                         ) {
                             PopupAddDialog()
                         }*/
-                        AddToChallengeButton(boardGameInfoActivity = boardGameInfoActivity)
+                        addPlayedGamesButton(boardGameInfoActivity = boardGameInfoActivity)
                         favoriteButton(boardGameInfoActivity = boardGameInfoActivity)
                     }
                 }
@@ -575,52 +558,13 @@ fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: R
 }
 
 
-
-
-@Composable
-fun PopupAddDialog() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.5f)
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box {
-            Popup(
-                alignment = Alignment.Center,
-                properties = PopupProperties()
-            ) {
-                Box(
-                    Modifier
-                        .size(450.dp, 300.dp)
-                        .padding(top = 5.dp)
-                        .background(
-                            MaterialTheme.colorScheme.background,
-                            RoundedCornerShape(10.dp)
-                        )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                    }
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel) {
     val averageRating = boardGameInfoActivity.boardGameData.user_rating // Placeholder, real coming
     Column {
         starDisplay(boardGameInfoActivity.boardGameData.ratingBGG, "BGG rating")
-        starDisplay(
-            averageRating,
+        starDisplay(viewModel.averageRating.toString()
+            ,
             text = "BoardBandit Average Rating"
         )
         ratingDisplay(
@@ -702,8 +646,8 @@ fun ratingDisplay(
                                 boardGameInfoActivity.updateRating(
                                     i.toString()
                                 )
+                                viewModel.fetchAverageRating(boardGameInfoActivity.currentGameID)
                             }
-                        // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
                     )
                 }
             }
@@ -787,6 +731,7 @@ fun favoriteButton(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp)
             ) { data ->
                 Snackbar(
                     snackbarData = data,
@@ -919,7 +864,7 @@ fun ParticleSystem(
 }
 
 @Composable
-fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
+fun addPlayedGamesButton(boardGameInfoActivity: BoardGameInfoActivity) {
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     Box(modifier = Modifier.fillMaxSize()) {
@@ -964,6 +909,7 @@ fun AddToChallengeButton(boardGameInfoActivity: BoardGameInfoActivity) {
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp)
             ) { data ->
                 Snackbar(
                     snackbarData = data,

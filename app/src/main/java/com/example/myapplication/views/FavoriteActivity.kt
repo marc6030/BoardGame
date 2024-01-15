@@ -112,7 +112,8 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1f),
+            state = scrollState
         ) {
             items(viewModel.favoriteBoardGameList) { boardgame ->
                 Row(

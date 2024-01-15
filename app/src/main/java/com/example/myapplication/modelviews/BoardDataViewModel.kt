@@ -35,7 +35,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     var nrOfRatedGames by mutableStateOf("0")
     var nrOfLikedGames by mutableStateOf("0")
 
-
     var bronzeRank by mutableStateOf(false)
     var silverRank by mutableStateOf(false)
     var goldRank by mutableStateOf(false)
@@ -93,7 +92,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     }
     fun fetchAdditionalBoardGameCategory(category : String) {
         offsetColumnCategory += limit
-        Log.v("tada", "tada")
+        Log.v("PLEASE", "WHY AM I NEVER TRIGGERED")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 categoryColumn +=

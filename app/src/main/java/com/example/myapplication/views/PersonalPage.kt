@@ -561,6 +561,7 @@ fun Dialog(
             text = {
                 Text(text = "$text", color = MaterialTheme.colorScheme.onBackground)
             },
+            containerColor = MaterialTheme.colorScheme.background,
             onDismissRequest = {
                 onDismissRequest()
             },

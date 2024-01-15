@@ -36,4 +36,6 @@ data class BoardGameItem (
 
     var category: List<String> = emptyList()
 
+
+
 )

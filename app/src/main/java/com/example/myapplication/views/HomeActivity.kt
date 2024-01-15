@@ -99,7 +99,6 @@ import kotlin.math.absoluteValue
 @Composable
 fun HomeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     boardgameSelections(navController, viewModel)
-
 }
 
 @Composable
@@ -107,10 +106,13 @@ fun boardgameSelections(
     navController: NavHostController,
     viewModel: BoardDataViewModel
 ) {
-
-    viewModel.fetchBoardGameCategories()
-    viewModel.getAllCategories()
-
+    LaunchedEffect(Unit) {
+        do {
+            viewModel.fetchBoardGameCategories()
+            viewModel.getAllCategories()
+            delay(500)
+        }while(checkListsAreEmpty(viewModel = viewModel))
+    }
 
     MenuScreen(navController = navController, informationtext = "Is an app developed in Kotlin for Android. Its a platform for " +
             "board game enthusiasts. It features functionalities for exploring " +
@@ -138,7 +140,7 @@ fun boardgameSelections(
                     boardGameSelection("Fighting", viewModel, 1, navController)
                 }
                 item {
-                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController)
+                    SwipeableHotnessRow(viewModel.boardGamesRow0, navController, viewModel = viewModel)
                 }
                 item {
                     RoundboardGameSelection("Categories", viewModel, navController)
@@ -166,93 +168,94 @@ fun boardgameSelections(
 fun SwipeableHotnessRow(
     items: List<BoardGameItem>,
     navController: NavHostController,
-    autoScrollDuration: Long = 3000L)
-{
+    autoScrollDuration: Long = 3000L,
+    viewModel: BoardDataViewModel) {
 
-    val pagerState = rememberPagerState(
-        initialPage = items.size/2,
-        initialPageOffsetFraction = 0f
-    ) {
-        items.size
-    }
+    if (items.isNotEmpty()) {
+        val pagerState = rememberPagerState(
+            initialPage = items.size / 2,
+            initialPageOffsetFraction = 0f
+        ) {
+            items.size
+        }
 
-    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
-    if (isDragged.not()) {
-        with(pagerState) {
-            var currentPageKey by remember { mutableStateOf(0) }
-            LaunchedEffect(key1 = currentPageKey) {
-                launch {
-                    delay(timeMillis = autoScrollDuration)
-                    val nextPage = (currentPage + 1).mod(10)
-                    animateScrollToPage(page = nextPage)
-                    currentPageKey = nextPage
+        val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
+        if (isDragged.not()) {
+            with(pagerState) {
+                var currentPageKey by remember { mutableStateOf(0) }
+                LaunchedEffect(key1 = currentPageKey) {
+                    launch {
+                        delay(timeMillis = autoScrollDuration)
+                        val nextPage = (currentPage + 1).mod(10)
+                        animateScrollToPage(page = nextPage)
+                        currentPageKey = nextPage
+                    }
+                }
+            }
+        }
+        Column(
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .height(400.dp),
+                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 20.dp),
+                pageSpacing = 8.dp,
+            ) { page ->
+                val item = items[page]
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()// Set a custom width for each item
+                        .shadow(8.dp, RoundedCornerShape(30.dp))
+                        .clickable {
+                            navController.navigate("boardgameinfo/${item.id}")
+                        }
+                        .graphicsLayer {
+                            val pageOffset =
+                                ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
+
+                            val transformation =
+                                lerp(
+                                    start = 0.7f,
+                                    stop = 1f,
+                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                )
+                            alpha = transformation
+                            scaleY = transformation
+                        }
+                ) {
+                    AsyncImage(
+                        model = item.imgUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        //alignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                    )
+                }
+            }
+
+            Row(
+                Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp, top = 10.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(pagerState.pageCount) { iteration ->
+                    val color =
+                        if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
+                    Box(
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .shadow(8.dp, CircleShape)
+                            .background(color)
+                            .size(12.dp)
+                    )
                 }
             }
         }
     }
-
-    Column(
-    ) {
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .height(400.dp),
-            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 20.dp),
-            pageSpacing = 8.dp,
-        ) { page ->
-            val item = items[page]
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()// Set a custom width for each item
-                    .shadow(8.dp, RoundedCornerShape(30.dp))
-                    .clickable {
-                        navController.navigate("boardgameinfo/${item.id}")
-                    }
-                    .graphicsLayer {
-                        val pageOffset =
-                            ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
-
-                        val transformation =
-                            lerp(
-                                start = 0.7f,
-                                stop = 1f,
-                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                            )
-                        alpha = transformation
-                        scaleY = transformation
-                    }
-            )  {
-                AsyncImage(
-                    model = item.imgUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    //alignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                )
-            }
-        }
-
-        Row(
-            Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(bottom = 10.dp, top = 10.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(pagerState.pageCount) { iteration ->
-                val color = if (pagerState.currentPage == iteration) Color.DarkGray else Color.LightGray
-                Box(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .shadow(8.dp, CircleShape)
-                        .background(color)
-                        .size(12.dp)
-                )
-            }
-        }
-    }
-
 }
 
 
@@ -354,7 +357,6 @@ fun RoundboardGameSelection(headline: String,
     LazyRow(
         modifier = Modifier,
         state = scrollState
-
     )
     {
 
@@ -452,4 +454,13 @@ fun BigPicture(
         }
 
     }
+}
+
+fun checkListsAreEmpty(viewModel: BoardDataViewModel): Boolean{
+    return viewModel.boardGamesRow0.isEmpty()
+            ||  viewModel.boardGamesRow1.isEmpty()
+            || viewModel.boardGamesRow2.isEmpty()
+            || viewModel.boardGamesRow3.isEmpty()
+            || viewModel.boardGamesRow4.isEmpty()
+            || viewModel.boardGamesRow5.isEmpty()
 }

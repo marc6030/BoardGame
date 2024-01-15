@@ -97,20 +97,18 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     }
 
     fun updateRating(newRating: String) {
-        if (boardGameData.user_rating == newRating){
-            val updatedGame = boardGameData.copy(user_rating = "0")
-            boardGameData = updatedGame
-        } else {
-            val updatedGame = boardGameData.copy(user_rating = newRating)
-            boardGameData = updatedGame
-        }
-
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                if (boardGameData.user_rating == newRating){
+                    val updatedGame = boardGameData.copy(user_rating = "0")
+                    boardGameData = updatedGame
+                } else {
+                    val updatedGame = boardGameData.copy(user_rating = newRating)
+                    boardGameData = updatedGame
+                }
                 BoardGameRepository().toggleRatingGame(getUserID(), boardGameData.id, newRating)
             } catch (e: Exception) {
-                Log.v("bgsearch_fault", "searchlogs: $e")
-                // boardGameSearch = null
+                Log.v("RatingUpdate", "RatingErrorUpdateMessage: $e")
             }
         }
     }
