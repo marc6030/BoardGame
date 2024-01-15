@@ -82,7 +82,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
     }
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "search"
 
     ) {
         composable("nointernet") {
@@ -144,7 +144,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
                 )
             }) {
 
-            searchActivity(navController, boardSearchViewModel)
+            searchActivity(navController, boardSearchViewModel, boardGameInfoActivity)
 
 
         }

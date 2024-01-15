@@ -3,6 +3,7 @@ import android.util.Log
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
 import com.example.myapplication.models.BoardGameSearch
+import com.example.myapplication.models.Categories
 import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -15,7 +16,7 @@ import java.net.URL
 
 class BoardGameRepository {
 
-    private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
+    private val baseUrl = "http://192.168.50.82:5050" // Replace with your Flask API URL
     private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyCUsP8-FIzZFeCNKk4yVgVUiY6pYAsl5SQ&q="
 
     private fun makeApiRequest(urlPath: String): String {
@@ -107,7 +108,42 @@ class BoardGameRepository {
         makeApiRequest(urlPath)
     }
 
-    suspend fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
+    suspend fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int, categories: Map<String, Boolean>): List<BoardGameSearch> {
+        var urlPath = "/boardgamesearch/$userSearch/$limit/$offset/"
+        var first = true
+        categories.forEach { (category, state) ->
+            if (state) {
+                if (first) {
+                    urlPath += "?categories=$category"
+                    first = false
+                } else {
+                    urlPath += "&categories=$category"
+                }
+            }
+        }
+
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val boardGameSearchItems = mutableListOf<BoardGameSearch>()
+
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val textContent = convertHtmlToStructuredText(jsonObject.getString("description"))
+            boardGameSearchItems.add(
+                BoardGameSearch(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                    description = textContent
+                )
+            )
+        }
+        return boardGameSearchItems
+    }
+
+    suspend fun getBoardGameSearchWithCategories(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
+
+
         val urlPath = "/boardgamesearch/$userSearch/$limit/$offset/"
         val jsonResponse = makeApiRequest(urlPath)
         val jsonArray = JSONArray(jsonResponse)
@@ -115,16 +151,33 @@ class BoardGameRepository {
 
         for (i in 0 until jsonArray.length()) {
             val jsonObject = jsonArray.getJSONObject(i)
+            val textContent = convertHtmlToStructuredText(jsonObject.getString("description"))
             boardGameSearchItems.add(
                 BoardGameSearch(
                     id = jsonObject.getString("id_actual"),
-                    name = jsonObject.getString("name")
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                    description = textContent
                 )
             )
         }
         return boardGameSearchItems
     }
 
+    suspend fun getAllCategories(): Categories {
+        val urlPath = "/boardGameCategories/"
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonObject = JSONObject(jsonResponse)
+        val jsonCategoriesArray = jsonObject.getJSONArray("categories")
+        val categoriesList = mutableListOf<String>()
+
+        for (i in 0 until jsonCategoriesArray.length()) {
+            val category = jsonCategoriesArray.getString(i)
+            categoriesList.add(category)
+        }
+
+        return Categories(categoriesList)
+    }
 
     suspend fun getBoardGame(id: String): BoardGame {
 

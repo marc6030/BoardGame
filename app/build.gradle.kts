@@ -124,7 +124,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-util:1.5.4")
     implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28")
 
-
     // Cucumber in androidtest
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
 
