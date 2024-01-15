@@ -50,8 +50,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -103,7 +105,7 @@ fun PopUpOptions(boardSearchViewModel: BoardSearchViewModel, showPopup: MutableS
     val rows = mutableListOf<List<String>>()
 
     fun calculateWidth(category: String): Dp {
-        val baseWidth = 80.dp
+        val baseWidth = 75.dp
         val padding = 10.dp
 
         return baseWidth + (category.length * 4).dp + padding
@@ -155,7 +157,10 @@ fun PopUpOptions(boardSearchViewModel: BoardSearchViewModel, showPopup: MutableS
                                     text = "$category ",
                                     color = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier
-                                        .padding(start = 10.dp, end = 10.dp, top = 6.5.dp, bottom = 6.5.dp)
+                                        .padding(start = 10.dp, end = 10.dp, top = 6.5.dp, bottom = 6.5.dp),
+                                    style = TextStyle(
+                                        shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                                    )
                                 )
                             }
                         }

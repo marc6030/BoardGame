@@ -167,14 +167,17 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
             }
         Spacer(modifier = Modifier.height(20.dp))
     }
-    IconButton(
-        onClick = { navController.popBackStack() }
-    ){
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowLeft,
-            contentDescription = "back arrow",
-            tint = MaterialTheme.colorScheme.onBackground
-        )
+    Column {
+        Spacer(modifier = Modifier.height(15.dp))
+        IconButton(
+            onClick = { navController.popBackStack() }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowLeft,
+                contentDescription = "back arrow",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 fun shortTitel(name: String): String{
