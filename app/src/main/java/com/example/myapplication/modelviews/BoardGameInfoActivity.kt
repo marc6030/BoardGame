@@ -70,9 +70,9 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val boardGame: BoardGame = BoardGameRepository().getBoardGame(id)
-                withContext(Dispatchers.Main) {
-                    boardGameData = boardGame
-                }
+                boardGameData = boardGame
+                averageRating = BoardGameRepository().fetchAverageBbRating(boardGameData.id)
+                Log.v("fetching91", "69")
             } catch (e: Exception) {
                 Log.v("can't fetch boardgamedata: ", "$e")
             } finally {
@@ -101,33 +101,31 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     fun updateRating(newRating: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (boardGameData.user_rating == newRating){
-                    val updatedGame = boardGameData.copy(user_rating = "0")
-                    boardGameData = updatedGame
-                } else {
-                    val updatedGame = boardGameData.copy(user_rating = newRating)
-                    boardGameData = updatedGame
-                }
+                averageRating = BoardGameRepository().fetchAverageBbRating(boardGameData.id)
+                Log.v("avgRating is: ", "$averageRating")
                 BoardGameRepository().toggleRatingGame(getUserID(), boardGameData.id, newRating)
-                withContext(Dispatchers.Main){
-                    fetchAverageRating(currentGameID)
+                fetchBoardGameData(boardGameData.id)
+                withContext(Dispatchers.Main) {
+
                 }
+
             } catch (e: Exception) {
                 Log.v("RatingUpdate", "RatingErrorUpdateMessage: $e")
             }
         }
     }
 
+    /*
     fun fetchAverageRating(gameID : String){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                averageRating = BoardGameRepository().fetchAverageBbRating(gameID)
             }
             catch (e : Exception){
                 Log.v("Cant fetch rating", "$e")
             }
         }
     }
+     */
 
     fun addOrRemovePlayedGames(gameID : String, increment : String){
         viewModelScope.launch(Dispatchers.IO) {

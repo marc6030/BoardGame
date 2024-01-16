@@ -110,10 +110,12 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var selectedTabIndex by remember { mutableStateOf(0) }
     var showYouTubePlayer by remember { mutableStateOf(false) }
 
+    LaunchedEffect(gameID){
+        boardGameInfoActivity.fetchBoardGameData(gameID)
+        boardGameInfoActivity.addToRecentBoardGames(gameID)
+        // boardGameInfoActivity.fetchAverageRating(gameID)
+    }
 
-    boardGameInfoActivity.fetchBoardGameData(gameID)
-    boardGameInfoActivity.addToRecentBoardGames(gameID)
-    boardGameInfoActivity.fetchAverageRating(gameID)
 
 
     val colorMatrixDark = ColorMatrix().apply {
@@ -129,7 +131,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
-    DisposableEffect(boardGame!!.name) {
+    DisposableEffect(boardGame.name) {
         textStyle = textStyleBody1
         readyToDraw = false
         onDispose { }
@@ -572,8 +574,7 @@ fun PopupRatingDialog(boardGameInfoActivity: BoardGameInfoActivity, viewModel: R
 fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsViewModel) {
     Column {
         starDisplay(boardGameInfoActivity.boardGameData.ratingBGG, "BGG rating")
-        starDisplay(boardGameInfoActivity.averageRating.toString()
-            ,
+        starDisplay(boardGameInfoActivity.averageRating.toString(),
             text = "BoardBandit Average Rating"
         )
         ratingDisplay(
@@ -630,9 +631,11 @@ fun ratingDisplay(
                     viewModel: RatingsViewModel,
                     boardGameInfoActivity: BoardGameInfoActivity
                 ) {
-
-
     val numOfStars = boardGameInfoActivity.boardGameData.user_rating.toDouble()
+    Log.v("current game: ", "${boardGameInfoActivity.boardGameData}")
+    Log.v("current rating: ", boardGameInfoActivity.boardGameData.user_rating)
+
+
 
     Column {
         Box {

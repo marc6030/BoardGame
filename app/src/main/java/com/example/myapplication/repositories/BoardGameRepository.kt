@@ -17,13 +17,24 @@ import java.net.URL
 
 class BoardGameRepository {
 
-    private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
+    private val baseUrl = "http://192.168.50.82:5050" // Replace with your Flask API URL
     private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyCUsP8-FIzZFeCNKk4yVgVUiY6pYAsl5SQ&q="
 
     private fun makeApiRequest(urlPath: String): String {
         val url = URL(baseUrl + urlPath)
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
+
+        BufferedReader(InputStreamReader(connection.inputStream)).use {
+            return it.readText()
+        }
+    }
+
+    private fun makeApiPostRequest(urlPath: String): String {
+        val url = URL(baseUrl + urlPath)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        connection.doOutput = true
 
         BufferedReader(InputStreamReader(connection.inputStream)).use {
             return it.readText()
@@ -141,8 +152,8 @@ class BoardGameRepository {
 
 
     suspend fun getBoardGame(id: String): BoardGame {
-
-        val urlPath = "/boardgame/$id/"
+        val username = "static_user"
+        val urlPath = "/boardgame/$id/$username"
         val jsonResponse = makeApiRequest(urlPath)
         val jsonObject = JSONObject(jsonResponse)
 
@@ -269,7 +280,7 @@ class BoardGameRepository {
 
     suspend fun toggleRatingGame(username: String, id: String, rating: String) {
         val urlPath = "/ratingstoggle/$id/$username/$rating/"
-        makeApiRequest(urlPath) // Assuming this is a POST request
+        makeApiPostRequest(urlPath) // Assuming this is a POST request
     }
 
     suspend fun getAllCategories(): Categories {

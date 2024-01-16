@@ -107,11 +107,10 @@ fun boardgameSelections(
     viewModel: BoardDataViewModel
 ) {
     LaunchedEffect(Unit) {
-        do {
-            viewModel.fetchBoardGameCategories()
-            viewModel.getAllCategories()
-            delay(500)
-        }while(checkListsAreEmpty(viewModel = viewModel))
+
+        viewModel.fetchBoardGameCategories()
+        viewModel.getAllCategories()
+
     }
 
     MenuScreen(navController = navController, informationtext = "Is an app developed in Kotlin for Android. Its a platform for " +
