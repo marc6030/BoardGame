@@ -104,6 +104,31 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         }
     }
 
+    fun fetchOneBoardGameCategory(category : String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                 if (category == categoryRow0) {
+                    boardGamesRow0 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow0, getUserID())
+                } else if (category == categoryRow1) {
+                    boardGamesRow1 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow1, getUserID())
+                } else if (category == categoryRow2) {
+                    boardGamesRow2 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow2, getUserID())
+                } else if (category == categoryRow3) {
+                    boardGamesRow3 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow3, getUserID())
+                } else if (category == categoryRow4) {
+                    boardGamesRow4 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow4, getUserID())
+                } else if (category == categoryRow5) {
+                    boardGamesRow5 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow5, getUserID())
+                }else if(category == "category"){
+                    categories = BoardGameRepository().getAllCategories()
+                }else if(category == "bigPicture"){
+                     bigPictureGame = BoardGameRepository().getBoardGame("316554")
+                 }
+            } catch (e: Exception) {
+                Log.v("Cant fetch GameCategories", "$e")
+            }
+        }
+    }
     fun fetchBoardGameCategories() {
         offsetRow0 = 0
         offsetRow1 = 0

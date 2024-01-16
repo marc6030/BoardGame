@@ -49,6 +49,7 @@ import com.example.myapplication.views.searchActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.delay
+import java.lang.Thread.sleep
 
 
 class MainActivity : ComponentActivity() {
@@ -70,6 +71,10 @@ class MainActivity : ComponentActivity() {
         )
         boardDataViewModel.fetchBoardGameCategories()
         boardDataViewModel.getAllCategories()
+
+        if(check(boardDataViewModel)){
+            load(boardDataViewModel)
+        }
 
         window.apply {
             clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -176,4 +181,47 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
             )
         }
     }
+}
+fun load(viewModel: BoardDataViewModel){
+        while(viewModel.boardGamesRow0.isEmpty()) {
+            viewModel.fetchOneBoardGameCategory(viewModel.categoryRow0)
+            sleep(500)
+        }
+        while(viewModel.boardGamesRow1.isEmpty()) {
+            viewModel.fetchOneBoardGameCategory(viewModel.categoryRow1)
+            sleep(500)
+        }
+        while(viewModel.boardGamesRow2.isEmpty()) {
+            viewModel.fetchOneBoardGameCategory(viewModel.categoryRow2)
+            sleep(500)
+        }
+        while(viewModel.boardGamesRow3.isEmpty()) {
+            viewModel.fetchOneBoardGameCategory(viewModel.categoryRow3)
+            sleep(500)
+        }
+        while(viewModel.boardGamesRow4.isEmpty()) {
+            viewModel.fetchOneBoardGameCategory(viewModel.categoryRow4)
+            sleep(500)
+        }
+        while(viewModel.boardGamesRow5.isEmpty()) {
+            viewModel.fetchOneBoardGameCategory(viewModel.categoryRow5)
+            sleep(500)
+        }
+    while(viewModel.categories.categories.isEmpty()) {
+        viewModel.fetchOneBoardGameCategory("category")
+        sleep(500)
+    }
+    while (viewModel.bigPictureGame.id.equals("")){
+        viewModel.fetchOneBoardGameCategory("bigPicture")
+    }
+}
+fun check(viewModel: BoardDataViewModel): Boolean {
+    return viewModel.boardGamesRow0.isEmpty()
+            || viewModel.boardGamesRow1.isEmpty()
+            || viewModel.boardGamesRow2.isEmpty()
+            || viewModel.boardGamesRow3.isEmpty()
+            || viewModel.boardGamesRow4.isEmpty()
+            || viewModel.boardGamesRow5.isEmpty()
+            || viewModel.categories.categories.isEmpty()
+            || viewModel.bigPictureGame.id.equals("")
 }
