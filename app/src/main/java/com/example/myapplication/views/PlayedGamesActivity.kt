@@ -48,6 +48,7 @@ import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.modelviews.BoardGameInfoActivity
 import com.example.myapplication.modelviews.PlayedGamesViewModel
+import kotlinx.coroutines.withContext
 
 
 @Composable

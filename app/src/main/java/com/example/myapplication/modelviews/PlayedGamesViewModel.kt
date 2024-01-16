@@ -59,7 +59,10 @@ class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel, private
     fun removeOrDecrementPlayedGames(boardgame : BoardGameItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "False")
+                //boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "False")
+
+                BoardGameRepository().addOrRemovePlayedGame(getUserID(), boardgame.id, "False")
+                fetchPlayedBoardGames()
                 withContext(Dispatchers.Main) {
                     playedGamesCheck++
                 }
@@ -71,7 +74,10 @@ class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel, private
     fun addOrIncrementPlayedGames(boardgame : BoardGameItem) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "True")
+                // boardGameInfoActivity.addOrRemovePlayedGames(boardgame.id, "True")
+
+                BoardGameRepository().addOrRemovePlayedGame(getUserID(), boardgame.id, "True")
+                fetchPlayedBoardGames()
                 withContext(Dispatchers.Main) {
                     playedGamesCheck++
                 }
