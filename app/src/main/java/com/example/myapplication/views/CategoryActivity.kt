@@ -50,7 +50,6 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 fun CategoryActivity(navController: NavHostController,
                      viewModel: BoardDataViewModel,
                      category : String) {
-
     val scrollState = rememberLazyListState()
 
     val shouldLoadMore = remember {

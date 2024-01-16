@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.net.Uri
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -363,15 +364,15 @@ fun RoundboardGameSelection(headline: String,
     )
     {
 
-        items(currentRow.categories) { item ->
-            item
+        items(currentRow.categories) { categoryName ->
             Box(
                 modifier = Modifier
                     .size(100.dp, 100.dp)
                     .testTag("items_1234")
                     .padding(5.dp)
                     .clickable {
-                        navController.navigate("category/$item")
+                        val encodedCategoryName = Uri.encode(categoryName)
+                        navController.navigate("category/$encodedCategoryName")
                     }
                     .shadow(8.dp, CircleShape)
             )
@@ -386,7 +387,7 @@ fun RoundboardGameSelection(headline: String,
                         .testTag("game_picture")
                         .blur(10.dp)
                 )
-                Text(item,
+                Text(categoryName,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,

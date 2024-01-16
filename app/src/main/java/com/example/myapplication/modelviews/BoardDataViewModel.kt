@@ -79,8 +79,9 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     }
 
     fun fetchBoardGameCategory(category : String) {
+
         offsetColumnCategory = 0
-        Log.v("tada", "tada")
+        Log.v("Category is: ", "$category")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 categoryColumn =

@@ -1,8 +1,10 @@
 package com.example.myapplication
 
 
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -135,7 +137,9 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         composable(
             route = "category/{category}") {
                 navBackStackEntry ->
-            val category = navBackStackEntry.arguments?.getString("category")!!
+            val encodedCategory = navBackStackEntry.arguments?.getString("category")!!
+            val category = encodedCategory.let { Uri.decode(it) }
+            Log.v("currentCategory: ", "$category")
             CategoryActivity(
                 navController = navController,
                 viewModel = boardDataViewModel,
