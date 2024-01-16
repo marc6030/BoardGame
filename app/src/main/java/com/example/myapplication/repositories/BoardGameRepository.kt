@@ -18,7 +18,7 @@ import java.net.URL
 
 class BoardGameRepository {
 
-    private val baseUrl = "http://192.168.50.82:5050" // Replace with your Flask API URL
+    private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
     private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyCUsP8-FIzZFeCNKk4yVgVUiY6pYAsl5SQ&q="
 
     private fun makeApiRequest(urlPath: String): String {

@@ -81,7 +81,7 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
                 )
             }
             Text(
-                text = "My Games",
+                text = "Challenges",
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,

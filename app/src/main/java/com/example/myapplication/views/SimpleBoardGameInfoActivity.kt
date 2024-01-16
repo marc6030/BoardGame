@@ -3,6 +3,7 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -418,6 +419,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         .background(MaterialTheme.colorScheme.background)
                                         .align(Alignment.BottomCenter)
                                         .clickable {
+                                            boardGameInfoActivity.openRatingPopUp = false
                                             coroutineScope.launch {
                                                 pagerState.animateScrollToPage(1)
                                             }
@@ -450,7 +452,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                         AnimatedVisibility(
                             visible = boardGameInfoActivity.openRatingPopUp,
                             enter = slideInVertically(),
-                            exit = slideOutVertically()
+                            exit = ExitTransition.None
                         ) {
                             PopupRatingDialog(
                                 boardGameInfoActivity = boardGameInfoActivity,
@@ -532,7 +534,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     Column {
         Spacer(modifier = Modifier.height(20.dp))
         IconButton(
-            onClick = { navController.popBackStack() },
+            onClick = { boardGameInfoActivity.openRatingPopUp = false
+                navController.popBackStack() },
         ) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,

@@ -107,7 +107,7 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
                 )
             }
             Text(
-                text = "My Games",
+                text = "Played Games",
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,

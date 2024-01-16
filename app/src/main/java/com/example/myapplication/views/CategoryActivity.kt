@@ -149,20 +149,10 @@ fun CategoryActivity(navController: NavHostController,
                             color = MaterialTheme.colorScheme.onBackground,
                         )
                     }
-                    Spacer(Modifier.width(10.dp))
+                    Spacer(Modifier.width(12.dp))
                 }
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-    }
-    IconButton(
-        onClick = { navController.popBackStack() }
-    ){
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowLeft,
-            contentDescription = "back arrow",
-            tint = MaterialTheme.colorScheme.onBackground
-        )
     }
 }
 
