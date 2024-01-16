@@ -66,7 +66,7 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
         }
     }
 
-    LaunchedEffect(viewModel.ratedGamesList){
+    LaunchedEffect(Unit){
         viewModel.fetchRatedBoardGames()
     }
 

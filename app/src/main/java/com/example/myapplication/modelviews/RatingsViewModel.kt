@@ -41,6 +41,10 @@ class RatingsViewModel(private var sharedViewModel: SharedViewModel) : ViewModel
 
     fun fetchAdditionalRatedBoardGames() {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.v(
+                "FetchingAdditionRatedBoardGameGood",
+                "Can fetch additional rated boardGames"
+            )
             try {
                 offset += limit
                 ratedGamesList += BoardGameRepository().getRatedGames(

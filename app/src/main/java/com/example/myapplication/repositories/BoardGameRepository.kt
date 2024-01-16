@@ -120,7 +120,7 @@ class BoardGameRepository {
             users.add(
                 User(
                     streak = jsonObject.getString("streak"),
-                    playedGames = jsonObject.getString("played_games"),
+                    playedGames = jsonObject.optString("played_games"),
                     ratedGames = jsonObject.getString("rated_games"),
                     likedGames = jsonObject.getString("liked_games")
                 )

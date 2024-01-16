@@ -69,9 +69,8 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
             viewModel.fetchAdditionalPlayedBoardGames()
         }
     }
-    viewModel.fetchPlayedBoardGames()
 
-    LaunchedEffect(viewModel.playedGamesCheck){
+    LaunchedEffect(Unit){
         viewModel.fetchPlayedBoardGames()
     }
 
