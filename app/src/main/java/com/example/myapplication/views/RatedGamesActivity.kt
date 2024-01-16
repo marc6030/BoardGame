@@ -56,7 +56,7 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
         derivedStateOf {
             val layoutInfo = scrollState.layoutInfo
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 2
         }
     }
 
