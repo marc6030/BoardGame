@@ -9,11 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGameItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel, private var boardGameInfoActivity: BoardGameInfoActivity) : ViewModel() {
+class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
 
     var playedGamesList by mutableStateOf<List<BoardGameItem>>(emptyList())
     var playedGamesCheck by mutableStateOf(0)

@@ -1,5 +1,4 @@
 
-import android.net.Uri
 import android.util.Log
 import com.example.myapplication.BoardGame
 import com.example.myapplication.BoardGameItem
@@ -69,7 +68,7 @@ class BoardGameRepository {
 
     suspend fun getBoardGameList(limit: Int, offset: Int, category: String? = null, username: String): List<BoardGameItem> {
         val urlPath = if (category != null) {
-            val safeCategory = category.replace("/", "--") ?: "none"
+            val safeCategory = category.replace("/", "--")
             "/boardgameitems/$safeCategory/$limit/$offset/$username/"
         } else {
             "/boardgameitems/none/$limit/$offset/$username/"
@@ -259,7 +258,7 @@ class BoardGameRepository {
         val favoriteBoardGames = mutableListOf<BoardGameItem>()
 
          if (jsonArray.length() == 0) {
-             return favoriteBoardGames;
+             return favoriteBoardGames
          }
 
         for (i in 0 until jsonArray.length()) {

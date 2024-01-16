@@ -95,7 +95,7 @@ fun description(boardGame: BoardGame) {
             .padding(10.dp)
     ) {
         item {
-            Box() {
+            Box {
                 Text(
                     text = boardGame.description,
                     style = MaterialTheme.typography.bodyLarge,

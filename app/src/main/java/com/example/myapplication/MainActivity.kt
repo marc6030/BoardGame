@@ -2,31 +2,16 @@ package com.example.myapplication
 
 
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Window
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -62,12 +47,10 @@ class MainActivity : ComponentActivity() {
         val account = GoogleSignIn.getLastSignedInAccount(this)
         val ratingsViewModel = RatingsViewModel(viewModel)
         val boardDataViewModel = BoardDataViewModel(viewModel)
-        val boardSearchViewModel = BoardSearchViewModel(viewModel)
+        val boardSearchViewModel = BoardSearchViewModel()
         val boardGameInfoActivity = BoardGameInfoActivity(viewModel)
-        val favoriteViewModel = FavoriteViewModel(viewModel, boardGameInfoActivity)
-        val playedGamesViewModel = PlayedGamesViewModel(sharedViewModel = viewModel,
-            boardGameInfoActivity = boardGameInfoActivity
-        )
+        val favoriteViewModel = FavoriteViewModel(viewModel)
+        val playedGamesViewModel = PlayedGamesViewModel(sharedViewModel = viewModel)
         boardDataViewModel.fetchBoardGameCategories()
         boardDataViewModel.getAllCategories()
 
@@ -82,7 +65,7 @@ class MainActivity : ComponentActivity() {
             navController = rememberNavController()
             AppTheme(useDarkTheme = true) {
                 boardgameApp(favoriteViewModel, ratingsViewModel, boardDataViewModel, boardSearchViewModel,
-                    viewModel, playedGamesViewModel, account, navController, boardGameInfoActivity)
+                    playedGamesViewModel, account, navController, boardGameInfoActivity)
             }
         }
     }
@@ -98,10 +81,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: RatingsViewModel, boardDataViewModel: BoardDataViewModel,
-                 boardSearchViewModel: BoardSearchViewModel,sharedViewModel: SharedViewModel, playedGamesViewModel: PlayedGamesViewModel, account: GoogleSignInAccount?, navController: NavHostController,
+                 boardSearchViewModel: BoardSearchViewModel, playedGamesViewModel: PlayedGamesViewModel, account: GoogleSignInAccount?, navController: NavHostController,
                  boardGameInfoActivity: BoardGameInfoActivity) {
 
-    val transitionDuration = 1000 // ms
     val context = LocalContext.current
     LaunchedEffect(true){
         while(true){

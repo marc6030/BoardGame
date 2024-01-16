@@ -10,7 +10,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -76,8 +75,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -116,7 +115,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     LaunchedEffect(gameID){
         boardGameInfoActivity.fetchBoardGameData(gameID)
         boardGameInfoActivity.addToRecentBoardGames(gameID)
-        // boardGameInfoActivity.fetchAverageRating(gameID)
     }
 
 
@@ -158,9 +156,8 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     VerticalPager(
         modifier = Modifier
             .fillMaxSize()
-            .clickable(enabled = boardGameInfoActivity.openRatingPopUp || boardGameInfoActivity.openAddPopUp) {
+            .clickable(enabled = boardGameInfoActivity.openRatingPopUp) {
                 boardGameInfoActivity.openRatingPopUp = false
-                boardGameInfoActivity.openAddPopUp = false
             },
         state = pagerState,
         pageContent = { page ->
@@ -488,7 +485,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             "General Info"
                                         ),
                                     ) {
-                                        selectedTabIndex = it;
+                                        selectedTabIndex = it
                                     }
                                     when (selectedTabIndex) {
                                         0 -> description(
@@ -596,10 +593,9 @@ fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsVi
         )
         ratingDisplay(
             text = "Your Rating",
-            viewModel = viewModel,
             boardGameInfoActivity = boardGameInfoActivity
         )
-        Log.v("BGG Rating", "${boardGameInfoActivity.boardGameData.ratingBGG}")
+        Log.v("BGG Rating", boardGameInfoActivity.boardGameData.ratingBGG)
     }
 }
 
@@ -617,7 +613,7 @@ fun starDisplay(stars: String, text: String) {
                 .padding(2.dp)
                 .wrapContentWidth(Alignment.Start)
         ) {
-            Row() {
+            Row {
                 for (i in 1..10) {
                     if (numOfStars >= i) {
                         Icon(
@@ -647,7 +643,6 @@ fun starDisplay(stars: String, text: String) {
 @Composable
 fun ratingDisplay(
                     text: String,
-                    viewModel: RatingsViewModel,
                     boardGameInfoActivity: BoardGameInfoActivity
                 ) {
     val numOfStars = boardGameInfoActivity.boardGameData.user_rating.toDouble()
@@ -671,7 +666,7 @@ fun ratingDisplay(
                     shape = RoundedCornerShape(10.dp)
                 )
         ) {
-            Row() {
+            Row {
                 for (i in 1..10) {
                     Icon(
                         imageVector = Icons.Outlined.Star,
@@ -719,7 +714,7 @@ fun favoriteButton(
                         !boardGameInfoActivity.snackbarFavoriteVisible
                     Log.v(
                         "is still fav",
-                        "${boardGameInfoActivity.boardGameData!!.isfavorite}"
+                        "${boardGameInfoActivity.boardGameData.isfavorite}"
                     )
                     if (boardGameInfoActivity.snackbarFavoriteVisible) {
                         coroutineScope.launch {
@@ -1022,7 +1017,7 @@ fun Modifier.shakeAndOffsetClickable(
             -15.0f at 2400
             15.0f at 2550
             0.0f at 3000
-        }
+        }, label = ""
     )
 
     val offsetXState by animateDpAsState(
@@ -1031,12 +1026,12 @@ fun Modifier.shakeAndOffsetClickable(
             durationMillis = 3000
             0.dp at 0
             offsetX at 3000
-        }
+        }, label = ""
     )
 
     val offsetYState by animateDpAsState(
         targetValue = if (isPressed) offsetY else 0.dp,
-        animationSpec = tween(300)
+        animationSpec = tween(300), label = ""
     )
 
     var changeSize = animateFloatAsState(
@@ -1047,7 +1042,7 @@ fun Modifier.shakeAndOffsetClickable(
             1.0f at 2999
             0.0f at 3000
             1.0f at 4000
-        }
+        }, label = ""
     ).value
 
     DisposableEffect(isPressed) {

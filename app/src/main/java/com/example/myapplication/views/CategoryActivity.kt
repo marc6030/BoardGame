@@ -1,7 +1,6 @@
 package com.example.myapplication.views
 
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,8 +42,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.modelviews.BoardDataViewModel
-import com.example.myapplication.modelviews.BoardGameInfoActivity
-import com.example.myapplication.modelviews.FavoriteViewModel
 
 
 @Composable

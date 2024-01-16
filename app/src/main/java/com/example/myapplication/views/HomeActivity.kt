@@ -198,8 +198,7 @@ fun SwipeableHotnessRow(
                 }
             }
         }
-        Column(
-        ) {
+        Column {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier

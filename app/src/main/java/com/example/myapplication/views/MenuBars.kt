@@ -1,15 +1,13 @@
 package com.example.myapplication.views
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -18,18 +16,14 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.myapplication.R
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.ui.res.colorResource
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.myapplication.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -10,13 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.BoardGameItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private var boardGameInfoActivity: BoardGameInfoActivity) : ViewModel() {
-
+class FavoriteViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
 
     var favoriteBoardGameList by mutableStateOf<List<BoardGameItem>>(emptyList())
-    var favoriteCheck by mutableStateOf(0)
 
     var offset = 0
     private var limit = 10
@@ -68,7 +65,4 @@ class FavoriteViewModel(private var sharedViewModel: SharedViewModel, private va
             }
         }
     }
-
-
-
 }

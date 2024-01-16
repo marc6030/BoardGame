@@ -3,7 +3,6 @@ package com.example.myapplication.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,7 +59,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -288,8 +286,7 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
     val gradientFrom = MaterialTheme.colorScheme.surface
     val gradientTo = MaterialTheme.colorScheme.background
 
-    Scaffold(
-    ) {
+    Scaffold {
         Column(
             modifier = Modifier
                 .fillMaxSize()

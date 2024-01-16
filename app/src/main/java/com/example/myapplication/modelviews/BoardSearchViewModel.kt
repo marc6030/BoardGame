@@ -14,7 +14,7 @@ import com.example.myapplication.models.Categories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BoardSearchViewModel(private var sharedViewModel: SharedViewModel) : ViewModel() {
+class BoardSearchViewModel() : ViewModel() {
     var boardGameSearch by mutableStateOf<List<BoardGameSearch>>(emptyList())
     // var categories by mutableStateOf(Categories(emptyList()))
     var input by mutableStateOf("")
