@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -377,8 +378,8 @@ fun RoundboardGameSelection(headline: String,
                     .shadow(8.dp, CircleShape)
             )
             {
-                AsyncImage(
-                    model = R.drawable.banditlogo,
+                Image(
+                    painter = painterResource(id = R.drawable.banditlogo),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
