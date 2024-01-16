@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -124,10 +126,13 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
 
     val boardGame =
         boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
-    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center, fontSize = 50.sp, shadow = Shadow(color = Color.Black, blurRadius = 6f))
+    val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(
+        textAlign = TextAlign.Center,
+        fontSize = 50.sp,
+        shadow = Shadow(color = Color.Black, blurRadius = 6f)
+    )
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
-
 
 
     // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
@@ -236,16 +241,23 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                         val temp = boardGame.name.replace(" ", "")
                                         Log.v("Boevs2", "${boardGame.name.replace(" ", "")}")
                                         boardGameInfoActivity.fetchYoutubeID(temp)
-                                        YoutubePlayer(youtubeVideoId = boardGameInfoActivity.youtubeID, lifecycleOwner = LocalLifecycleOwner.current)
+                                        YoutubePlayer(
+                                            youtubeVideoId = boardGameInfoActivity.youtubeID,
+                                            lifecycleOwner = LocalLifecycleOwner.current
+                                        )
 
                                         // Close Button
                                         IconButton(
-                                            onClick = { showYouTubePlayer = false},
+                                            onClick = { showYouTubePlayer = false },
                                             modifier = Modifier
                                                 .align(Alignment.TopEnd)
                                                 .padding(16.dp)
                                         ) {
-                                            Icon(imageVector = Icons.Default.Close, contentDescription = "Close", tint = Color.White)
+                                            Icon(
+                                                imageVector = Icons.Default.Close,
+                                                contentDescription = "Close",
+                                                tint = Color.White
+                                            )
                                         }
                                     }
                                 }
@@ -264,76 +276,76 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                             .fillMaxWidth(0.5f),
                                         verticalArrangement = Arrangement.SpaceAround,
                                         horizontalAlignment = Alignment.CenterHorizontally
-                                    ){
-                                            Image(
-                                                painter = painterResource(id = R.drawable.people_alt),
-                                                contentDescription = null,
-                                                colorFilter = ColorFilter.tint(Color.White)
-                                            )
-                                            Text(
-                                                text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                modifier = Modifier.fillMaxWidth(),
-                                                textAlign = TextAlign.Center,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White
-                                            )
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.people_alt),
+                                            contentDescription = null,
+                                            colorFilter = ColorFilter.tint(Color.White)
+                                        )
+                                        Text(
+                                            text = "${boardGame.minPlayers} - ${boardGame.maxPlayers}",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
 
-                                            Image(
-                                                painter = painterResource(id = R.drawable.av_timer),
-                                                contentDescription = null,
-                                                colorFilter = ColorFilter.tint(Color.White)
-                                            )
-                                            Text(
-                                                text = "${boardGame.playingTime} min.",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                modifier = Modifier.fillMaxWidth(),
-                                                textAlign = TextAlign.Center,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White
-                                            )
+                                        Image(
+                                            painter = painterResource(id = R.drawable.av_timer),
+                                            contentDescription = null,
+                                            colorFilter = ColorFilter.tint(Color.White)
+                                        )
+                                        Text(
+                                            text = "${boardGame.playingTime} min.",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
 
-                                        }
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxHeight()
-                                                .fillMaxWidth(1f),
-                                            verticalArrangement = Arrangement.SpaceAround,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Image(
-                                                painter = painterResource(id = R.drawable.elderly),
-                                                contentDescription = null,
-                                                colorFilter = ColorFilter.tint(Color.White),
-                                                modifier = Modifier.shakeAndOffsetClickable(
-                                                    onClick = { /* your click logic */ },
-                                                    offsetX = 700.dp
-                                                )
-                                            )
-                                            Text(
-                                                text = "${boardGame.age}+",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                modifier = Modifier.fillMaxWidth(),
-                                                textAlign = TextAlign.Center,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White
-                                            )
-
-                                            Image(
-                                                painter = painterResource(id = R.drawable.fitness_center),
-                                                contentDescription = null,
-                                                colorFilter = ColorFilter.tint(Color.White)
-                                            )
-                                            Text(
-                                                text = boardGame.averageWeight,
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                modifier = Modifier.fillMaxWidth(),
-                                                textAlign = TextAlign.Center,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.White
-                                            )
-                                        }
                                     }
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .fillMaxWidth(1f),
+                                        verticalArrangement = Arrangement.SpaceAround,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.elderly),
+                                            contentDescription = null,
+                                            colorFilter = ColorFilter.tint(Color.White),
+                                            modifier = Modifier.shakeAndOffsetClickable(
+                                                onClick = { /* your click logic */ },
+                                                offsetX = 700.dp
+                                            )
+                                        )
+                                        Text(
+                                            text = "${boardGame.age}+",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+
+                                        Image(
+                                            painter = painterResource(id = R.drawable.fitness_center),
+                                            contentDescription = null,
+                                            colorFilter = ColorFilter.tint(Color.White)
+                                        )
+                                        Text(
+                                            text = boardGame.averageWeight,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
 
                             }
                         }
@@ -445,17 +457,11 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
                                 viewModel = ratingsViewModel
                             )
                         }
-                        /*AnimatedVisibility(
-                            visible = boardGameInfoActivity.openAddPopUp,
-                            enter = slideInVertically(),
-                            exit = slideOutVertically()
-                        ) {
-                            PopupAddDialog()
-                        }*/
                         addPlayedGamesButton(boardGameInfoActivity = boardGameInfoActivity)
                         favoriteButton(boardGameInfoActivity = boardGameInfoActivity)
                     }
                 }
+
                 1 -> {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(
@@ -523,14 +529,18 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
             }
         }
     )
-    IconButton(
-        onClick = { navController.popBackStack() }
-    ){
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowLeft,
-            contentDescription = "back arrow",
-            tint = MaterialTheme.colorScheme.onBackground
-        )
+    Column {
+        Spacer(modifier = Modifier.height(15.dp))
+        IconButton(
+            onClick = { navController.popBackStack() },
+        ) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowLeft,
+                contentDescription = "back arrow",
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.size(100.dp)
+            )
+        }
     }
 }
 
@@ -590,8 +600,10 @@ fun ratingTab(boardGameInfoActivity: BoardGameInfoActivity, viewModel: RatingsVi
 fun starDisplay(stars: String, text: String) {
     val numOfStars: Double = stars.toBigDecimal().setScale(1, RoundingMode.CEILING).toDouble()
     Column {
-        Box {
-            Text(text + ": $numOfStars / 10")
+        Box (modifier = Modifier.padding(2.dp)){
+            Text(text + ": $numOfStars / 10", color = Color.White, style = TextStyle(
+                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+            ))
         }
         Box(
             modifier = Modifier
@@ -638,13 +650,20 @@ fun ratingDisplay(
 
 
     Column {
-        Box {
-            Text(text + ": $numOfStars / 10 - Rate by tapping a Star")
+        Box (modifier = Modifier.padding(2.dp)){
+            Text(text + ": $numOfStars / 10 - Rate by tapping a Star", color = Color.White,
+                style = TextStyle(
+                    shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                ))
         }
         Box(
             modifier = Modifier
                 .padding(2.dp)
                 .wrapContentWidth(Alignment.Start)
+                .background(
+                    color = Color.Gray,
+                    shape = RoundedCornerShape(10.dp)
+                )
         ) {
             Row() {
                 for (i in 1..10) {

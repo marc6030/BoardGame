@@ -132,7 +132,42 @@ class BoardGameRepository {
         makeApiRequest(urlPath)
     }
 
-    suspend fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
+    suspend fun getBoardGameSearch(userSearch: String, limit: Int, offset: Int, categories: Map<String, Boolean>): List<BoardGameSearch> {
+        var urlPath = "/boardgamesearch/$userSearch/$limit/$offset/"
+        var first = true
+        categories.forEach { (category, state) ->
+            if (state) {
+                if (first) {
+                    urlPath += "?categories=$category"
+                    first = false
+                } else {
+                    urlPath += "&categories=$category"
+                }
+            }
+        }
+
+        val jsonResponse = makeApiRequest(urlPath)
+        val jsonArray = JSONArray(jsonResponse)
+        val boardGameSearchItems = mutableListOf<BoardGameSearch>()
+
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val textContent = convertHtmlToStructuredText(jsonObject.getString("description"))
+            boardGameSearchItems.add(
+                BoardGameSearch(
+                    id = jsonObject.getString("id_actual"),
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                    description = textContent
+                )
+            )
+        }
+        return boardGameSearchItems
+    }
+
+    suspend fun getBoardGameSearchWithCategories(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
+
+
         val urlPath = "/boardgamesearch/$userSearch/$limit/$offset/"
         val jsonResponse = makeApiRequest(urlPath)
         val jsonArray = JSONArray(jsonResponse)
@@ -140,10 +175,13 @@ class BoardGameRepository {
 
         for (i in 0 until jsonArray.length()) {
             val jsonObject = jsonArray.getJSONObject(i)
+            val textContent = convertHtmlToStructuredText(jsonObject.getString("description"))
             boardGameSearchItems.add(
                 BoardGameSearch(
                     id = jsonObject.getString("id_actual"),
-                    name = jsonObject.getString("name")
+                    name = jsonObject.getString("name"),
+                    imgUrl = jsonObject.getString("image"),
+                    description = textContent
                 )
             )
         }
@@ -332,8 +370,7 @@ fun main() {
     //val bg = postgresql().getBoardGame("54")
     //val bgg = postgresql().getBoardGameList()
     // val bgs = postgresql().getBoardGameSearch("what da faq")
-    //BoardGameRepository().addOrRemovePlayedGame("static_user", "1", "True")
-    //BoardGameRepository().getNumberOfGamesOrStreak("static_user")
+    //print(BoardGameRepository().getNumberOfGamesOrStreak("static_user", "played_games"))
     // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
     //println(bg)
     //println(bgg)

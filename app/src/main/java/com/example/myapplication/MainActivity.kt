@@ -122,8 +122,9 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         }
         composable(
             route = "search") {
+            searchActivity(navController, boardSearchViewModel, boardGameInfoActivity)
 
-            searchActivity(navController, boardSearchViewModel)
+
         }
         composable(
             route = "favorite") {

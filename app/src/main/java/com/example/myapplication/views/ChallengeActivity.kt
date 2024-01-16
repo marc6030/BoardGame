@@ -81,52 +81,55 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
 
         ) {
             item {
-                achievement("Liked Games! - Bronze ", viewModel.nrOfLikedGames.toInt(), 100f)
+                achievement("Liked Games! - Bronze ", viewModel.nrOfLikedGames.toInt(), 10f)
             }
             item {
-                achievement("Liked Games! - Silver", viewModel.nrOfLikedGames.toInt(), 250f)
+                achievement("Liked Games! - Silver", viewModel.nrOfLikedGames.toInt(), 20f)
             }
             item {
-                achievement("Liked Games! - Gold", viewModel.nrOfLikedGames.toInt(), 500f)
+                achievement("Liked Games! - Gold", viewModel.nrOfLikedGames.toInt(), 30f)
             }
             item {
-                achievement("Played Games! - Bronze", viewModel.nrOfPlayedGames.toInt(), 100f)
+                achievement("Played Games! - Bronze", viewModel.nrOfPlayedGames.toInt(), 10f)
             }
             item {
-                achievement("Played Games! - Silver", viewModel.nrOfPlayedGames.toInt(), 250f)
+                achievement("Played Games! - Silver", viewModel.nrOfPlayedGames.toInt(), 20f)
             }
             item {
-                achievement("Played Games! - Gold", viewModel.nrOfPlayedGames.toInt(), 500f)
+                achievement("Played Games! - Gold", viewModel.nrOfPlayedGames.toInt(), 30f)
             }
             item {
-                achievement("Logon Streak! - Bronze", viewModel.streak.toInt(), 100f)
+                achievement("Logon Streak! - Bronze", viewModel.streak.toInt(), 10f)
             }
             item {
-                achievement("Logon Streak! - Silver", viewModel.streak.toInt(), 250f)
+                achievement("Logon Streak! - Silver", viewModel.streak.toInt(), 20f)
             }
             item {
-                achievement("Logon Streak! - Gold", viewModel.streak.toInt(), 500f)
+                achievement("Logon Streak! - Gold", viewModel.streak.toInt(), 30f)
             }
             item {
-                achievement("Rated Games! - Bronze", viewModel.nrOfRatedGames.toInt(), 100f)
+                achievement("Rated Games! - Bronze", viewModel.nrOfRatedGames.toInt(), 10f)
             }
             item {
-                achievement("Rated Games! - Silver", viewModel.nrOfRatedGames.toInt(), 250f)
+                achievement("Rated Games! - Silver", viewModel.nrOfRatedGames.toInt(), 20f)
             }
             item {
-                achievement("Rated Games! - Gold", viewModel.nrOfRatedGames.toInt(), 500f)
+                achievement("Rated Games! - Gold", viewModel.nrOfRatedGames.toInt(), 30f)
             }
         }
 
         }
-    IconButton(
-        onClick = { navController.popBackStack() }
-    ){
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowLeft,
-            contentDescription = "back arrow",
-            tint = MaterialTheme.colorScheme.onBackground
-        )
+    Column {
+        Spacer(modifier = Modifier.height(15.dp))
+        IconButton(
+            onClick = { navController.popBackStack() }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowLeft,
+                contentDescription = "back arrow",
+                tint = MaterialTheme.colorScheme.onBackground
+            )
+        }
     }
 }
 
@@ -134,9 +137,9 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
 fun achievement(Headline: String, Completion: Int, Bar: Float) {
     //val item = viewModel.bigPictureGame
     val achievement: Painter
-    if (Bar == 100f) {
+    if (Bar == 10f) {
         achievement = painterResource(id = R.drawable.bronzeachiev)
-    } else if (Bar == 250f) {
+    } else if (Bar == 20f) {
         achievement = painterResource(id = R.drawable.silverachiev)
     } else {
         achievement = painterResource(id = R.drawable.goldachiev)
@@ -190,7 +193,7 @@ fun achievement(Headline: String, Completion: Int, Bar: Float) {
                     trackColor = MaterialTheme.colorScheme.background
                 )
                 Text(
-                    text = "$Completion/${Bar.toInt()} (${percent}%)",
+                    text = if(percent > 100)"${Bar.toInt()}/${Bar.toInt()} (100%)" else "$Completion/${Bar.toInt()} (${percent}%)",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier

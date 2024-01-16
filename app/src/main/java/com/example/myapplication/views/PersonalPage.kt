@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.R
+import com.example.myapplication.bounceClickable
 import com.example.myapplication.modelviews.BoardDataViewModel
 
 // played games, liked games, something fun
@@ -657,26 +658,26 @@ fun recentBoardGameSelection(headline: String,
 
 
 fun rankDecider(viewModel: BoardDataViewModel){
-    if(viewModel.nrOfRatedGames.toInt() > 99
-        || viewModel.nrOfPlayedGames.toInt() > 99
-        || viewModel.nrOfLikedGames.toInt() > 99
-        || viewModel.streak.toInt() >99){
+    if(viewModel.nrOfRatedGames.toInt() > 9
+        || viewModel.nrOfPlayedGames.toInt() > 9
+        || viewModel.nrOfLikedGames.toInt() > 9
+        || viewModel.streak.toInt() >9){
         viewModel.bronzeRank = true
-        if(viewModel.nrOfRatedGames.toInt() > 249 && viewModel.nrOfPlayedGames.toInt() > 249
-            || viewModel.nrOfPlayedGames.toInt() > 249 && viewModel.nrOfLikedGames.toInt() > 249
-            || viewModel.nrOfLikedGames.toInt() > 249 && viewModel.nrOfRatedGames.toInt() > 249
-            || viewModel.streak.toInt() >249 && viewModel.nrOfRatedGames.toInt() > 249
-            || viewModel.streak.toInt() >249 && viewModel.nrOfPlayedGames.toInt() > 249
-            || viewModel.streak.toInt() >249 && viewModel.nrOfLikedGames.toInt() > 249 
+        if(viewModel.nrOfRatedGames.toInt() > 19 && viewModel.nrOfPlayedGames.toInt() > 19
+            || viewModel.nrOfPlayedGames.toInt() > 19 && viewModel.nrOfLikedGames.toInt() > 19
+            || viewModel.nrOfLikedGames.toInt() > 19 && viewModel.nrOfRatedGames.toInt() > 19
+            || viewModel.streak.toInt() >19 && viewModel.nrOfRatedGames.toInt() > 19
+            || viewModel.streak.toInt() >19 && viewModel.nrOfPlayedGames.toInt() > 19
+            || viewModel.streak.toInt() >19 && viewModel.nrOfLikedGames.toInt() > 19
             ){
             viewModel.silverRank = true
-            if(viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499
-                || viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.streak.toInt() >499
-                || viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499 &&  viewModel.streak.toInt() >499
-                || viewModel.streak.toInt() >499 && viewModel.nrOfPlayedGames.toInt() > 499 && viewModel.nrOfLikedGames.toInt() > 499){
+            if(viewModel.nrOfRatedGames.toInt() > 29 && viewModel.nrOfPlayedGames.toInt() > 29 && viewModel.nrOfLikedGames.toInt() > 29
+                || viewModel.nrOfRatedGames.toInt() > 29 && viewModel.nrOfPlayedGames.toInt() > 29 && viewModel.streak.toInt() >29
+                || viewModel.nrOfRatedGames.toInt() > 29 && viewModel.nrOfLikedGames.toInt() > 29 &&  viewModel.streak.toInt() >29
+                || viewModel.streak.toInt() >29 && viewModel.nrOfPlayedGames.toInt() > 29 && viewModel.nrOfLikedGames.toInt() > 29){
                 viewModel.goldRank = true
-                if(viewModel.nrOfRatedGames.toInt() > 499 && viewModel.nrOfPlayedGames.toInt() > 499
-                    && viewModel.nrOfLikedGames.toInt() > 499 && viewModel.streak.toInt() >499){
+                if(viewModel.nrOfRatedGames.toInt() > 29 && viewModel.nrOfPlayedGames.toInt() > 29
+                    && viewModel.nrOfLikedGames.toInt() > 29 && viewModel.streak.toInt() >29){
                     viewModel.platRank = true
                 }
             }
