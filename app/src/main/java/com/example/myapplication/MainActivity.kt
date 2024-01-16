@@ -66,6 +66,8 @@ class MainActivity : ComponentActivity() {
         val playedGamesViewModel = PlayedGamesViewModel(sharedViewModel = viewModel,
             boardGameInfoActivity = boardGameInfoActivity
         )
+        boardDataViewModel.fetchBoardGameCategories()
+        boardDataViewModel.getAllCategories()
 
         window.apply {
             clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)

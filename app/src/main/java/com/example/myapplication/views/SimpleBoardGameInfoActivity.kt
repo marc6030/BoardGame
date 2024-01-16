@@ -648,7 +648,6 @@ fun ratingDisplay(
     Log.v("current rating: ", boardGameInfoActivity.boardGameData.user_rating)
 
 
-
     Column {
         Box (modifier = Modifier.padding(2.dp)){
             Text(text + ": $numOfStars / 10 - Rate by tapping a Star", color = Color.White,

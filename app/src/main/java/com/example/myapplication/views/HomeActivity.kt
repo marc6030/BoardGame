@@ -106,12 +106,16 @@ fun boardgameSelections(
     navController: NavHostController,
     viewModel: BoardDataViewModel
 ) {
+    /*
     LaunchedEffect(Unit) {
-
-        viewModel.fetchBoardGameCategories()
-        viewModel.getAllCategories()
+        if (viewModel.boardGamesRow1.size < 2){
+            viewModel.fetchBoardGameCategories()
+            viewModel.getAllCategories()
+        }
 
     }
+
+     */
 
     MenuScreen(navController = navController, informationtext = "Is an app developed in Kotlin for Android. Its a platform for " +
             "board game enthusiasts. It features functionalities for exploring " +
