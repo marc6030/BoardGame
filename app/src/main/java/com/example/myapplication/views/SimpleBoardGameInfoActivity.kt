@@ -530,7 +530,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         }
     )
     Column {
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         IconButton(
             onClick = { navController.popBackStack() },
         ) {

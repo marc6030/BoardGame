@@ -27,10 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,18 +63,34 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
                 )
             }
     ) {
-        Spacer(Modifier.height(40.dp))
-        Text(
-            text = "Challenges",
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.CenterHorizontally),
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(20.dp))
+                .padding(top=32.dp)
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.align(Alignment.CenterStart).size(50.dp),
+
+                ) {
+                Icon(
+                    imageVector = Icons.Filled.KeyboardArrowLeft,
+                    contentDescription = "back arrow",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+            Text(
+                text = "My Games",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = TextStyle(
+                    shadow = Shadow(color = Color.Black, blurRadius = 6f)
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,19 +135,6 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
             item {
                 achievement("Rated Games! - Gold", viewModel.nrOfRatedGames.toInt(), 30f)
             }
-        }
-
-        }
-    Column {
-        Spacer(modifier = Modifier.height(15.dp))
-        IconButton(
-            onClick = { navController.popBackStack() }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowLeft,
-                contentDescription = "back arrow",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
         }
     }
 }

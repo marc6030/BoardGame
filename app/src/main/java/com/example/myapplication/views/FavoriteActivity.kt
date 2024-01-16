@@ -96,19 +96,35 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                 )
             }
     ) {
-        Spacer(Modifier.height(40.dp))
-        Text(
-            text = "My Games",
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = TextStyle(
-                shadow = Shadow(color = Color.Black, offset = Offset(1f, 1f), blurRadius = 6f)
+                .padding(top=32.dp)
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.align(Alignment.CenterStart).size(50.dp),
+
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.KeyboardArrowLeft,
+                    contentDescription = "back arrow",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+            Text(
+                text = "My Games",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = TextStyle(
+                    shadow = Shadow(color = Color.Black, blurRadius = 6f)
+                ),
+                modifier = Modifier.align(Alignment.Center)
             )
-        )
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
@@ -160,18 +176,6 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
-    }
-    Column {
-        Spacer(modifier = Modifier.height(15.dp))
-        IconButton(
-            onClick = { navController.popBackStack() }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowLeft,
-                contentDescription = "back arrow",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
     }
 }
 

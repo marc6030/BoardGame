@@ -34,8 +34,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +65,6 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
             viewModel.fetchAdditionalRatedBoardGames()
         }
     }
-    viewModel.fetchRatedBoardGames()
 
     LaunchedEffect(viewModel.ratedGamesList){
         viewModel.fetchRatedBoardGames()
@@ -83,16 +84,34 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
                 )
             }
     ) {
-        Spacer(Modifier.height(40.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top=32.dp)
+        ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.align(Alignment.CenterStart).size(50.dp),
+
+                ) {
+                Icon(
+                    imageVector = Icons.Filled.KeyboardArrowLeft,
+                    contentDescription = "back arrow",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(50.dp)
+                )
+            }
             Text(
                 text = "Rated Games",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                style = TextStyle(
+                    shadow = Shadow(color = Color.Black, blurRadius = 6f)
+                ),
+                modifier = Modifier.align(Alignment.Center)
             )
+        }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -141,18 +160,6 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
                 }
             }
         Spacer(modifier = Modifier.height(20.dp))
-    }
-    Column {
-        Spacer(modifier = Modifier.height(15.dp))
-        IconButton(
-            onClick = { navController.popBackStack() }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowLeft,
-                contentDescription = "back arrow",
-                tint = MaterialTheme.colorScheme.onBackground
-            )
-        }
     }
 }
 
