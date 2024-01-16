@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,8 +65,11 @@ import com.example.myapplication.modelviews.BoardDataViewModel
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
-    viewModel.fetchRecentBoardGames()
-    viewModel.fetchKeyStats()
+    LaunchedEffect(Unit) {
+        viewModel.fetchRecentBoardGames()
+        viewModel.fetchKeyStats()
+    }
+
     val profilepicture: Painter = painterResource(id = R.drawable.profilepicture)
     val bronze: Painter = painterResource(id = R.drawable.bronze)
     val silver: Painter = painterResource(id = R.drawable.silver)

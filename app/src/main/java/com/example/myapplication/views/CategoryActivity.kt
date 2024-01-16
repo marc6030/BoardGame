@@ -93,7 +93,11 @@ fun CategoryActivity(navController: NavHostController,
                 .padding(top=32.dp)
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    val currentRoute = navController.currentBackStackEntry?.destination?.route
+                    if (currentRoute != "home") {
+                        navController.popBackStack()}
+                          },
                 modifier = Modifier.align(Alignment.CenterStart).size(50.dp),
 
                 ) {

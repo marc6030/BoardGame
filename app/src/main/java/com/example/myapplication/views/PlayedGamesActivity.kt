@@ -61,13 +61,16 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
         derivedStateOf {
             val layoutInfo = scrollState.layoutInfo
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 2
         }
     }
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalPlayedBoardGames()
+            if (viewModel.playedGamesList.size > 8) {
+                viewModel.fetchAdditionalPlayedBoardGames()
+            }
+
         }
     }
 
@@ -96,7 +99,12 @@ fun PlayedGamesActivity(navController: NavHostController, viewModel: PlayedGames
                 .padding(top=32.dp)
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    val currentRoute = navController.currentBackStackEntry?.destination?.route
+                    if (currentRoute != "personal") {
+                        navController.popBackStack()}
+                },
+
                 modifier = Modifier.align(Alignment.CenterStart).size(50.dp),
 
                 ) {

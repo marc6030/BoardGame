@@ -79,7 +79,9 @@ fun goBack(navController: NavHostController) {
 
     IconButton(
         onClick = {
-            navController.popBackStack()
+            val currentRoute = navController.currentBackStackEntry?.destination?.route
+            if (currentRoute != "home") {
+                navController.popBackStack()}
         },
         modifier = Modifier
             .padding(4.dp)
@@ -265,7 +267,10 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
     }
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            boardSearchViewModel.fetchAdditionalSearchResults()
+            if (boardSearchViewModel.boardGameSearch.size > 8) {
+                boardSearchViewModel.fetchAdditionalSearchResults()
+            }
+
         }
     }
     LaunchedEffect(Unit) {

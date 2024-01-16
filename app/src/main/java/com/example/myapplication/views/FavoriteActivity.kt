@@ -63,15 +63,21 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
 
     val shouldLoadMore = remember {
         derivedStateOf {
+
             val layoutInfo = scrollState.layoutInfo
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 5
+
+            lastVisibleItem != null && lastVisibleItem.index >= layoutInfo.totalItemsCount - 2
+
         }
     }
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalFavoriteBoardGames()
+            if (viewModel.favoriteBoardGameList.size > 8) {
+                viewModel.fetchAdditionalFavoriteBoardGames()
+            }
+
         }
     }
 
@@ -102,7 +108,12 @@ fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewMo
                 .padding(top=32.dp)
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    val currentRoute = navController.currentBackStackEntry?.destination?.route
+                    if (currentRoute != "personal") {
+                        navController.popBackStack()}
+                },
+
                 modifier = Modifier.align(Alignment.CenterStart).size(50.dp),
 
             ) {

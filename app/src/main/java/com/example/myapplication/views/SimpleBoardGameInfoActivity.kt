@@ -534,8 +534,12 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     Column {
         Spacer(modifier = Modifier.height(20.dp))
         IconButton(
-            onClick = { boardGameInfoActivity.openRatingPopUp = false
-                navController.popBackStack() },
+            onClick = {
+                boardGameInfoActivity.openRatingPopUp = false
+                val currentRoute = navController.currentBackStackEntry?.destination?.route
+                if (currentRoute != "home" && currentRoute != "personal") {
+                    navController.popBackStack()}
+                  },
         ) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
@@ -919,8 +923,7 @@ fun addPlayedGamesButton(boardGameInfoActivity: BoardGameInfoActivity) {
                             boardGameInfoActivity.currentGameID,
                             "True"
                         )
-                        boardGameInfoActivity.snackbarChallengeVisible =
-                            !boardGameInfoActivity.snackbarChallengeVisible
+                        boardGameInfoActivity.snackbarChallengeVisible = true
                         if (boardGameInfoActivity.snackbarChallengeVisible) {
                             coroutineScope.launch {
                                 val result = snackbarHostState.showSnackbar(

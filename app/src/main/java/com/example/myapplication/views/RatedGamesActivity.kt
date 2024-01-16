@@ -62,7 +62,10 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
 
     LaunchedEffect(shouldLoadMore.value) {
         if (shouldLoadMore.value) {
-            viewModel.fetchAdditionalRatedBoardGames()
+            if (viewModel.ratedGamesList.size > 8) {
+                viewModel.fetchAdditionalRatedBoardGames()
+            }
+
         }
     }
 
@@ -90,7 +93,12 @@ fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewM
                 .padding(top=32.dp)
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    val currentRoute = navController.currentBackStackEntry?.destination?.route
+                    if (currentRoute != "personal") {
+                        navController.popBackStack()}
+
+                          },
                 modifier = Modifier.align(Alignment.CenterStart).size(50.dp),
 
                 ) {
