@@ -61,9 +61,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
 
     var backgroundFade by mutableStateOf(Color.Black)
 
-    fun setIsLoading(setme : Boolean) {
-        sharedViewModel.isLoading = setme
-    }
 
     fun getAllCategories() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -111,7 +108,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         offsetRow3 = 0
         offsetRow4 = 0
         offsetRow5 = 0
-        // setIsLoading(true)
         Log.v("tada", "tada")
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -125,8 +121,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
-            } finally {
-                setIsLoading(false)
             }
         }
     }

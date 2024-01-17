@@ -658,6 +658,11 @@ fun recentBoardGameSelection(headline: String,
 
 
 fun rankDecider(viewModel: BoardDataViewModel){
+    viewModel.bronzeRank = false
+    viewModel.silverRank = false
+    viewModel.goldRank = false
+    viewModel.platRank = false
+
     if(viewModel.nrOfRatedGames.toInt() > 9
         || viewModel.nrOfPlayedGames.toInt() > 9
         || viewModel.nrOfLikedGames.toInt() > 9
