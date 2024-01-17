@@ -82,7 +82,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 categoryColumn =
-                    BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category, getUserID())
+                    BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category, sharedViewModel.getUserID())
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategory", "$e")
             }
@@ -94,7 +94,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 categoryColumn +=
-                    BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category, getUserID())
+                    BoardGameRepository().getBoardGameList(limit = limit, offset = offsetColumnCategory, category, sharedViewModel.getUserID())
             } catch (e: Exception) {
                 Log.v("Cant fetch additional GAMECATEGORY", "$e")
             }
@@ -111,13 +111,13 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         Log.v("tada", "tada")
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                bigPictureGame = BoardGameRepository().getBoardGame("316554")
-                boardGamesRow0 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow0, getUserID())
-                boardGamesRow1 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow1, getUserID())
-                boardGamesRow2 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow2, getUserID())
-                boardGamesRow3 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow3, getUserID())
-                boardGamesRow4 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow4, getUserID())
-                boardGamesRow5 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow5, getUserID())
+                bigPictureGame = BoardGameRepository().getBoardGame("316554", sharedViewModel.getUserID())
+                boardGamesRow0 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow0, sharedViewModel.getUserID())
+                boardGamesRow1 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow1, sharedViewModel.getUserID())
+                boardGamesRow2 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow2, sharedViewModel.getUserID())
+                boardGamesRow3 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow3, sharedViewModel.getUserID())
+                boardGamesRow4 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow4, sharedViewModel.getUserID())
+                boardGamesRow5 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow5, sharedViewModel.getUserID())
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
@@ -128,7 +128,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     fun fetchRecentBoardGames(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                boardGamesRowRecent = BoardGameRepository().getBoardGameToRecentList(getUserID())
+                boardGamesRowRecent = BoardGameRepository().getBoardGameToRecentList(sharedViewModel.getUserID())
                 Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch recentGames", "$e")
@@ -139,7 +139,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     fun fetchKeyStats(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val user = BoardGameRepository().getNumberOfGamesAndStreak(getUserID())
+                val user = BoardGameRepository().getNumberOfGamesAndStreak(sharedViewModel.getUserID())
                 streak = user.get(0).streak
                 nrOfPlayedGames = user.get(0).playedGames
                 nrOfRatedGames = user.get(0).ratedGames
@@ -159,31 +159,27 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
             try {
                 if (row == 0) {
                     offsetRow0 += limit
-                    boardGamesRow0 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow0, categoryRow0, getUserID())
+                    boardGamesRow0 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow0, categoryRow0, sharedViewModel.getUserID())
                 } else if (row == 1) {
                     offsetRow1 += limit
-                    boardGamesRow1 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow1, categoryRow1, getUserID())
+                    boardGamesRow1 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow1, categoryRow1, sharedViewModel.getUserID())
                 } else if (row == 2) {
                     offsetRow2 += limit
-                    boardGamesRow2 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow2, categoryRow2, getUserID())
+                    boardGamesRow2 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow2, categoryRow2, sharedViewModel.getUserID())
                 } else if (row == 3) {
                     offsetRow3 += limit
-                    boardGamesRow3 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow3, categoryRow3, getUserID())
+                    boardGamesRow3 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow3, categoryRow3, sharedViewModel.getUserID())
                 } else if (row == 4) {
                     offsetRow4 += limit
-                    boardGamesRow4 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow4, categoryRow4, getUserID())
+                    boardGamesRow4 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow4, categoryRow4, sharedViewModel.getUserID())
                 } else if (row == 5) {
                     offsetRow5 += limit
-                    boardGamesRow5 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow5, categoryRow5, getUserID())
+                    boardGamesRow5 += BoardGameRepository().getBoardGameList(limit = limit, offset = offsetRow5, categoryRow5, sharedViewModel.getUserID())
                 }
             } catch (e: Exception) {
                 Log.v("fetchAdditionalBoardGameCategories","Can't fetch additional boardGameCategories")
             }
         }
     }
-    fun getUserID(): String {
-        val userID: String = "static_user"
-        Log.v("UserID is: ", userID)
-        return userID
-    }
+
 }

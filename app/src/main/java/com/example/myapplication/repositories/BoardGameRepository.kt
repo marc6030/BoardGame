@@ -190,8 +190,8 @@ class BoardGameRepository {
     }
 
 
-    suspend fun getBoardGame(id: String): BoardGame {
-        val username = "static_user"
+    suspend fun getBoardGame(id: String, username: String): BoardGame {
+
         val urlPath = "/boardgame/$id/$username"
         val jsonResponse = makeApiRequest(urlPath)
         val jsonObject = JSONObject(jsonResponse)

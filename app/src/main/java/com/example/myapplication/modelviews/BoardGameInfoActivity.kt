@@ -63,7 +63,7 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val boardGame: BoardGame = BoardGameRepository().getBoardGame(id)
+                val boardGame: BoardGame = BoardGameRepository().getBoardGame(id, getUserID())
                 boardGameData = boardGame
                 averageRating = BoardGameRepository().fetchAverageBbRating(boardGameData.id)
                 Log.v("fetching91", "69")
@@ -95,7 +95,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     fun updateRating(newRating: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                averageRating = BoardGameRepository().fetchAverageBbRating(boardGameData.id)
                 Log.v("avgRating is: ", "$averageRating")
                 BoardGameRepository().toggleRatingGame(getUserID(), boardGameData.id, newRating)
                 fetchBoardGameData(boardGameData.id)
