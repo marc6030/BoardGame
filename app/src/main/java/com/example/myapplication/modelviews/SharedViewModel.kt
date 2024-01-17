@@ -9,8 +9,6 @@ import androidx.lifecycle.ViewModel
 class SharedViewModel : ViewModel() {
     //var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var userAuthenticated by mutableStateOf(false)
-    var isLoading by mutableStateOf(false)
-
 
     fun getUserID(): String {
         val userID: String = "static_user"
