@@ -277,7 +277,7 @@ fun boardGameSelection(headline: String,
         3 -> viewModel.boardGamesRow3
         4 -> viewModel.boardGamesRow4
         5 -> viewModel.boardGamesRow5
-        else -> emptyList() // Handle default case or invalid row
+        else -> emptyList()
     }
 
     val shouldLoadMore = remember {

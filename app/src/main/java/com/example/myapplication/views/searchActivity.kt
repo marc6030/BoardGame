@@ -183,7 +183,7 @@ fun Options(showPopup: MutableState<Boolean>, boardSearchViewModel: BoardSearchV
         }
     }
 
-    if (!showPopup.value){
+    if (!showPopup.value) {
         if (selectedCategories == 0) {
             IconButton(
                 onClick = { showPopup.value = !showPopup.value },
@@ -232,11 +232,7 @@ fun Options(showPopup: MutableState<Boolean>, boardSearchViewModel: BoardSearchV
             )
         }
     }
-
-
 }
-
-
 
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class)

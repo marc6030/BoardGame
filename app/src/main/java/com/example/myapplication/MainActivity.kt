@@ -51,6 +51,7 @@ class MainActivity : ComponentActivity() {
         val boardGameInfoActivity = BoardGameInfoActivity(viewModel)
         val favoriteViewModel = FavoriteViewModel(viewModel)
         val playedGamesViewModel = PlayedGamesViewModel(sharedViewModel = viewModel)
+        viewModel.checkOrCreateUser()
         boardDataViewModel.fetchBoardGameCategories()
         boardDataViewModel.getAllCategories()
 

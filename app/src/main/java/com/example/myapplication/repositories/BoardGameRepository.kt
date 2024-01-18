@@ -109,6 +109,12 @@ class BoardGameRepository {
         return recentBoardGameItems
     }
 
+    suspend fun checkOrCreateUser(userID: String): Unit{
+        val urlPath = "/check_or_create_user/$userID/"
+        makeApiPostRequest(urlPath)
+        return
+    }
+
     suspend fun getNumberOfGamesAndStreak(UserID : String) : List<User> {
         val urlPath = "/users_key_info/$UserID/"
         val jsonResponse = makeApiRequest(urlPath)
