@@ -43,10 +43,7 @@ import com.example.myapplication.modelviews.BoardGameInfoActivity
 
 
 @Composable
-fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
-
-    val scrollState = rememberLazyListState()
-
+fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
 
     val gradientFrom = MaterialTheme.colorScheme.surface
     val gradientTo = MaterialTheme.colorScheme.background
@@ -143,7 +140,7 @@ fun ChallengeActivity(navController: NavHostController, viewModel: BoardDataView
 
 @Composable
 fun achievement(Headline: String, Completion: Int, Bar: Float) {
-    //val item = viewModel.bigPictureGame
+
     val achievement: Painter
     if (Bar == 10f) {
         achievement = painterResource(id = R.drawable.bronzeachiev)
@@ -163,7 +160,7 @@ fun achievement(Headline: String, Completion: Int, Bar: Float) {
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp) // Adds space between elements in the Row
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Image Box
             Box(

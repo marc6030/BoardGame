@@ -33,7 +33,6 @@ class PlayedGamesViewModel(private var sharedViewModel: SharedViewModel) : ViewM
                     limit = limit,
                     offset = offset
                 )
-                Log.v("Fetch Played Games ", "success!")
             } catch (e: Exception) {
                 Log.v("Fetch Played games failed!: ", "$e")
             }

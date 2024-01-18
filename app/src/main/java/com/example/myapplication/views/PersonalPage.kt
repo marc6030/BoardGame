@@ -58,7 +58,6 @@ import com.example.myapplication.R
 import com.example.myapplication.modelviews.BoardDataViewModel
 
 // played games, liked games, something fun
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
 fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewModel) {
     LaunchedEffect(Unit) {
@@ -170,7 +169,7 @@ fun PersonalActivity(navController: NavHostController, viewModel: BoardDataViewM
                     KeyStats(viewModel)
                     Spacer(modifier = Modifier.height(10.dp))
                     Menu(navController)
-                    Recents(viewModel = viewModel, 1, navController)
+                    Recents(viewModel = viewModel, navController)
                 }
             }
             if (viewModel.platRank) {
@@ -579,7 +578,7 @@ fun Dialog(
     }
 }
 @Composable
-fun Recents(viewModel: BoardDataViewModel, row: Int, navController: NavHostController) {
+fun Recents(viewModel: BoardDataViewModel, navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -606,8 +605,6 @@ fun recentBoardGameSelection(headline: String,
 ){
     val scrollState = rememberLazyListState()
 
-    // currentrow is currently just a random category, but should be recent visited games.
-    // val currentRow = viewModel.boardGamesRowRecent
     val currentRow = viewModel.boardGamesRowRecent
 
     Column {

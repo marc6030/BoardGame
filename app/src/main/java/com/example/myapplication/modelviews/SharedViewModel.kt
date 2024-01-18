@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SharedViewModel : ViewModel() {
-    //var boardGameList by mutableStateOf<BoardGameItems?>(null)
     var userAuthenticated by mutableStateOf(false)
 
     fun getUserID(): String {

@@ -32,7 +32,6 @@ class RatingsViewModel(private var sharedViewModel: SharedViewModel) : ViewModel
                     limit = limit,
                     offset = offset
                 )
-                Log.v("Fetch Rated ", "success!")
             } catch (e: Exception) {
                 Log.v("Fetch Rated failed!: ", "$e")
             }
@@ -41,10 +40,6 @@ class RatingsViewModel(private var sharedViewModel: SharedViewModel) : ViewModel
 
     fun fetchAdditionalRatedBoardGames() {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.v(
-                "FetchingAdditionRatedBoardGameGood",
-                "Can fetch additional rated boardGames"
-            )
             try {
                 offset += limit
                 ratedGamesList += BoardGameRepository().getRatedGames(

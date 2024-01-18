@@ -16,10 +16,9 @@ import kotlinx.coroutines.launch
 
 class BoardSearchViewModel() : ViewModel() {
     var boardGameSearch by mutableStateOf<List<BoardGameSearch>>(emptyList())
-    // var categories by mutableStateOf(Categories(emptyList()))
     var input by mutableStateOf("")
-    var limit by mutableIntStateOf(15) // could be a value
-    var offset by mutableIntStateOf(0) // could be a value
+    var limit by mutableIntStateOf(15)
+    var offset by mutableIntStateOf(0)
     var categories = mutableStateMapOf<String, Boolean>()
 
 
@@ -29,7 +28,6 @@ class BoardSearchViewModel() : ViewModel() {
             boardGameSearch = emptyList()
             return
         }
-        // setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 offset = 0
@@ -38,7 +36,6 @@ class BoardSearchViewModel() : ViewModel() {
 
             } catch (e: Exception) {
                 Log.v("bgsearch_fault", "searchlogs: $e")
-                // boardGameSearch = null
             }
         }
     }
@@ -52,13 +49,9 @@ class BoardSearchViewModel() : ViewModel() {
                 val newBoardGameSearchItems: List<BoardGameSearch> = BoardGameRepository().getBoardGameSearch(input, limit, offset, categories)
                 boardGameSearch += newBoardGameSearchItems
 
-                Log.v("bgsearch_new", "searchlogs: $newBoardGameSearchItems")
-                Log.v("bgsearch_new_all", "${boardGameSearch.size}")
-
 
             } catch (e: Exception) {
                 Log.v("bgsearch_new_fault", "searchlogs: $boardGameSearch")
-                // boardGameSearch = null
             }
         }
     }
@@ -72,7 +65,6 @@ class BoardSearchViewModel() : ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.v("bgsearch_new_fault", "searchlogs: $boardGameSearch")
-                // boardGameSearch = null
             }
         }
     }

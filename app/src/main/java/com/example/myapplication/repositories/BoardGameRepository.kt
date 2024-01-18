@@ -17,7 +17,7 @@ import java.net.URL
 
 class BoardGameRepository {
 
-    private val baseUrl = "http://135.181.106.80:5050" // Replace with your Flask API URL
+    private val baseUrl = "http://135.181.106.80:5050"
     private val youtubeUrl = "https://www.googleapis.com/youtube/v3/search?key=AIzaSyCUsP8-FIzZFeCNKk4yVgVUiY6pYAsl5SQ&q="
 
     private fun makeApiRequest(urlPath: String): String {
@@ -172,30 +172,6 @@ class BoardGameRepository {
         return boardGameSearchItems
     }
 
-    suspend fun getBoardGameSearchWithCategories(userSearch: String, limit: Int, offset: Int): List<BoardGameSearch> {
-
-
-        val urlPath = "/boardgamesearch/$userSearch/$limit/$offset/"
-        val jsonResponse = makeApiRequest(urlPath)
-        val jsonArray = JSONArray(jsonResponse)
-        val boardGameSearchItems = mutableListOf<BoardGameSearch>()
-
-        for (i in 0 until jsonArray.length()) {
-            val jsonObject = jsonArray.getJSONObject(i)
-            val textContent = convertHtmlToStructuredText(jsonObject.getString("description"))
-            boardGameSearchItems.add(
-                BoardGameSearch(
-                    id = jsonObject.getString("id_actual"),
-                    name = jsonObject.getString("name"),
-                    imgUrl = jsonObject.getString("image"),
-                    description = textContent
-                )
-            )
-        }
-        return boardGameSearchItems
-    }
-
-
     suspend fun getBoardGame(id: String, username: String): BoardGame {
 
         val urlPath = "/boardgame/$id/$username"
@@ -203,7 +179,6 @@ class BoardGameRepository {
         val jsonObject = JSONObject(jsonResponse)
 
         val textContent = convertHtmlToStructuredText(jsonObject.getString("description"))
-        // Log.v("WTF", "$jsonObject")
         return BoardGame(
             id = jsonObject.getString("id_actual"),
             name = jsonObject.getString("name"),
@@ -369,19 +344,3 @@ class BoardGameRepository {
     }
 
 }
-
-
-
-
-fun main() {
-    //val bg = postgresql().getBoardGame("54")
-    //val bgg = postgresql().getBoardGameList()
-    // val bgs = postgresql().getBoardGameSearch("what da faq")
-    //print(BoardGameRepository().getNumberOfGamesOrStreak("static_user", "played_games"))
-    // print(BoardGameRepository().getBoardGameList(10, 10, "fighting"))
-    //println(bg)
-    //println(bgg)
-    // println(bgs)
-    // println(bgt)
-}
-

@@ -66,7 +66,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
                 val boardGame: BoardGame = BoardGameRepository().getBoardGame(id, getUserID())
                 boardGameData = boardGame
                 averageRating = BoardGameRepository().fetchAverageBbRating(boardGameData.id)
-                Log.v("fetching91", "69")
             } catch (e: Exception) {
                 Log.v("can't fetch boardgamedata: ", "$e")
             } finally {
@@ -79,13 +78,12 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val youtubeID_ = BoardGameRepository().searchYoutube(id + "boardgame")
-                Log.v("Youtube Boardgame: ", "$youtubeID_")
 
                 withContext(Dispatchers.Main) {
                     youtubeID = youtubeID_
                 }
             } catch (e: Exception) {
-                Log.v("can't fetch boardgamedata: ", "$e")
+                Log.v("can't fetch youtubeID: ", "$e")
             } finally {
                 //
             }
@@ -95,7 +93,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
     fun updateRating(newRating: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                Log.v("avgRating is: ", "$averageRating")
                 BoardGameRepository().toggleRatingGame(getUserID(), boardGameData.id, newRating)
                 fetchBoardGameData(boardGameData.id)
             } catch (e: Exception) {
@@ -108,7 +105,6 @@ class BoardGameInfoActivity(private var sharedViewModel: SharedViewModel) : View
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 BoardGameRepository().addOrRemovePlayedGame(getUserID(), gameID, increment)
-                Log.v("update Played Games ", "success!")
             }
             catch (e : Exception){
                 Log.v("update Played games failed!: ", "$e")

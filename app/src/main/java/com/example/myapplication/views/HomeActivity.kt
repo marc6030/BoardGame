@@ -108,16 +108,7 @@ fun boardgameSelections(
     navController: NavHostController,
     viewModel: BoardDataViewModel
 ) {
-    /*
-    LaunchedEffect(Unit) {
-        if (viewModel.boardGamesRow1.size < 2){
-            viewModel.fetchBoardGameCategories()
-            viewModel.getAllCategories()
-        }
 
-    }
-
-     */
 
     MenuScreen(navController = navController, informationtext = "Is an app developed in Kotlin for Android. Its a platform for " +
             "board game enthusiasts. It features functionalities for exploring " +
@@ -209,7 +200,7 @@ fun SwipeableHotnessRow(
                 val item = items[page]
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()// Set a custom width for each item
+                        .fillMaxSize()
                         .shadow(8.dp, RoundedCornerShape(30.dp))
                         .clickable {
                             navController.navigate("boardgameinfo/${item.id}")
@@ -232,7 +223,6 @@ fun SwipeableHotnessRow(
                         model = item.imgUrl,
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
-                        //alignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxHeight()
                     )
@@ -458,13 +448,4 @@ fun BigPicture(
         }
 
     }
-}
-
-fun checkListsAreEmpty(viewModel: BoardDataViewModel): Boolean{
-    return viewModel.boardGamesRow0.isEmpty()
-            ||  viewModel.boardGamesRow1.isEmpty()
-            || viewModel.boardGamesRow2.isEmpty()
-            || viewModel.boardGamesRow3.isEmpty()
-            || viewModel.boardGamesRow4.isEmpty()
-            || viewModel.boardGamesRow5.isEmpty()
 }

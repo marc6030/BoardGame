@@ -48,7 +48,7 @@ import com.example.myapplication.modelviews.FavoriteViewModel
 
 
 @Composable
-fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
+fun FavoriteActivity(navController: NavHostController, viewModel: FavoriteViewModel) {
 
     val scrollState = rememberLazyListState()
 

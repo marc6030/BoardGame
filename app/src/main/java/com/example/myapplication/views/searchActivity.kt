@@ -96,7 +96,7 @@ fun goBack(navController: NavHostController) {
 
 
 @Composable
-fun PopUpOptions(boardSearchViewModel: BoardSearchViewModel, showPopup: MutableState<Boolean>) {
+fun PopUpOptions(boardSearchViewModel: BoardSearchViewModel) {
     val categories = boardSearchViewModel.categories
     val maxWidth = 400.dp
     val maxHeight = 650.dp
@@ -235,12 +235,11 @@ fun Options(showPopup: MutableState<Boolean>, boardSearchViewModel: BoardSearchV
 }
 
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun searchActivity(navController: NavHostController, boardSearchViewModel: BoardSearchViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
     val input = boardSearchViewModel.input
     val scrollState = rememberLazyListState()
-    val keyboardVisible = WindowInsets.isImeVisible
     val searchBarHeight = 46.dp
     val showPopup = remember { mutableStateOf(false) }
     val expandedStates = remember { mutableStateMapOf<Int, Boolean>() }
@@ -275,7 +274,7 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
     }
 
     if (showPopup.value){
-        PopUpOptions(boardSearchViewModel, showPopup)
+        PopUpOptions(boardSearchViewModel)
         boardSearchViewModel.input = ""
         controller?.hide()
     }
@@ -328,9 +327,6 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
 
             }
 
-
-
-
             // List of search results
             LazyColumn(
                 modifier = Modifier
@@ -348,14 +344,14 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
                     Row(
                         modifier = Modifier
                             .height(100.dp)
-                            .fillMaxWidth() // Ensures the Row takes full width
+                            .fillMaxWidth()
                             .padding(horizontal = 10.dp, vertical = 0.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .clickable {
                                 navController.navigate("boardgameinfo/${result.id}")
                             },
-                        verticalAlignment = Alignment.CenterVertically, // Aligns children vertically center
-                        horizontalArrangement = Arrangement.SpaceBetween // Distributes space between children
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Box(
                             modifier = Modifier.padding(4.dp)
@@ -385,7 +381,7 @@ fun searchActivity(navController: NavHostController, boardSearchViewModel: Board
                             imageVector = if (expandedStates[result.id.toInt()]!!) {Icons.Default.KeyboardArrowUp} else {Icons.Default.KeyboardArrowDown}, // Using the default arrow drop down icon
                             contentDescription = "Dropdown Menu",
                             modifier = Modifier
-                                .size(40.dp) // Adjust the size as needed
+                                .size(40.dp)
                                 .clip(RoundedCornerShape(20.dp))
                                 .clickable {
                                     expandedStates[result.id.toInt()] =

@@ -115,7 +115,7 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         }
         composable(
             route = "favorite") {
-            FavoriteActivity(navController, favoriteViewModel, boardGameInfoActivity)
+            FavoriteActivity(navController, favoriteViewModel)
         }
         composable(
             route = "category/{category}") {
@@ -131,15 +131,15 @@ fun boardgameApp(favoriteViewModel: FavoriteViewModel, ratingsViewModel: Ratings
         }
         composable(
             route = "challenge") {
-            ChallengeActivity(navController, boardDataViewModel, boardGameInfoActivity)
+            ChallengeActivity(navController, boardDataViewModel)
         }
         composable(
             route = "playedGames") {
-            PlayedGamesActivity(navController, playedGamesViewModel, boardGameInfoActivity)
+            PlayedGamesActivity(navController, playedGamesViewModel)
         }
         composable(
             route = "ratedGames") {
-            RatedGamesActivity(navController, ratingsViewModel, boardGameInfoActivity)
+            RatedGamesActivity(navController, ratingsViewModel)
         }
         composable(
             route = "personal"

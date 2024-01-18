@@ -123,8 +123,7 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
         setToScale(0.5f, 0.5f, 0.5f, 1f)
     }
 
-    val boardGame =
-        boardGameInfoActivity.boardGameData // It IS a var. It will not work as intended as a val. Trust me bro
+    val boardGame = boardGameInfoActivity.boardGameData
     val textStyleBody1 = MaterialTheme.typography.headlineLarge.copy(
         textAlign = TextAlign.Center,
         fontSize = 50.sp,
@@ -133,8 +132,6 @@ fun SimpleBoardGameInfoActivity(navController: NavHostController,
     var textStyle by remember { mutableStateOf(textStyleBody1) }
     var readyToDraw by remember { mutableStateOf(false) }
 
-
-    // val boardGameIsFavourite by viewModel.isBoardGameFavourite.observeAsState()
     DisposableEffect(boardGame.name) {
         textStyle = textStyleBody1
         readyToDraw = false
@@ -622,8 +619,6 @@ fun starDisplay(stars: String, text: String) {
                             tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .size(34.dp)
-
-                            // .border(BorderStroke(2.dp, color = Color.Black), 2.dp, Shape = ShapeTokens.BorderDefaultShape)
                         )
                     } else {
                         Icon(
@@ -766,10 +761,10 @@ fun favoriteButton(
             ) { data ->
                 Snackbar(
                     snackbarData = data,
-                    actionColor = MaterialTheme.colorScheme.background, // Change the color of the "UNDO" text
-                    containerColor = Color.Gray, // Change the background color of the Snackbar
+                    actionColor = MaterialTheme.colorScheme.background,
+                    containerColor = Color.Gray,
                     contentColor = Color.White
-                )// Change the color of the text in the Snackbar
+                )
             }
         }
     }
@@ -949,10 +944,10 @@ fun addPlayedGamesButton(boardGameInfoActivity: BoardGameInfoActivity) {
             ) { data ->
                 Snackbar(
                     snackbarData = data,
-                    actionColor = Color.LightGray, // Change the color of the "UNDO" text
-                    containerColor = Color.Gray, // Change the background color of the Snackbar
+                    actionColor = Color.LightGray,
+                    containerColor = Color.Gray,
                     contentColor = Color.White
-                )// Change the color of the text in the Snackbar
+                )
             }
         }
     }

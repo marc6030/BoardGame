@@ -46,7 +46,7 @@ import com.example.myapplication.modelviews.RatingsViewModel
 
 
 @Composable
-fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewModel, boardGameInfoActivity: BoardGameInfoActivity) {
+fun RatedGamesActivity(navController: NavHostController, viewModel: RatingsViewModel) {
 
     val scrollState = rememberLazyListState()
 

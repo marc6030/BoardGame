@@ -40,27 +40,24 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     var goldRank by mutableStateOf(false)
     var platRank by mutableStateOf(false)
 
-    val categoryRow0 = null
-    val categoryRow1 = "fighting"
-    val categoryRow2 = "Economic"
-    val categoryRow3 = "Card game"
-    val categoryRow4 = "fantasy"
-    val categoryRow5 = "racing"
+    private val categoryRow0 = null
+    private val categoryRow1 = "fighting"
+    private val categoryRow2 = "Economic"
+    private val categoryRow3 = "Card game"
+    private val categoryRow4 = "fantasy"
+    private val categoryRow5 = "racing"
 
-    var offsetRow0 = 0
-    var offsetRow1 = 0
-    var offsetRow2 = 0
-    var offsetRow3 = 0
-    var offsetRow4 = 0
-    var offsetRow5 = 0
+    private var offsetRow0 = 0
+    private var offsetRow1 = 0
+    private var offsetRow2 = 0
+    private var offsetRow3 = 0
+    private var offsetRow4 = 0
+    private var offsetRow5 = 0
 
-    var offsetColumnCategory = 0
+    private var offsetColumnCategory = 0
 
 
     private var limit = 10
-
-    var backgroundFade by mutableStateOf(Color.Black)
-
 
     fun getAllCategories() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -78,7 +75,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     fun fetchBoardGameCategory(category : String) {
 
         offsetColumnCategory = 0
-        Log.v("Category is: ", "$category")
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 categoryColumn =
@@ -90,7 +87,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
     }
     fun fetchAdditionalBoardGameCategory(category : String) {
         offsetColumnCategory += limit
-        Log.v("PLEASE", "WHY AM I NEVER TRIGGERED")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 categoryColumn +=
@@ -108,7 +104,7 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         offsetRow3 = 0
         offsetRow4 = 0
         offsetRow5 = 0
-        Log.v("tada", "tada")
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 bigPictureGame = BoardGameRepository().getBoardGame("316554", sharedViewModel.getUserID())
@@ -118,7 +114,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
                 boardGamesRow3 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow3, sharedViewModel.getUserID())
                 boardGamesRow4 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow4, sharedViewModel.getUserID())
                 boardGamesRow5 = BoardGameRepository().getBoardGameList(limit = limit, offset = 0, categoryRow5, sharedViewModel.getUserID())
-                Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch GameCategories", "$e")
             }
@@ -129,7 +124,6 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 boardGamesRowRecent = BoardGameRepository().getBoardGameToRecentList(sharedViewModel.getUserID())
-                Log.v("tada", "tada")
             } catch (e: Exception) {
                 Log.v("Cant fetch recentGames", "$e")
             }
@@ -140,11 +134,10 @@ class BoardDataViewModel(private var sharedViewModel: SharedViewModel) : ViewMod
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val user = BoardGameRepository().getNumberOfGamesAndStreak(sharedViewModel.getUserID())
-                streak = user.get(0).streak
-                nrOfPlayedGames = user.get(0).playedGames
-                nrOfRatedGames = user.get(0).ratedGames
-                nrOfLikedGames = user.get(0).likedGames
-                Log.v("tada", "tada")
+                streak = user[0].streak
+                nrOfPlayedGames = user[0].playedGames
+                nrOfRatedGames = user[0].ratedGames
+                nrOfLikedGames = user[0].likedGames
             } catch (e: Exception) {
                 Log.v("Cant fetch keystats", "$e")
             }
